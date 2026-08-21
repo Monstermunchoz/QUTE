@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { User } from "@supabase/supabase-js";
+import { getPublicSupabaseEnv } from "@/lib/supabase/env";
 
 type SessionResult = {
   supabaseResponse: NextResponse;
@@ -12,8 +13,7 @@ export async function updateSession(request: NextRequest): Promise<SessionResult
     request,
   });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const { url: supabaseUrl, anonKey: supabaseAnonKey } = getPublicSupabaseEnv();
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return { supabaseResponse, user: null };

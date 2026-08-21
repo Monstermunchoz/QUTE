@@ -8,13 +8,15 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
+import { getPublicSupabaseEnv } from "@/lib/supabase/env";
 import { isAdult } from "@/lib/utils/age";
 import {
   registerSchema,
   type RegisterValues,
 } from "@/lib/validation/auth";
 
-const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+const turnstileSiteKey = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "").trim();
+const turnstileEnabled = turnstileSiteKey.length > 0;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -55,14 +57,22 @@ export default function RegisterPage() {
       return;
     }
 
-    if (turnstileSiteKey && !turnstileToken) {
+    if (turnstileEnabled && !turnstileToken) {
       setFormError("Captcha en cours. Réessaie dans une seconde.");
       turnstileRef.current?.execute();
       return;
     }
 
+    const { url, anonKey } = getPublicSupabaseEnv();
+
+    if (!url || !anonKey) {
+      console.error("[register] NEXT_PUBLIC_SUPABASE_URL or ANON_KEY missing");
+      setFormError("Configuration serveur incomplète. Réessaie plus tard.");
+      return;
+    }
+
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
@@ -74,19 +84,32 @@ export default function RegisterPage() {
     });
 
     if (error) {
+      console.error("[register] signUp", error);
       setFormError(error.message);
       return;
     }
 
     const {
       data: { user },
+      error: userError,
     } = await supabase.auth.getUser();
 
+    if (userError) {
+      console.error("[register] getUser", userError);
+    }
+
     if (user) {
-      await supabase
+      const { error: profileError } = await supabase
         .from("profiles")
         .update({ date_naissance: values.dateNaissance })
         .eq("id", user.id);
+
+      if (profileError) {
+        console.error("[register] profile update", profileError);
+      }
+    } else if (signUpData.user && !signUpData.session) {
+      setFormError("Compte créé. Vérifie tes emails pour te connecter.");
+      return;
     }
 
     router.push("/accueil");
@@ -146,7 +169,7 @@ export default function RegisterPage() {
         register={register("dateNaissance")}
       />
 
-      {turnstileSiteKey ? (
+      {turnstileEnabled ? (
         <Turnstile
           ref={turnstileRef}
           siteKey={turnstileSiteKey}
