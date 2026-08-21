@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /cgu
+Allow: /login
+Allow: /register
+Disallow: /accueil
+Disallow: /moi
+Disallow: /admin
+Disallow: /explorer
+Disallow: /qute
+Disallow: /creer
+Sitemap: https://qute.fr/sitemap.xml

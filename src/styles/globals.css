@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --qute-pink: #ff2d87;
+  --qute-violet: #7b2fff;
+  --qute-orange: #ff6b2b;
+  --qute-dark: #0a0a0a;
+  --qute-card: #111111;
+  --qute-border: #1e1e1e;
+  --qute-muted: #888888;
+  --qute-gradient: linear-gradient(135deg, #ff2d87, #7b2fff);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: #0a0a0a;
+  color: #ffffff;
+  font-family: Inter, var(--font-sans), sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+svg {
+  width: auto;
+  height: auto;
+}
+
+header svg,
+nav svg,
+svg.icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  max-width: 20px;
+  max-height: 20px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+img.logo-full {
+  height: 160px;
+  width: auto;
+  max-height: 160px;
+  object-fit: contain;
+}
+
+img.logo-full-auth {
+  height: 80px;
+  width: auto;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+img.logo-icon-bar {
+  height: 28px;
+  width: auto;
+  max-height: 28px;
+  object-fit: contain;
+}
+
+img.logo-icon-cta {
+  height: 80px;
+  width: auto;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+img.logo-icon-footer {
+  height: 24px;
+  width: auto;
+  max-height: 24px;
+  object-fit: contain;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-fade] {
+  opacity: 0;
+}
+
+.fade-in {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.landing-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.landing-inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-fade],
+  .fade-in {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+}
+
+.leaflet-container {
+  background: #0a0a0a;
+  font-family: inherit;
+}
+
+.leaflet-container img {
+  max-width: none;
+}
+
+.qute-marker {
+  background: transparent;
+  border: none;
+}
+
+.qute-marker-dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff2d87;
+  border: 2px solid #ffffff;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #111111;
+  color: #ffffff;
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+.leaflet-popup-tip {
+  background: #111111;
+}
+
+.leaflet-popup-content {
+  margin: 12px;
+}
+
+.leaflet-popup-content a {
+  color: #ffffff;
+}
