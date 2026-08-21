@@ -37,9 +37,9 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     .from("profiles")
     .select("id, pseudo, ville, photo_url, photo_status")
     .neq("id", user.id)
-    .neq("photo_status", "pending")
+    .not("photo_status", "eq", "rejected")
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(100);
 
   if (blockedIds.length > 0) {
     query = query.not("id", "in", `(${blockedIds.join(",")})`);

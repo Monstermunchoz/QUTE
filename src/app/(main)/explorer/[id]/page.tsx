@@ -37,7 +37,7 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
 
   const profile = data as Profile;
 
-  if (profile.photo_status === "pending") {
+  if (profile.photo_status === "rejected") {
     notFound();
   }
 
