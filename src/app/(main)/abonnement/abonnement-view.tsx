@@ -144,12 +144,14 @@ export function AbonnementView({
       const payload = (await response.json().catch(() => null)) as {
         url?: string;
         error?: string;
+        redirect?: string;
       } | null;
 
       if (!response.ok || !payload?.url) {
         console.error("[portal]", response.status, payload);
         setLoading(null);
-        setError(payload?.error ?? "Portail indisponible pour le moment.");
+        setError(payload?.error ?? "Aucun abonnement actif via Stripe.");
+        router.replace(payload?.redirect ?? "/abonnement");
         return;
       }
 
@@ -157,7 +159,8 @@ export function AbonnementView({
     } catch (err) {
       console.error("[portal]", err);
       setLoading(null);
-      setError("Portail indisponible pour le moment.");
+      setError("Aucun abonnement actif via Stripe.");
+      router.replace("/abonnement");
     }
   }
 

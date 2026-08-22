@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createServiceClient } from "@/lib/supabase/admin";
 import { getSiteUrl, isAllowedPriceId } from "@/lib/stripe/config";
+import { resolveStripeCustomer } from "@/lib/stripe/customer";
 import { getStripe } from "@/lib/stripe/server";
 import { estPremium } from "@/lib/subscription";
 
@@ -47,43 +47,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Profil introuvable" }, { status: 404 });
   }
 
-  if (estPremium(profil) && profil.stripe_customer_id) {
-    try {
+  try {
+    const existingId = (profil.stripe_customer_id as string | null) ?? null;
+    const customerId = await resolveStripeCustomer({
+      userId: user.id,
+      email: user.email,
+      name: (profil.pseudo as string | null) ?? undefined,
+      existingId,
+      createIfMissing: true,
+    });
+
+    if (!customerId) {
+      return NextResponse.json(
+        { error: "Impossible de créer le client Stripe" },
+        { status: 500 },
+      );
+    }
+
+    const reusedExisting =
+      Boolean(existingId) && customerId === existingId.trim();
+
+    if (estPremium(profil) && reusedExisting) {
       const portal = await getStripe().billingPortal.sessions.create({
-        customer: profil.stripe_customer_id,
+        customer: customerId,
         return_url: `${getSiteUrl()}/abonnement`,
         locale: "fr",
       });
 
       return NextResponse.json({ url: portal.url });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Erreur Stripe";
-      console.error("[stripe/checkout] portal", error);
-      return NextResponse.json({ error: message }, { status: 500 });
-    }
-  }
-
-  try {
-    const admin = createServiceClient();
-    let customerId = profil.stripe_customer_id as string | null;
-
-    if (!customerId) {
-      const customer = await getStripe().customers.create({
-        email: user.email ?? undefined,
-        name: (profil.pseudo as string | null) ?? undefined,
-        metadata: { user_id: user.id },
-      });
-
-      customerId = customer.id;
-
-      const { error } = await admin
-        .from("profiles")
-        .update({ stripe_customer_id: customerId })
-        .eq("id", user.id);
-
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
     }
 
     const trialDays = profil.essai_utilise ? undefined : 7;
