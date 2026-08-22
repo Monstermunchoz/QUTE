@@ -57,6 +57,44 @@ function formatMontant(cents: number, devise: string) {
   }).format(cents / 100);
 }
 
+type BillingInterval = "mensuel" | "annuel";
+
+function PeriodToggle({
+  value,
+  onChange,
+}: {
+  value: BillingInterval;
+  onChange: (value: BillingInterval) => void;
+}) {
+  return (
+    <div className="mt-4 flex rounded-[12px] bg-[#1E1E1E] p-1">
+      <button
+        type="button"
+        onClick={() => onChange("mensuel")}
+        className={`flex-1 rounded-[10px] py-2 text-sm font-bold ${
+          value === "mensuel" ? "text-white" : "text-[#888888]"
+        }`}
+        style={value === "mensuel" ? gradient : undefined}
+      >
+        Mensuel
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("annuel")}
+        className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-[10px] py-2 text-sm font-bold ${
+          value === "annuel" ? "text-white" : "text-[#888888]"
+        }`}
+        style={value === "annuel" ? gradient : undefined}
+      >
+        Annuel
+        <span className="rounded-[6px] bg-white/15 px-1.5 py-0.5 text-[10px] font-bold text-white">
+          2 mois offerts
+        </span>
+      </button>
+    </div>
+  );
+}
+
 export function AbonnementView({
   current,
   statut,
@@ -69,7 +107,12 @@ export function AbonnementView({
 }: AbonnementViewProps) {
   const router = useRouter();
   const [shopOpen, setShopOpen] = useState(false);
-  const [periode, setPeriode] = useState<"mensuel" | "annuel">("mensuel");
+  const [periodes, setPeriodes] = useState<
+    Record<"qute_plus" | "qute_club", BillingInterval>
+  >({
+    qute_plus: "mensuel",
+    qute_club: "mensuel",
+  });
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<"success" | "annule" | null>(banner);
@@ -98,7 +141,7 @@ export function AbonnementView({
     setLoading(key);
 
     if (!priceId) {
-      console.error("[checkout] priceId manquant", { key, periode, priceIds });
+      console.error("[checkout] priceId manquant", { key, periodes, priceIds });
       setError("Tarif introuvable. Vérifie les clés Stripe.");
       setLoading(null);
       return;
@@ -281,37 +324,13 @@ export function AbonnementView({
         </article>
       ) : null}
 
-      <div className="flex rounded-[12px] bg-[#111111] p-1">
-        <button
-          type="button"
-          onClick={() => setPeriode("mensuel")}
-          className={`flex-1 rounded-[10px] py-2.5 text-sm font-bold ${
-            periode === "mensuel" ? "text-white" : "text-[#888888]"
-          }`}
-          style={periode === "mensuel" ? gradient : undefined}
-        >
-          Mensuel
-        </button>
-        <button
-          type="button"
-          onClick={() => setPeriode("annuel")}
-          className={`relative flex flex-1 items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-bold ${
-            periode === "annuel" ? "text-white" : "text-[#888888]"
-          }`}
-          style={periode === "annuel" ? gradient : undefined}
-        >
-          Annuel
-          <span className="rounded-[6px] bg-white/15 px-1.5 py-0.5 text-[10px] font-bold text-white">
-            2 mois offerts
-          </span>
-        </button>
-      </div>
-
       {paidPlans.map((plan) => {
+        const planKey = plan.id === "qute_plus" ? "qute_plus" : "qute_club";
         const isCurrent = plan.id === current;
         const stripePlan =
-          plan.id === "qute_plus" ? STRIPE_PLANS.qute_plus : STRIPE_PLANS.qute_club;
-        const ids = plan.id === "qute_plus" ? priceIds.qute_plus : priceIds.qute_club;
+          planKey === "qute_plus" ? STRIPE_PLANS.qute_plus : STRIPE_PLANS.qute_club;
+        const ids = priceIds[planKey];
+        const periode = periodes[planKey];
         const annuel = periode === "annuel";
         const price = annuel ? stripePlan.annuel.montant : stripePlan.mensuel.montant;
         const priceId = annuel ? ids.annuel : ids.mensuel;
@@ -374,6 +393,15 @@ export function AbonnementView({
                 {annuel ? "2 mois offerts" : plan.note}
               </p>
             ) : null}
+            <PeriodToggle
+              value={periode}
+              onChange={(value) =>
+                setPeriodes((currentPeriodes) => ({
+                  ...currentPeriodes,
+                  [planKey]: value,
+                }))
+              }
+            />
             <ul className="mt-3">
               {plan.items.map((item, index) => (
                 <li
