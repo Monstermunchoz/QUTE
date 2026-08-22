@@ -48,61 +48,73 @@ export async function POST(request: Request) {
   }
 
   if (estPremium(profil) && profil.stripe_customer_id) {
-    const portal = await getStripe().billingPortal.sessions.create({
-      customer: profil.stripe_customer_id,
-      return_url: `${getSiteUrl()}/abonnement`,
-      locale: "fr",
-    });
+    try {
+      const portal = await getStripe().billingPortal.sessions.create({
+        customer: profil.stripe_customer_id,
+        return_url: `${getSiteUrl()}/abonnement`,
+        locale: "fr",
+      });
 
-    return NextResponse.json({ url: portal.url });
-  }
-
-  const admin = createServiceClient();
-  let customerId = profil.stripe_customer_id as string | null;
-
-  if (!customerId) {
-    const customer = await getStripe().customers.create({
-      email: user.email ?? undefined,
-      name: (profil.pseudo as string | null) ?? undefined,
-      metadata: { user_id: user.id },
-    });
-
-    customerId = customer.id;
-
-    const { error } = await admin
-      .from("profiles")
-      .update({ stripe_customer_id: customerId })
-      .eq("id", user.id);
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ url: portal.url });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erreur Stripe";
+      console.error("[stripe/checkout] portal", error);
+      return NextResponse.json({ error: message }, { status: 500 });
     }
   }
 
-  const trialDays = profil.essai_utilise ? undefined : 7;
+  try {
+    const admin = createServiceClient();
+    let customerId = profil.stripe_customer_id as string | null;
 
-  const session = await getStripe().checkout.sessions.create({
-    customer: customerId,
-    mode: "subscription",
-    line_items: [{ price: priceId, quantity: 1 }],
-    subscription_data: {
-      ...(trialDays ? { trial_period_days: trialDays } : {}),
+    if (!customerId) {
+      const customer = await getStripe().customers.create({
+        email: user.email ?? undefined,
+        name: (profil.pseudo as string | null) ?? undefined,
+        metadata: { user_id: user.id },
+      });
+
+      customerId = customer.id;
+
+      const { error } = await admin
+        .from("profiles")
+        .update({ stripe_customer_id: customerId })
+        .eq("id", user.id);
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+    }
+
+    const trialDays = profil.essai_utilise ? undefined : 7;
+
+    const session = await getStripe().checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      subscription_data: {
+        ...(trialDays ? { trial_period_days: trialDays } : {}),
+        metadata: { user_id: user.id },
+      },
+      locale: "fr",
+      allow_promotion_codes: true,
+      success_url: `${getSiteUrl()}/abonnement?success=1`,
+      cancel_url: `${getSiteUrl()}/abonnement?annule=1`,
       metadata: { user_id: user.id },
-    },
-    locale: "fr",
-    allow_promotion_codes: true,
-    success_url: `${getSiteUrl()}/abonnement?success=1`,
-    cancel_url: `${getSiteUrl()}/abonnement?annule=1`,
-    metadata: { user_id: user.id },
-    integration_identifier: `qute-abo-${randomSuffix()}`,
-  });
+      integration_identifier: `qute-abo-${randomSuffix()}`,
+    });
 
-  if (!session.url) {
-    return NextResponse.json(
-      { error: "Impossible de créer la session" },
-      { status: 500 },
-    );
+    if (!session.url) {
+      return NextResponse.json(
+        { error: "Impossible de créer la session" },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json({ url: session.url });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Erreur Stripe";
+    console.error("[stripe/checkout]", error);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  return NextResponse.json({ url: session.url });
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { AbonnementView } from "./abonnement-view";
 import { normalizeAbonnement } from "@/lib/abonnement";
+import { PLANS as STRIPE_PLANS } from "@/lib/stripe/config";
 import { createClient } from "@/lib/supabase/server";
 import type { AbonnementStatut } from "@/lib/subscription";
 
@@ -62,6 +63,16 @@ export default async function AbonnementPage({
       essaiUtilise={Boolean(row?.essai_utilise)}
       hasCustomer={Boolean(row?.stripe_customer_id)}
       paiements={(paiementRows ?? []) as PaiementRow[]}
+      priceIds={{
+        qute_plus: {
+          mensuel: STRIPE_PLANS.qute_plus.mensuel.priceId,
+          annuel: STRIPE_PLANS.qute_plus.annuel.priceId,
+        },
+        qute_club: {
+          mensuel: STRIPE_PLANS.qute_club.mensuel.priceId,
+          annuel: STRIPE_PLANS.qute_club.annuel.priceId,
+        },
+      }}
       banner={
         searchParams.success === "1"
           ? "success"

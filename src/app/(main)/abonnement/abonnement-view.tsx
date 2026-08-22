@@ -22,6 +22,11 @@ type Paiement = {
   created_at: string;
 };
 
+type PriceIds = {
+  qute_plus: { mensuel: string; annuel: string };
+  qute_club: { mensuel: string; annuel: string };
+};
+
 type AbonnementViewProps = {
   current: Abonnement;
   statut: AbonnementStatut;
@@ -29,6 +34,7 @@ type AbonnementViewProps = {
   essaiUtilise: boolean;
   hasCustomer: boolean;
   paiements: Paiement[];
+  priceIds: PriceIds;
   banner: "success" | "annule" | null;
 };
 
@@ -58,6 +64,7 @@ export function AbonnementView({
   essaiUtilise,
   hasCustomer,
   paiements,
+  priceIds,
   banner,
 }: AbonnementViewProps) {
   const router = useRouter();
@@ -70,6 +77,8 @@ export function AbonnementView({
   const club = estClub({ abonnement: current, abonnement_statut: statut });
   const jours = joursRestants(fin);
   const finLabel = formatDate(fin);
+  const gratuit = PLANS.find((plan) => plan.id === "gratuit");
+  const paidPlans = PLANS.filter((plan) => plan.id !== "gratuit");
 
   useEffect(() => {
     if (!banner) {
@@ -88,42 +97,68 @@ export function AbonnementView({
     setError(null);
     setLoading(key);
 
-    const response = await fetch("/api/stripe/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceId }),
-    });
-    const payload = (await response.json().catch(() => null)) as {
-      url?: string;
-      error?: string;
-    } | null;
-
-    if (!response.ok || !payload?.url) {
+    if (!priceId) {
+      console.error("[checkout] priceId manquant", { key, periode, priceIds });
+      setError("Tarif introuvable. Vérifie les clés Stripe.");
       setLoading(null);
-      setError(payload?.error ?? "Impossible de lancer le paiement.");
       return;
     }
 
-    window.location.href = payload.url;
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priceId }),
+      });
+      const payload = (await response.json().catch((parseError) => {
+        console.error("[checkout] réponse illisible", parseError);
+        return null;
+      })) as { url?: string; error?: string } | null;
+
+      if (!response.ok || !payload?.url) {
+        console.error("[checkout]", {
+          status: response.status,
+          priceId,
+          key,
+          payload,
+        });
+        setError(payload?.error ?? `Impossible de lancer le paiement (${response.status}).`);
+        setLoading(null);
+        return;
+      }
+
+      window.location.href = payload.url;
+    } catch (err) {
+      console.error("[checkout]", err);
+      setError("Impossible de lancer le paiement.");
+      setLoading(null);
+    }
   }
 
   async function goPortal() {
     setError(null);
     setLoading("portal");
 
-    const response = await fetch("/api/stripe/portal", { method: "POST" });
-    const payload = (await response.json().catch(() => null)) as {
-      url?: string;
-      error?: string;
-    } | null;
+    try {
+      const response = await fetch("/api/stripe/portal", { method: "POST" });
+      const payload = (await response.json().catch(() => null)) as {
+        url?: string;
+        error?: string;
+      } | null;
 
-    if (!response.ok || !payload?.url) {
+      if (!response.ok || !payload?.url) {
+        console.error("[portal]", response.status, payload);
+        setLoading(null);
+        setError(payload?.error ?? "Portail indisponible pour le moment.");
+        return;
+      }
+
+      window.location.href = payload.url;
+    } catch (err) {
+      console.error("[portal]", err);
       setLoading(null);
-      setError(payload?.error ?? "Portail indisponible pour le moment.");
-      return;
+      setError("Portail indisponible pour le moment.");
     }
-
-    window.location.href = payload.url;
   }
 
   return (
@@ -152,10 +187,7 @@ export function AbonnementView({
           </p>
         </article>
       ) : (
-        <article
-          className="rounded-[16px] p-[2px]"
-          style={gradient}
-        >
+        <article className="rounded-[16px] p-[2px]" style={gradient}>
           <div className="rounded-[14px] bg-[#111111] p-5">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-bold text-white">
@@ -206,6 +238,39 @@ export function AbonnementView({
         </article>
       )}
 
+      {gratuit ? (
+        <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5">
+          {current === "gratuit" ? (
+            <p className="mb-3 w-fit rounded-[8px] bg-[#FF2D87] px-2 py-1 text-[10px] font-bold text-white">
+              Ton plan
+            </p>
+          ) : null}
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-lg font-bold text-white">{gratuit.name}</h2>
+            <p className="text-sm text-[#888888]">
+              <span className="font-bold text-white">0€</span>/mois
+            </p>
+          </div>
+          <p className="mt-1 text-[13px] italic text-[#888888]">
+            {gratuit.tagline}
+          </p>
+          <ul className="mt-3">
+            {gratuit.items.map((item, index) => (
+              <li
+                key={item}
+                className={`py-2.5 text-sm text-[#CCCCCC] ${
+                  index < gratuit.items.length - 1
+                    ? "border-b border-[#1E1E1E]"
+                    : ""
+                }`}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ) : null}
+
       <div className="flex rounded-[12px] bg-[#111111] p-1">
         <button
           type="button"
@@ -232,26 +297,16 @@ export function AbonnementView({
         </button>
       </div>
 
-      {PLANS.map((plan) => {
+      {paidPlans.map((plan) => {
         const isCurrent = plan.id === current;
         const stripePlan =
-          plan.id === "qute_plus"
-            ? STRIPE_PLANS.qute_plus
-            : plan.id === "qute_club"
-              ? STRIPE_PLANS.qute_club
-              : null;
-        const price =
-          plan.id === "gratuit"
-            ? "0€"
-            : periode === "annuel"
-              ? stripePlan?.annuel.montant
-              : stripePlan?.mensuel.montant;
-        const suffix = plan.id === "gratuit" ? "/mois" : periode === "annuel" ? "/an" : "/mois";
-        const priceId =
-          periode === "annuel"
-            ? stripePlan?.annuel.priceId
-            : stripePlan?.mensuel.priceId;
+          plan.id === "qute_plus" ? STRIPE_PLANS.qute_plus : STRIPE_PLANS.qute_club;
+        const ids = plan.id === "qute_plus" ? priceIds.qute_plus : priceIds.qute_club;
+        const annuel = periode === "annuel";
+        const price = annuel ? stripePlan.annuel.montant : stripePlan.mensuel.montant;
+        const priceId = annuel ? ids.annuel : ids.mensuel;
         const ctaKey = `${plan.id}-${periode}`;
+        const busy = loading === ctaKey;
         let cta = "Choisir";
 
         if (!essaiUtilise && !premium) {
@@ -283,12 +338,19 @@ export function AbonnementView({
                 {plan.badge}
               </p>
             ) : null}
-            <div className="flex items-baseline justify-between">
+            <div className="flex items-start justify-between gap-3">
               <h2 className="text-lg font-bold text-white">{plan.name}</h2>
-              <p className="text-sm text-[#888888]">
-                <span className="font-bold text-white">{price}</span>
-                {suffix}
-              </p>
+              <div className="text-right">
+                <p className="text-sm text-[#888888]">
+                  <span className="font-bold text-white">{price}</span>
+                  {annuel ? "/an" : "/mois"}
+                </p>
+                {annuel ? (
+                  <p className="mt-0.5 text-[12px] text-[#888888]">
+                    soit {stripePlan.annuel.soitParMois}/mois
+                  </p>
+                ) : null}
+              </div>
             </div>
             <p className="mt-1 text-[13px] italic text-[#888888]">
               {plan.tagline}
@@ -299,9 +361,7 @@ export function AbonnementView({
                   plan.noteAccent ? "text-[#FF2D87]" : "text-[#888888]"
                 }`}
               >
-                {periode === "annuel" && plan.id !== "gratuit"
-                  ? "2 mois offerts"
-                  : plan.note}
+                {annuel ? "2 mois offerts" : plan.note}
               </p>
             ) : null}
             <ul className="mt-3">
@@ -318,27 +378,15 @@ export function AbonnementView({
                 </li>
               ))}
             </ul>
-            {plan.id !== "gratuit" ? (
-              <button
-                type="button"
-                disabled={isCurrent || loading !== null || !priceId}
-                onClick={() => {
-                  if (!priceId) {
-                    return;
-                  }
-
-                  void goCheckout(priceId, ctaKey);
-                }}
-                className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-[#1E1E1E] disabled:text-[#888888]"
-                style={isCurrent ? undefined : gradient}
-              >
-                {isCurrent
-                  ? "Ton plan"
-                  : loading === ctaKey
-                    ? "Redirection…"
-                    : cta}
-              </button>
-            ) : null}
+            <button
+              type="button"
+              disabled={isCurrent || loading !== null}
+              onClick={() => void goCheckout(priceId, ctaKey)}
+              className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-[#1E1E1E] disabled:text-[#888888]"
+              style={isCurrent ? undefined : gradient}
+            >
+              {isCurrent ? "Ton plan" : busy ? "Redirection…" : cta}
+            </button>
           </article>
         );
       })}

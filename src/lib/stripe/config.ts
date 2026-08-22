@@ -8,6 +8,7 @@ export const PLANS = {
     annuel: {
       priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_PLUS_ANNUEL ?? "",
       montant: "79,99 €",
+      soitParMois: "6,67 €",
     },
   },
   qute_club: {
@@ -19,6 +20,7 @@ export const PLANS = {
     annuel: {
       priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_CLUB_ANNUEL ?? "",
       montant: "159,99 €",
+      soitParMois: "13,33 €",
     },
   },
 } as const;
