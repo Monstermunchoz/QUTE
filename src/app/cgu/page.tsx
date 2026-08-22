@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CguPage() {
   return (
-    <main className="min-h-screen bg-[#0A0A0A] px-4 py-8 text-white">
+    <main className="min-h-screen bg-[#000000] px-4 py-8 text-white">
       <div className="relative mx-auto w-full max-w-lg">
         <Link
           href="/register"

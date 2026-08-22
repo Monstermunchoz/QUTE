@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 :root {
+  --qute-black: #000000;
   --qute-pink: #ff2d87;
   --qute-violet: #7b2fff;
   --qute-orange: #ff6b2b;
-  --qute-dark: #0a0a0a;
+  --qute-dark: #000000;
   --qute-card: #111111;
   --qute-border: #1e1e1e;
   --qute-muted: #888888;
@@ -22,7 +23,7 @@ html {
 }
 
 body {
-  background: #0a0a0a;
+  background: var(--qute-black);
   color: #ffffff;
   font-family: Inter, var(--font-sans), sans-serif;
 }
@@ -32,7 +33,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: var(--qute-black);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -106,6 +107,7 @@ img.logo-icon-nav {
   width: auto;
   max-height: 26px;
   object-fit: contain;
+  mix-blend-mode: screen;
 }
 
 img.logo-icon-auth {
@@ -120,6 +122,7 @@ img.logo-icon-bar {
   width: auto;
   max-height: 28px;
   object-fit: contain;
+  mix-blend-mode: screen;
 }
 
 header svg.menu-icon {
@@ -190,10 +193,90 @@ img.logo-icon-shop {
 .landing-title {
   font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .landing-copy {
   line-height: 1.7;
+  max-width: 620px;
+}
+
+.landing-hero {
+  position: relative;
+  min-height: 85vh;
+  justify-content: center;
+  padding-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .landing-hero {
+    min-height: 90vh;
+  }
+}
+
+.landing-hero-fade {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+}
+
+@keyframes bounce-down {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+.scroll-hint {
+  animation: bounce-down 2s ease-in-out infinite;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-hint-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-shop {
+  position: relative;
+  overflow: hidden;
+  background: #111111;
+}
+
+.landing-shop::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255, 45, 135, 0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.landing-sticky-cta {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.landing-sticky-cta-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .landing-card {
@@ -226,8 +309,8 @@ img.logo-icon-shop {
   align-items: center;
   text-align: center;
   width: 100%;
-  padding-top: 64px;
-  padding-bottom: 64px;
+  padding-top: 72px;
+  padding-bottom: 72px;
 }
 
 @media (min-width: 768px) {
@@ -259,7 +342,8 @@ img.logo-icon-shop {
 
 @media (prefers-reduced-motion: reduce) {
   [data-fade],
-  .fade-in {
+  .fade-in,
+  .scroll-hint {
     opacity: 1;
     animation: none;
     transform: none;
@@ -267,7 +351,7 @@ img.logo-icon-shop {
 }
 
 .leaflet-container {
-  background: #0a0a0a;
+  background: var(--qute-black);
   font-family: inherit;
 }
 

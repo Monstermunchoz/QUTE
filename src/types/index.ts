@@ -204,6 +204,16 @@ export type Signalement = {
   created_at: string;
 };
 
+export type AmiStatut = "en_attente" | "accepte" | "refuse";
+
+export type Ami = {
+  id: string;
+  demandeur_id: string;
+  destinataire_id: string;
+  statut: AmiStatut;
+  created_at: string;
+};
+
 export type NotificationType =
   | "match"
   | "message"

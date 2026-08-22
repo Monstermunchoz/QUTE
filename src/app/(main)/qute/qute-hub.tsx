@@ -35,7 +35,7 @@ export function QuteHub({
   }, [initialTab]);
 
   return (
-    <main className="flex flex-col gap-4 bg-[#0A0A0A] pb-4">
+    <main className="flex flex-col gap-4 bg-[#000000] pb-4">
       <header>
         <h1 className="text-2xl font-bold text-white">QUTE</h1>
         <p className="text-sm text-[#888888]">Matchs, QRUSH et messages.</p>

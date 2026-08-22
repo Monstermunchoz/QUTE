@@ -8,7 +8,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className="min-h-screen bg-[#000000]">
       <TopBar />
       <div className="mx-auto w-full max-w-lg px-4 pb-24 pt-16">{children}</div>
       <Suspense fallback={null}>

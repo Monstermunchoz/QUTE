@@ -35,6 +35,7 @@ const NAV: MenuItem[] = [
   { href: "/creer", label: "Créer un événement", icon: <PlusIcon /> },
   { href: "/qute?tab=qrush", label: "QRUSH reçus", icon: <BoltIcon /> },
   { href: "/qute", label: "Messages", icon: <BubbleIcon /> },
+  { href: "/amis", label: "Mes amis", icon: <FriendsIcon /> },
 ];
 
 const ACCOUNT: MenuItem[] = [
@@ -190,6 +191,16 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
       ) : null}
       <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} />
     </>
+  );
+}
+
+function FriendsIcon() {
+  return (
+    <svg className="icon" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <circle cx="8.5" cy="8" r="2.4" />
+      <path d="M4 18c.4-2.6 2-4 4.5-4s4.1 1.4 4.5 4" />
+      <path d="M16.5 7.5 19 10l3-3.5" />
+    </svg>
   );
 }
 

@@ -14,7 +14,7 @@ const config: Config = {
           pink: "#FF2D87",
           violet: "#7B2FFF",
           orange: "#FF6B2B",
-          dark: "#0A0A0A",
+          dark: "#000000",
           card: "#111111",
           border: "#1E1E1E",
           muted: "#888888",

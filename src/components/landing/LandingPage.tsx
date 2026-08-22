@@ -149,6 +149,9 @@ function PriceList({ items }: { items: string[] }) {
 
 export function LandingPage() {
   const [shopOpen, setShopOpen] = useState(false);
+  const [hintHidden, setHintHidden] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
+  const [ctaInView, setCtaInView] = useState(false);
 
   useEffect(() => {
     const sections = document.querySelectorAll("[data-fade]");
@@ -161,7 +164,7 @@ export function LandingPage() {
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -169,11 +172,48 @@ export function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    function onScroll() {
+      const y = window.scrollY;
+      setHintHidden(y > 100);
+      setPastHero(y > window.innerHeight * 0.75);
+    }
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const cta = document.getElementById("landing-cta");
+    if (!cta) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setCtaInView(entries.some((entry) => entry.isIntersecting));
+      },
+      { threshold: 0.2 },
+    );
+
+    observer.observe(cta);
+    return () => observer.disconnect();
+  }, []);
+
+  function scrollToFeatures() {
+    document.getElementById("landing-features")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }
+
+  const showSticky = pastHero && !ctaInView;
+
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-center text-white">
+    <div className="min-h-screen bg-[#000000] text-center text-white">
       <GradientDefs />
 
-      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-[#1E1E1E] bg-[#0A0A0A]">
+      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-[#1E1E1E] bg-[#000000]">
         <div className="mx-auto flex h-full w-full max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -196,7 +236,7 @@ export function LandingPage() {
 
       <section
         data-fade
-        className="landing-section px-4 pt-28"
+        className="landing-section landing-hero px-4 pt-28"
         style={sectionStyle}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -206,10 +246,10 @@ export function LandingPage() {
           className="logo-icon-hero"
           style={{ height: 180, margin: "0 auto 32px" }}
         />
-        <h1 className="landing-title text-center text-[36px] leading-tight text-white md:text-[48px]">
+        <h1 className="landing-title text-center text-[36px] text-white md:text-[48px]">
           Ta communauté. Ta ville. Ce soir.
         </h1>
-        <p className="landing-copy mt-4 max-w-[560px] text-center text-[18px] text-[#888888]">
+        <p className="landing-copy mx-auto mt-4 text-center text-[18px] text-[#888888]">
           Le réseau social queer de Lyon. Rencontres, lieux, sorties — un seul
           endroit, fait pour nous.
         </p>
@@ -231,18 +271,40 @@ export function LandingPage() {
         <p className="mt-6 text-center text-[13px] text-[#555555]">
           Plateforme réservée aux adultes +18 • LGBTQIA+ & alliés
         </p>
+        <button
+          type="button"
+          aria-label="Voir la suite"
+          onClick={scrollToFeatures}
+          className={`scroll-hint absolute bottom-8 z-10 text-[#888888] ${
+            hintHidden ? "scroll-hint-hidden" : ""
+          }`}
+        >
+          <svg
+            width={28}
+            height={28}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            aria-hidden
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+        <div className="landing-hero-fade" />
       </section>
 
       <section
+        id="landing-features"
         data-fade
-        className="landing-section bg-[#0A0A0A] px-4"
+        className="landing-section bg-[#000000] px-4"
         style={sectionStyle}
       >
         <div className="landing-inner mx-auto w-full max-w-5xl">
           <h2 className="landing-title text-center text-[32px] text-white">
             Tout ce dont tu as besoin
           </h2>
-          <div className="mx-auto mt-10 grid w-full grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="mx-auto mt-10 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
             {features.map((feature) => (
               <article
                 key={feature.title}
@@ -252,7 +314,7 @@ export function LandingPage() {
                 <h3 className="landing-title mt-4 text-center text-xl">
                   {feature.title}
                 </h3>
-                <p className="landing-copy mt-3 text-center text-sm text-[#888888]">
+                <p className="landing-copy mx-auto mt-3 text-center text-sm text-[#888888]">
                   {feature.text}
                 </p>
               </article>
@@ -266,11 +328,11 @@ export function LandingPage() {
         className="landing-section bg-[#111111] px-4"
         style={sectionStyle}
       >
-        <div className="landing-inner mx-auto w-full max-w-[600px]">
+        <div className="landing-inner mx-auto w-full max-w-[620px]">
           <h2 className="landing-title text-center text-[32px] text-white">
             Ce soir à Lyon
           </h2>
-          <p className="landing-copy mt-4 text-center text-[18px] text-[#888888]">
+          <p className="landing-copy mx-auto mt-4 text-center text-[18px] text-[#888888]">
             Pendant que tu lis ça, quelqu&apos;un cherche avec qui sortir. QUTE
             agrège en temps réel les événements, les lieux actifs et les
             personnes qui sortent. Plus besoin de scroller cinq apps.
@@ -287,49 +349,17 @@ export function LandingPage() {
 
       <section
         data-fade
-        className="landing-section bg-[#0A0A0A] px-4"
+        className="landing-section landing-shop px-4"
         style={sectionStyle}
       >
-        <div className="landing-inner mx-auto w-full max-w-5xl">
-          <h2 className="landing-title text-center text-[32px] text-white">
-            Pensé pour nous, par nous
-          </h2>
-          <p className="landing-copy mx-auto mt-4 max-w-[600px] text-center text-[#888888]">
-            QUTE n&apos;est pas une app de rencontres de plus. C&apos;est un
-            espace communautaire local — pour discuter dans des salons, trouver
-            un event, savoir où sortir, rencontrer des gens. En sécurité, entre
-            nous.
-          </p>
-          <ul className="mx-auto mt-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3">
-            {strengths.map((item) => (
-              <li
-                key={item.title}
-                className="flex flex-col items-center text-center"
-              >
-                <StrengthIcon name={item.icon} />
-                <p className="landing-title mt-3 text-white">{item.title}</p>
-                <p className="landing-copy mt-1 text-sm text-[#888888]">
-                  {item.text}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section
-        data-fade
-        className="landing-section bg-[#111111] px-4"
-        style={sectionStyle}
-      >
-        <div className="landing-inner mx-auto flex w-full max-w-[600px] flex-col items-center">
-          <span className="rounded-[8px] bg-[#1E1E1E] px-3 py-1 text-[11px] font-bold tracking-[0.1em] text-[#FF2D87]">
+        <div className="landing-inner relative z-10 mx-auto flex w-full max-w-[560px] flex-col items-center">
+          <span className="rounded-[20px] bg-[#1E1E1E] px-4 py-1.5 text-[11px] font-bold tracking-[0.12em] text-[#FF2D87]">
             BIENTÔT
           </span>
-          <h2 className="landing-title mt-4 text-center text-[32px] text-white">
+          <h2 className="landing-title mt-4 text-center text-[36px] text-white">
             QUTE Shop
           </h2>
-          <p className="landing-copy mt-4 text-center text-[18px] text-[#888888]">
+          <p className="landing-copy mx-auto mt-4 text-center text-[18px] text-[#888888]">
             Vêtements et accessoires queer, pensés pour la communauté. Des
             pièces qui te ressemblent, sans compromis.
           </p>
@@ -349,17 +379,49 @@ export function LandingPage() {
 
       <section
         data-fade
-        className="landing-section bg-[#0A0A0A] px-4"
+        className="landing-section bg-[#000000] px-4"
+        style={sectionStyle}
+      >
+        <div className="landing-inner mx-auto w-full max-w-5xl">
+          <h2 className="landing-title text-center text-[32px] text-white">
+            Pensé pour nous, par nous
+          </h2>
+          <p className="landing-copy mx-auto mt-4 text-center text-[#888888]">
+            QUTE n&apos;est pas une app de rencontres de plus. C&apos;est un
+            espace communautaire local — pour discuter dans des salons, trouver
+            un event, savoir où sortir, rencontrer des gens. En sécurité, entre
+            nous.
+          </p>
+          <ul className="mx-auto mt-10 grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+            {strengths.map((item) => (
+              <li
+                key={item.title}
+                className="flex flex-col items-center text-center"
+              >
+                <StrengthIcon name={item.icon} />
+                <p className="landing-title mt-3 text-white">{item.title}</p>
+                <p className="landing-copy mx-auto mt-1 text-sm text-[#888888]">
+                  {item.text}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section
+        data-fade
+        className="landing-section bg-[#000000] px-4"
         style={sectionStyle}
       >
         <div className="landing-inner mx-auto w-full max-w-5xl">
           <h2 className="landing-title text-center text-[32px] text-white">
             Choisis ton QUTE
           </h2>
-          <p className="landing-copy mt-3 text-center text-[#888888]">
+          <p className="landing-copy mx-auto mt-3 text-center text-[#888888]">
             Commence gratuitement. Passe au niveau supérieur quand tu veux.
           </p>
-          <div className="mx-auto mt-10 grid w-full grid-cols-1 items-stretch gap-4 md:grid-cols-3">
+          <div className="mx-auto mt-10 grid w-full grid-cols-1 items-stretch gap-6 md:grid-cols-3">
             {PLANS.map((plan) => (
               <article
                 key={plan.id}
@@ -382,7 +444,7 @@ export function LandingPage() {
                 ) : null}
                 <h3
                   className={`landing-title text-[24px] text-white ${
-                    plan.featured ? "mt-4" : plan.badgeGradient ? "mt-4" : ""
+                    plan.featured || plan.badgeGradient ? "mt-4" : ""
                   }`}
                 >
                   {plan.name}
@@ -430,6 +492,7 @@ export function LandingPage() {
       </section>
 
       <section
+        id="landing-cta"
         data-fade
         className="landing-section px-4"
         style={{
@@ -437,7 +500,7 @@ export function LandingPage() {
           background: "linear-gradient(135deg, #FF2D87, #7B2FFF)",
         }}
       >
-        <div className="landing-inner mx-auto flex w-full max-w-[600px] flex-col items-center">
+        <div className="landing-inner mx-auto flex w-full max-w-[620px] flex-col items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-icon.png"
@@ -446,10 +509,10 @@ export function LandingPage() {
             className="logo-icon-cta"
             style={{ margin: "0 auto" }}
           />
-          <h2 className="landing-title mt-6 text-center text-[40px] leading-tight text-white">
+          <h2 className="landing-title mt-6 text-center text-[40px] text-white">
             On t&apos;attend.
           </h2>
-          <p className="landing-copy mt-3 text-center text-[18px] text-white">
+          <p className="landing-copy mx-auto mt-3 text-center text-[18px] text-white">
             Rejoins la communauté queer de Lyon. C&apos;est gratuit.
           </p>
           <Link
@@ -465,7 +528,7 @@ export function LandingPage() {
       </section>
 
       <footer
-        className="landing-section border-t border-[#1E1E1E] bg-[#0A0A0A] px-4 !py-8"
+        className="landing-section border-t border-[#1E1E1E] bg-[#000000] px-4 !py-8"
         style={sectionStyle}
       >
         <div className="landing-inner mx-auto flex w-full max-w-5xl flex-col items-center gap-4 text-center">
@@ -506,6 +569,23 @@ export function LandingPage() {
           </p>
         </div>
       </footer>
+
+      <div
+        className={`fixed inset-x-0 bottom-0 z-30 h-[68px] border-t border-[#1E1E1E] bg-black/95 px-4 backdrop-blur-[12px] md:hidden ${
+          showSticky
+            ? "landing-sticky-cta landing-sticky-cta-visible"
+            : "landing-sticky-cta"
+        }`}
+      >
+        <Link
+          href="/register"
+          className="mt-2 flex h-[52px] w-full items-center justify-center rounded-[12px] text-sm font-bold"
+          style={gradient}
+        >
+          Rejoindre QUTE
+        </Link>
+      </div>
+
       <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} />
     </div>
   );

@@ -6,8 +6,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
-      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-[#1E1E1E] bg-[#0A0A0A]">
+    <div className="min-h-screen bg-[#000000]">
+      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-[#1E1E1E] bg-[#000000]">
         <div className="relative mx-auto flex h-full w-full max-w-lg items-center justify-center px-4">
           <Link
             href="/"

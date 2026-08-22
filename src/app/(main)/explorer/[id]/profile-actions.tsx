@@ -5,15 +5,18 @@ import { useRouter } from "next/navigation";
 import { MatchModal } from "@/components/features/MatchModal";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
+import { friendLabel, isFriendLocked } from "@/lib/amis";
 import { openConversation } from "@/app/(main)/qute/actions";
-import type { Conversation } from "@/types";
+import type { Ami, Conversation } from "@/types";
 
 type ProfileActionsProps = {
   profileId: string;
+  currentUserId: string;
   alreadyQrushed: boolean;
   hasMatch: boolean;
   matchId: string | null;
   existingConversation: Pick<Conversation, "id" | "statut"> | null;
+  friendRelation: Ami | null;
 };
 
 function matchPair(userId: string, profileId: string) {
@@ -24,14 +27,18 @@ function matchPair(userId: string, profileId: string) {
 
 export function ProfileActions({
   profileId,
+  currentUserId,
   alreadyQrushed,
   hasMatch,
   matchId,
   existingConversation,
+  friendRelation,
 }: ProfileActionsProps) {
   const router = useRouter();
   const [qrushed, setQrushed] = useState(alreadyQrushed);
+  const [relation, setRelation] = useState<Ami | null>(friendRelation);
   const [qrushLoading, setQrushLoading] = useState(false);
+  const [friendLoading, setFriendLoading] = useState(false);
   const [blockLoading, setBlockLoading] = useState(false);
   const [messageLoading, setMessageLoading] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
@@ -90,6 +97,44 @@ export function ProfileActions({
     if (match) {
       setMatchOpen(true);
     }
+  }
+
+  async function addFriend() {
+    if (isFriendLocked(relation)) {
+      return;
+    }
+
+    setError(null);
+    setFriendLoading(true);
+
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    const { data, error: insertError } = await supabase
+      .from("amis")
+      .insert({
+        demandeur_id: user.id,
+        destinataire_id: profileId,
+        statut: "en_attente",
+      })
+      .select("*")
+      .single();
+
+    setFriendLoading(false);
+
+    if (insertError) {
+      setError(insertError.message);
+      return;
+    }
+
+    setRelation(data as Ami);
   }
 
   async function openOrStartMessage() {
@@ -247,6 +292,14 @@ export function ProfileActions({
           disabled={qrushed}
           loading={qrushLoading}
           onClick={() => void sendQrush()}
+        />
+        <Button
+          type="button"
+          label={friendLabel(relation, currentUserId)}
+          variant="secondary"
+          disabled={isFriendLocked(relation)}
+          loading={friendLoading}
+          onClick={() => void addFriend()}
         />
         <Button
           type="button"

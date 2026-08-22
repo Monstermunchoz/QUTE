@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Avatar } from "@/components/features/Avatar";
+import { ProfileModal } from "@/components/features/ProfileModal";
+import { SalonMembersModal } from "@/components/features/SalonMembersModal";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile, Salon, SalonMessage } from "@/types";
 
@@ -33,7 +35,13 @@ export function SalonRoom({
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
+  const [membersOpen, setMembersOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const memberCount = useMemo(
+    () => new Set(messages.map((message) => message.auteur_id)).size,
+    [messages],
+  );
   const canSend =
     draft.trim().length >= 1 && draft.trim().length <= 1000 && !sending;
 
@@ -135,8 +143,8 @@ export function SalonRoom({
   }
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] flex-col bg-[#0A0A0A]">
-      <header className="flex shrink-0 items-center gap-3 border-b border-[#1E1E1E] bg-[#0A0A0A] py-3">
+    <div className="flex h-[calc(100vh-10rem)] flex-col bg-[#000000]">
+      <header className="flex shrink-0 items-center gap-3 border-b border-[#1E1E1E] bg-[#000000] py-3">
         <Link
           href="/explorer"
           aria-label="Retour"
@@ -157,9 +165,13 @@ export function SalonRoom({
         </Link>
         <div className="min-w-0">
           <h1 className="truncate font-bold text-white">{salon.nom}</h1>
-          <p className="text-xs text-[#888888]">
-            {messages.length} message{messages.length === 1 ? "" : "s"}
-          </p>
+          <button
+            type="button"
+            onClick={() => setMembersOpen(true)}
+            className="text-left text-xs font-bold text-[#FF2D87]"
+          >
+            {memberCount} personne{memberCount === 1 ? "" : "s"} dans ce salon
+          </button>
         </div>
       </header>
 
@@ -176,11 +188,18 @@ export function SalonRoom({
 
             return (
               <div key={message.id} className="flex items-start gap-2">
-                <Avatar
-                  pseudo={pseudo}
-                  photoUrl={author?.photo_url}
-                  size="sm"
-                />
+                <button
+                  type="button"
+                  onClick={() => setProfileId(message.auteur_id)}
+                  aria-label={`Voir le profil de ${pseudo}`}
+                  className="shrink-0"
+                >
+                  <Avatar
+                    pseudo={pseudo}
+                    photoUrl={author?.photo_url}
+                    size="sm"
+                  />
+                </button>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold text-white">{pseudo}</p>
                   <p
@@ -212,7 +231,7 @@ export function SalonRoom({
       </div>
 
       <form
-        className="flex shrink-0 items-end gap-2 border-t border-[#1E1E1E] bg-[#0A0A0A] pt-3"
+        className="flex shrink-0 items-end gap-2 border-t border-[#1E1E1E] bg-[#000000] pt-3"
         onSubmit={(event) => {
           event.preventDefault();
           void sendMessage();
@@ -252,6 +271,22 @@ export function SalonRoom({
       {error ? (
         <p className="pt-2 text-center text-sm text-[#FF4444]">{error}</p>
       ) : null}
+
+      <SalonMembersModal
+        open={membersOpen}
+        onClose={() => setMembersOpen(false)}
+        salonId={salon.id}
+        onSelect={(id) => {
+          setMembersOpen(false);
+          setProfileId(id);
+        }}
+      />
+      <ProfileModal
+        open={Boolean(profileId)}
+        onClose={() => setProfileId(null)}
+        profileId={profileId}
+        currentUserId={currentUserId}
+      />
     </div>
   );
 }

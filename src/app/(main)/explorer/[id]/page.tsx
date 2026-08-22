@@ -3,7 +3,7 @@ import { Avatar } from "@/components/features/Avatar";
 import { ProfileActions } from "./profile-actions";
 import { createClient } from "@/lib/supabase/server";
 import { isJeSorsActive, jeSorsLabel } from "@/lib/utils/je-sors";
-import type { AlbumPhoto, JeSors, Profile } from "@/types";
+import type { AlbumPhoto, Ami, JeSors, Profile } from "@/types";
 
 type ProfilePageProps = {
   params: { id: string };
@@ -70,7 +70,8 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
     )
     .maybeSingle();
 
-  const [{ data: jeSorsRow }, { data: albumRows }] = await Promise.all([
+  const [{ data: jeSorsRow }, { data: albumRows }, { data: amiRows }] =
+    await Promise.all([
     supabase
       .from("je_sors")
       .select("statut, zone, expires_at")
@@ -84,6 +85,12 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
       .eq("statut", "approved")
       .order("ordre", { ascending: true })
       .limit(6),
+    supabase
+      .from("amis")
+      .select("*")
+      .or(
+        `and(demandeur_id.eq.${user.id},destinataire_id.eq.${profile.id}),and(demandeur_id.eq.${profile.id},destinataire_id.eq.${user.id})`,
+      ),
   ]);
 
   const jeSors =
@@ -91,6 +98,8 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
       ? (jeSorsRow as Pick<JeSors, "statut" | "zone" | "expires_at">)
       : null;
   const album = (albumRows ?? []) as Pick<AlbumPhoto, "id" | "url" | "ordre">[];
+  const friendRelation =
+    ((amiRows ?? []) as Ami[]).find((item) => item.statut !== "refuse") ?? null;
 
   return (
     <main className="flex flex-col items-center gap-4 pb-4 text-center">
@@ -139,10 +148,12 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
 
       <ProfileActions
         profileId={profile.id}
+        currentUserId={user.id}
         alreadyQrushed={Boolean(existingQrush)}
         hasMatch={Boolean(match)}
         matchId={match?.id ?? null}
         existingConversation={existingConversation}
+        friendRelation={friendRelation}
       />
     </main>
   );

@@ -113,8 +113,8 @@ export function ChatRoom({
   }
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] flex-col bg-[#0A0A0A]">
-      <header className="flex shrink-0 items-center gap-3 border-b border-[#1E1E1E] bg-[#0A0A0A] py-3">
+    <div className="flex h-[calc(100vh-10rem)] flex-col bg-[#000000]">
+      <header className="flex shrink-0 items-center gap-3 border-b border-[#1E1E1E] bg-[#000000] py-3">
         <Link
           href="/qute"
           aria-label="Retour"
@@ -184,7 +184,7 @@ export function ChatRoom({
         </p>
       ) : (
       <form
-        className="flex shrink-0 items-end gap-2 border-t border-[#1E1E1E] bg-[#0A0A0A] pt-3"
+        className="flex shrink-0 items-end gap-2 border-t border-[#1E1E1E] bg-[#000000] pt-3"
         onSubmit={(event) => {
           event.preventDefault();
           void sendMessage();
