@@ -45,6 +45,18 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
     notFound();
   }
 
+  if (profile.photo_status !== "approved" && profile.id !== user.id) {
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    const role = typeof me?.role === "string" ? me.role : "";
+    if (role !== "admin" && role !== "moderateur") {
+      notFound();
+    }
+  }
+
   const { data: blockRows } = await supabase
     .from("blocages")
     .select("id")

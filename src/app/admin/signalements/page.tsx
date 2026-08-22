@@ -60,6 +60,7 @@ export default async function AdminSignalementsPage() {
               <SignalementActions
                 signalementId={item.id}
                 cibleId={item.cible_id}
+                ciblePseudo={profilesById[item.cible_id]?.pseudo ?? "QUTE"}
               />
             </li>
           ))}

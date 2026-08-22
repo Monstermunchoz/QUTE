@@ -56,7 +56,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       "id, pseudo, ville, zone, photo_url, photo_status, abonnement, role, identites, date_naissance",
     )
     .neq("id", user.id)
-    .not("photo_status", "eq", "rejected")
+    .eq("photo_status", "approved")
     .order("created_at", { ascending: false })
     .limit(100);
 

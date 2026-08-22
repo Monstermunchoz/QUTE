@@ -6,7 +6,7 @@ Ce document décrit l’état **local du repo** (`supabase/migrations/`). Il ne 
 
 | Fichier | Rôle |
 |---|---|
-| `001_…sql` … `028_…sql` | Historique. Chaque fichier est un delta. **Ne pas les supprimer.** |
+| `001_…sql` … `029_…sql` | Historique. Chaque fichier est un delta. **Ne pas les supprimer.** |
 | `schema_complet.sql` | Schéma **courant fusionné**, idempotent. Sert à reconstruire une base vide. **Ce n’est pas une migration numérotée** : ne pas l’attendre du runner `supabase migration up`. |
 
 Les numéros ne sont pas une chronologie parfaite : certains numéros sont doublés, un numéro est sauté, et le nom demandé pour un fichier ne correspond pas toujours au fichier présent.
@@ -24,6 +24,7 @@ Les numéros ne sont pas une chronologie parfaite : certains numéros sont doubl
   - `026_blocages_bidirectionnel.sql` = lecture des blocages par les deux côtés
   - `027_likes_lieux.sql` = likes de lieux
   - `028_photos_pending.sql` = photos en `pending`, plus d’auto-approve
+  - `029_audit_log.sql` = RLS profils (connexion + photo approved) + journal d’audit admin
 
 ## Ordre d’application des fichiers numérotés
 
@@ -57,6 +58,7 @@ Ordre lexicographique des noms sur disque (celui qu’un runner du type `NNN_nom
 26. `026_blocages_bidirectionnel.sql`
 27. `027_likes_lieux.sql`
 28. `028_photos_pending.sql`
+29. `029_audit_log.sql`
 
 `schema_complet.sql` n’entre pas dans cette liste.
 
@@ -69,6 +71,7 @@ On ne connaît pas l’état d’une instance distante à partir de ce dépôt.
 | `001` → `023` | Historique long du schéma dans le repo. Sur une instance déjà utilisée, ils ont en général déjà été passés (SQL Editor ou runner). |
 | `024` → `027` | Présents dans le repo. **Peuvent devoir être exécutés à la main** dans l’éditeur SQL Supabase s’ils n’ont pas encore été appliqués sur l’instance. |
 | `028` | **Nouveau** dans le repo (`photos.statut` default `pending`, drop auto-approve, policies staff). À passer si l’instance a encore le default `approved`. |
+| `029` | **Nouveau** : RLS profils (plus de lecture anonyme / pending public) + table `audit_log`. À passer dans l’éditeur SQL. |
 
 Pour savoir ce qui manque sur une instance : comparer les objets (tables `emails_bannis`, `likes_lieux`, default de `photos.statut`, policy `supprime ses notifications`, policy `voit les blocages me concernant`).
 
@@ -81,7 +84,7 @@ Pour savoir ce qui manque sur une instance : comparer les objets (tables `emails
 
 Le fichier est idempotent (`create table if not exists`, `add column if not exists`, `drop policy` puis `create policy`, `drop trigger` puis `create trigger`). On peut le relancer pour rattraper une base incomplète. Il n’écrase pas les lignes métier déjà présentes (les seeds salons / lieux s’insèrent seulement si le nom n’existe pas).
 
-**Ne pas** enchaîner ensuite les fichiers `001`–`028` sur la même base : ce serait rejouer l’historique par-dessus un schéma déjà fusionné. Les numérotés restent pour l’historique git et pour les instances qui ont déjà suivi cet ordre.
+**Ne pas** enchaîner ensuite les fichiers `001`–`029` sur la même base : ce serait rejouer l’historique par-dessus un schéma déjà fusionné. Les numérotés restent pour l’historique git et pour les instances qui ont déjà suivi cet ordre.
 
 Hors schéma (volontairement absent de `schema_complet.sql`) :
 
@@ -113,6 +116,7 @@ Hors schéma (volontairement absent de `schema_complet.sql`) :
 | `paiements` | 023 |
 | `emails_bannis` | 024 |
 | `likes_lieux` | 027 |
+| `audit_log` | 029 |
 
 Storage : bucket privé `avatars` (012) + policies 013 (pas de lecture anon ; `pending.jpg` réservé à soi + staff).
 
@@ -127,7 +131,7 @@ Realtime (uniquement ce que les numérotés ajoutent) : `messages`, `salon_messa
 | Auto-approve photo | évoqué / droppé en 028 | **pas** de trigger `on_photo_upload` ni de fonction `auto_approve_photo` |
 | `handle_new_user` | 001 → 013 → 014_discovery → **015** | version **015** (ne bloque jamais `auth.users`) |
 | Ban email | — | trigger **`prevent_banned_signup`** (024), séparé de `handle_new_user` |
-| Lecture profils | 001 public → 013 masque `pending` | **014_discovery_visible** : le **profil** pending reste listable ; `rejected` masqué (sauf soi / staff). Les **photos** pending ne s’affichent que pour le propriétaire et le staff (app + storage `pending.jpg`). |
+| Lecture profils | 001 public → 013 masque `pending` → 014 pending listable | **029** : `auth.uid()` obligatoire ; seuls `photo_status = 'approved'`, le propriétaire et le staff voient le profil. Pas de lecture anonyme. |
 | Création salon / événement | ouverte (007) puis premium (019/022) | **023** : `qute_plus` / `qute_club` **et** `abonnement_statut` in (`essai`,`actif`,`annule`) |
 | Blocages | FOR ALL côté bloqueur (002) | 002 **plus** SELECT si `bloque_id` = moi (026) |
 | RLS anon | policies `using (true)` | **013** : `auth.uid() is not null` partout côté métier |

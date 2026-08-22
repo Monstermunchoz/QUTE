@@ -12,10 +12,7 @@
 --   • pas de trigger on_photo_upload / fonction auto_approve_photo (028)
 --   • handle_new_user              version 015 (ne bloque jamais auth.users)
 --   • ban email                    trigger prevent_banned_signup (024)
---   • lecture profils              014_discovery_visible (profils pending
---                                  visibles ; rejected masqué ; photos pending
---                                  masquées côté app + storage pending.jpg
---                                  réservé soi/staff)
+--   • lecture profils              029 : connecté + (approved OU soi OU staff)
 --   • création salon / événement   023 (abonnement + abonnement_statut)
 --   • blocages                     002 + SELECT bidirectionnel (026)
 -- =============================================================================
@@ -353,6 +350,18 @@ create table if not exists public.likes_lieux (
   unique(lieu_id, user_id)
 );
 
+-- 1.17 audit_log (029)
+create table if not exists public.audit_log (
+  id uuid default gen_random_uuid() primary key,
+  admin_id uuid references public.profiles(id) on delete set null,
+  action text not null,
+  cible_type text check (cible_type in
+    ('profil','message','photo','evenement','salon','signalement')),
+  cible_id uuid,
+  details jsonb,
+  created_at timestamptz default now()
+);
+
 -- Données 023 : aligner le statut d’abonnement des profils déjà premium
 update public.profiles
 set abonnement_statut = 'actif'
@@ -384,6 +393,7 @@ alter table public.amis enable row level security;
 alter table public.paiements enable row level security;
 alter table public.emails_bannis enable row level security;
 alter table public.likes_lieux enable row level security;
+alter table public.audit_log enable row level security;
 
 -- ---------------------------------------------------------------------------
 -- 3. Droits (013 lockdown + exceptions 024 / 027)
@@ -672,6 +682,7 @@ create trigger on_demande_ami
 -- 6.1 profiles
 drop policy if exists "lecture profil public" on public.profiles;
 drop policy if exists "lecture profil connecte" on public.profiles;
+drop policy if exists "lecture profil public minimal" on public.profiles;
 drop policy if exists "admin voit profils" on public.profiles;
 drop policy if exists "modif son propre profil" on public.profiles;
 drop policy if exists "admin modifie profils" on public.profiles;
@@ -682,7 +693,7 @@ create policy "lecture profil connecte" on public.profiles
     auth.uid() is not null
     and (
       id = auth.uid()
-      or photo_status is distinct from 'rejected'
+      or photo_status = 'approved'
       or public.is_staff()
     )
   );
@@ -1032,6 +1043,30 @@ create policy "voit les likes" on public.likes_lieux
 
 create policy "gere son like" on public.likes_lieux
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- 6.22 audit_log
+revoke update, delete on public.audit_log from authenticated;
+grant select, insert on public.audit_log to authenticated;
+
+drop policy if exists "admin voit audit log" on public.audit_log;
+create policy "admin voit audit log" on public.audit_log
+  for select using (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid()
+      and role in ('admin','moderateur')
+    )
+  );
+
+drop policy if exists "admin insere audit log" on public.audit_log;
+create policy "admin insere audit log" on public.audit_log
+  for insert with check (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid()
+      and role in ('admin','moderateur')
+    )
+  );
 
 -- ---------------------------------------------------------------------------
 -- 7. Storage — bucket avatars (012 + 013)

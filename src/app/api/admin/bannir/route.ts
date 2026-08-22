@@ -4,6 +4,7 @@ import {
   parseUserId,
   requireStaff,
 } from "@/lib/admin/api";
+import { logAdminAction } from "@/lib/admin/audit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,6 +34,13 @@ export async function POST(request: Request) {
   }
 
   try {
+    const { data: cible } = await staff.admin
+      .from("profiles")
+      .select("pseudo")
+      .eq("id", userId)
+      .maybeSingle();
+    const pseudo = typeof cible?.pseudo === "string" ? cible.pseudo : "";
+
     const { data: authData, error: getError } =
       await staff.admin.auth.admin.getUserById(userId);
 
@@ -83,6 +91,14 @@ export async function POST(request: Request) {
     if (profileError) {
       console.error("[admin/bannir] profile", profileError);
     }
+
+    await logAdminAction(staff.admin, {
+      adminId: staff.user.id,
+      action: "bannir",
+      cibleType: "profil",
+      cibleId: userId,
+      details: { pseudo, email },
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {

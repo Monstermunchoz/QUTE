@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 type EventModerationActionsProps = {
   evenementId: string;
@@ -15,24 +14,32 @@ export function EventModerationActions({
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function setStatut(statut: "publie" | "refuse") {
-    setLoading(statut);
+  async function setStatut(action: "publier" | "refuser") {
+    setLoading(action);
     setError(null);
 
-    const supabase = createClient();
-    const { error: updateError } = await supabase
-      .from("evenements")
-      .update({ statut })
-      .eq("id", evenementId);
+    try {
+      const response = await fetch("/api/admin/evenements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ evenementId, action }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
 
-    setLoading(null);
+      if (!response.ok) {
+        setError(payload?.error ?? "Action impossible.");
+        setLoading(null);
+        return;
+      }
 
-    if (updateError) {
-      setError(updateError.message);
-      return;
+      setLoading(null);
+      router.refresh();
+    } catch {
+      setError("Action impossible.");
+      setLoading(null);
     }
-
-    router.refresh();
   }
 
   return (
@@ -41,7 +48,7 @@ export function EventModerationActions({
         <button
           type="button"
           disabled={Boolean(loading)}
-          onClick={() => void setStatut("publie")}
+          onClick={() => void setStatut("publier")}
           className="h-11 w-full rounded-[12px] bg-[#22C55E] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
           Publier
@@ -49,7 +56,7 @@ export function EventModerationActions({
         <button
           type="button"
           disabled={Boolean(loading)}
-          onClick={() => void setStatut("refuse")}
+          onClick={() => void setStatut("refuser")}
           className="h-11 w-full rounded-[12px] bg-[#FF4444] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
           Refuser

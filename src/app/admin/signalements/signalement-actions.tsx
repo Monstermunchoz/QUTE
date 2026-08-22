@@ -2,65 +2,84 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 type SignalementActionsProps = {
   signalementId: string;
   cibleId: string;
+  ciblePseudo: string;
 };
 
 export function SignalementActions({
   signalementId,
   cibleId,
+  ciblePseudo,
 }: SignalementActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function setStatut(statut: "traite" | "rejete") {
-    setLoading(statut);
+  async function setStatut(action: "traiter" | "rejeter") {
+    setLoading(action);
     setError(null);
 
-    const supabase = createClient();
-    const { error: updateError } = await supabase
-      .from("signalements")
-      .update({ statut })
-      .eq("id", signalementId);
+    try {
+      const response = await fetch("/api/admin/signalements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ signalementId, action }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
 
-    setLoading(null);
+      if (!response.ok) {
+        setError(payload?.error ?? "Action impossible.");
+        setLoading(null);
+        return;
+      }
 
-    if (updateError) {
-      setError(updateError.message);
-      return;
+      setLoading(null);
+      router.refresh();
+    } catch {
+      setError("Action impossible.");
+      setLoading(null);
     }
-
-    router.refresh();
   }
 
   async function banUser() {
-    setLoading("ban");
-    setError(null);
-
-    const supabase = createClient();
-    const { error: banError } = await supabase
-      .from("profiles")
-      .update({ compte_verifie: false })
-      .eq("id", cibleId);
-
-    if (banError) {
-      setLoading(null);
-      setError(banError.message);
+    if (
+      !window.confirm(
+        `Bannir et supprimer le compte de ${ciblePseudo} ? L'adresse email sera bloquée.`,
+      )
+    ) {
       return;
     }
 
-    await supabase
-      .from("signalements")
-      .update({ statut: "traite" })
-      .eq("id", signalementId);
+    setLoading("ban");
+    setError(null);
 
-    setLoading(null);
-    window.alert("Utilisateur banni : compte non vérifié.");
-    router.refresh();
+    try {
+      const response = await fetch("/api/admin/bannir", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: cibleId }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+
+      if (!response.ok) {
+        setError(payload?.error ?? "Bannissement impossible.");
+        setLoading(null);
+        return;
+      }
+
+      setLoading(null);
+      router.refresh();
+    } catch {
+      setError("Bannissement impossible.");
+      setLoading(null);
+    }
   }
 
   return (
@@ -69,7 +88,7 @@ export function SignalementActions({
         <button
           type="button"
           disabled={Boolean(loading)}
-          onClick={() => void setStatut("traite")}
+          onClick={() => void setStatut("traiter")}
           className="h-11 w-full rounded-[12px] bg-[#22C55E] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
           Traiter
@@ -77,7 +96,7 @@ export function SignalementActions({
         <button
           type="button"
           disabled={Boolean(loading)}
-          onClick={() => void setStatut("rejete")}
+          onClick={() => void setStatut("rejeter")}
           className="h-11 w-full rounded-[12px] bg-[#FF4444] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
           Rejeter
@@ -88,7 +107,7 @@ export function SignalementActions({
           onClick={() => void banUser()}
           className="h-11 w-full rounded-[12px] bg-[#FF4444] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
-          Bannir l&apos;utilisateur
+          Bannir {ciblePseudo}
         </button>
       </div>
       {error ? <p className="text-sm text-[#FF4444]">{error}</p> : null}

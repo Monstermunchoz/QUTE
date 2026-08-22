@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/admin/evenements", label: "Événements" },
   { href: "/admin/profils", label: "Profils" },
   { href: "/admin/photos", label: "Photos" },
+  { href: "/admin/audit", label: "Journal" },
 ];
 
 type AdminNavProps = {

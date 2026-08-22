@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 type PhotoModerationActionsProps = {
   kind: "avatar" | "album";
@@ -19,87 +18,32 @@ export function PhotoModerationActions({
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function approve() {
-    setLoading("approved");
+  async function moderate(action: "approuver" | "rejeter") {
+    setLoading(action);
     setError(null);
 
-    const supabase = createClient();
+    try {
+      const response = await fetch("/api/admin/photos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind, profileId, photoId, action }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
 
-    if (kind === "album" && photoId) {
-      const { error: updateError } = await supabase
-        .from("photos")
-        .update({ statut: "approved" })
-        .eq("id", photoId);
-
-      setLoading(null);
-
-      if (updateError) {
-        setError(updateError.message);
+      if (!response.ok) {
+        setError(payload?.error ?? "Action impossible.");
+        setLoading(null);
         return;
       }
 
-      router.refresh();
-      return;
-    }
-
-    const { data: signed } = await supabase.storage
-      .from("avatars")
-      .createSignedUrl(`${profileId}/pending.jpg`, 60 * 60 * 24 * 365);
-
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({
-        photo_status: "approved",
-        photo_url: signed?.signedUrl ?? undefined,
-      })
-      .eq("id", profileId);
-
-    setLoading(null);
-
-    if (updateError) {
-      setError(updateError.message);
-      return;
-    }
-
-    router.refresh();
-  }
-
-  async function reject() {
-    setLoading("rejected");
-    setError(null);
-
-    const supabase = createClient();
-
-    if (kind === "album" && photoId) {
-      const { error: updateError } = await supabase
-        .from("photos")
-        .update({ statut: "rejected" })
-        .eq("id", photoId);
-
       setLoading(null);
-
-      if (updateError) {
-        setError(updateError.message);
-        return;
-      }
-
       router.refresh();
-      return;
+    } catch {
+      setError("Action impossible.");
+      setLoading(null);
     }
-
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ photo_status: "rejected", photo_url: null })
-      .eq("id", profileId);
-
-    setLoading(null);
-
-    if (updateError) {
-      setError(updateError.message);
-      return;
-    }
-
-    router.refresh();
   }
 
   return (
@@ -108,7 +52,7 @@ export function PhotoModerationActions({
         <button
           type="button"
           disabled={Boolean(loading)}
-          onClick={() => void approve()}
+          onClick={() => void moderate("approuver")}
           className="h-[52px] w-full rounded-[12px] bg-[#22C55E] px-4 text-base font-bold text-white disabled:opacity-50"
         >
           Approuver
@@ -116,7 +60,7 @@ export function PhotoModerationActions({
         <button
           type="button"
           disabled={Boolean(loading)}
-          onClick={() => void reject()}
+          onClick={() => void moderate("rejeter")}
           className="h-[52px] w-full rounded-[12px] bg-[#FF4444] px-4 text-base font-bold text-white disabled:opacity-50"
         >
           Rejeter
