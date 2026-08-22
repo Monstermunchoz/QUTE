@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { ShopModal } from "@/components/ui/ShopModal";
+import { PLANS } from "@/lib/plans";
 
 const gradient = { background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" };
 
@@ -46,34 +48,6 @@ const strengths = [
     text: "Conçu pour Lyon Métropole et sa communauté.",
     icon: "local" as const,
   },
-];
-
-const freeFeatures = [
-  "Profil et photos",
-  "Exploration illimitée",
-  "20 QRUSH par jour",
-  "Matchs et messages",
-  "Salons et groupes",
-  "CE SOIR et JE SORS",
-  "Carte des lieux",
-  "Agenda des événements",
-];
-
-const plusFeatures = [
-  "Tout le gratuit",
-  "Voir qui t'a QRUSHé",
-  "QRUSH illimités",
-  "Badge QUTE+ sur ton profil",
-  "Filtres avancés",
-  "Priorité dans l'exploration",
-];
-
-const clubFeatures = [
-  "Tout QUTE+",
-  "Profil mis en avant",
-  "Événements exclusifs QUTE",
-  "Badge Club",
-  "Support prioritaire",
 ];
 
 function GradientDefs() {
@@ -174,6 +148,8 @@ function PriceList({ items }: { items: string[] }) {
 }
 
 export function LandingPage() {
+  const [shopOpen, setShopOpen] = useState(false);
+
   useEffect(() => {
     const sections = document.querySelectorAll("[data-fade]");
     const observer = new IntersectionObserver(
@@ -343,6 +319,36 @@ export function LandingPage() {
 
       <section
         data-fade
+        className="landing-section bg-[#111111] px-4"
+        style={sectionStyle}
+      >
+        <div className="landing-inner mx-auto flex w-full max-w-[600px] flex-col items-center">
+          <span className="rounded-[8px] bg-[#1E1E1E] px-3 py-1 text-[11px] font-bold tracking-[0.1em] text-[#FF2D87]">
+            BIENTÔT
+          </span>
+          <h2 className="landing-title mt-4 text-center text-[32px] text-white">
+            QUTE Shop
+          </h2>
+          <p className="landing-copy mt-4 text-center text-[18px] text-[#888888]">
+            Vêtements et accessoires queer, pensés pour la communauté. Des
+            pièces qui te ressemblent, sans compromis.
+          </p>
+          <button
+            type="button"
+            onClick={() => setShopOpen(true)}
+            className="landing-btn mx-auto mt-8 flex h-[52px] w-full max-w-sm items-center justify-center rounded-[12px] text-sm font-bold"
+            style={gradient}
+          >
+            Accéder au shop
+          </button>
+          <p className="mt-4 text-center text-[13px] text-[#555555]">
+            Les membres QUTE Club bénéficient de 10% de remise permanente.
+          </p>
+        </div>
+      </section>
+
+      <section
+        data-fade
         className="landing-section bg-[#0A0A0A] px-4"
         style={sectionStyle}
       >
@@ -354,71 +360,67 @@ export function LandingPage() {
             Commence gratuitement. Passe au niveau supérieur quand tu veux.
           </p>
           <div className="mx-auto mt-10 grid w-full grid-cols-1 items-stretch gap-4 md:grid-cols-3">
-            <article className="landing-card flex flex-col items-center rounded-[16px] bg-[#111111] p-8 text-center">
-              <h3 className="landing-title text-[24px] text-white">Gratuit</h3>
-              <p className="mt-3 text-center">
-                <span className="text-[40px] font-bold text-white">0€</span>
-                <span className="text-[#888888]">/mois</span>
-              </p>
-              <PriceList items={freeFeatures} />
-              <Link
-                href="/register"
-                className="landing-btn mt-auto flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-sm font-bold text-white"
+            {PLANS.map((plan) => (
+              <article
+                key={plan.id}
+                className={`relative flex flex-col items-center rounded-[16px] bg-[#111111] p-8 text-center ${
+                  plan.featured ? "landing-card-featured" : "landing-card"
+                }`}
               >
-                Créer mon compte
-              </Link>
-            </article>
-
-            <article className="landing-card-featured relative flex flex-col items-center rounded-[16px] bg-[#111111] p-8 text-center">
-              <p className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-[8px] bg-[#FF2D87] px-3 py-1 text-[11px] font-bold tracking-wide text-white">
-                LE PLUS POPULAIRE
-              </p>
-              <h3 className="landing-title mt-4 text-[24px] text-white">
-                QUTE+
-              </h3>
-              <p className="mt-3 text-center">
-                <span className="text-[40px] font-bold text-white">4,99€</span>
-                <span className="text-[#888888]">/mois</span>
-              </p>
-              <p className="mt-1 text-center text-[13px] text-[#FF2D87]">
-                7 jours offerts · ou 39,99€/an
-              </p>
-              <PriceList items={plusFeatures} />
-              <Link
-                href="/register"
-                className="landing-btn mt-auto flex h-[52px] w-full items-center justify-center rounded-[12px] px-3 text-center text-sm font-bold"
-                style={gradient}
-              >
-                Essayer gratuitement
-              </Link>
-            </article>
-
-            <article className="landing-card flex flex-col items-center rounded-[16px] bg-[#111111] p-8 text-center">
-              <p
-                className="mx-auto w-fit rounded-[8px] px-3 py-1 text-[11px] font-bold tracking-wide text-white"
-                style={gradient}
-              >
-                PREMIUM
-              </p>
-              <h3 className="landing-title mt-4 text-[24px] text-white">
-                QUTE Club
-              </h3>
-              <p className="mt-3 text-center">
-                <span className="text-[40px] font-bold text-white">12,99€</span>
-                <span className="text-[#888888]">/mois</span>
-              </p>
-              <p className="mt-1 text-center text-[13px] text-[#888888]">
-                7 jours offerts · ou 99,99€/an
-              </p>
-              <PriceList items={clubFeatures} />
-              <Link
-                href="/register"
-                className="landing-btn mt-auto flex h-[52px] w-full items-center justify-center rounded-[12px] px-3 text-center text-sm font-bold"
-                style={gradient}
-              >
-                Essayer gratuitement
-              </Link>
-            </article>
+                {plan.badge && !plan.badgeGradient ? (
+                  <p className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-[8px] bg-[#FF2D87] px-3 py-1 text-[11px] font-bold tracking-wide text-white">
+                    {plan.badge}
+                  </p>
+                ) : null}
+                {plan.badge && plan.badgeGradient ? (
+                  <p
+                    className="mx-auto w-fit rounded-[8px] px-3 py-1 text-[11px] font-bold tracking-wide text-white"
+                    style={gradient}
+                  >
+                    {plan.badge}
+                  </p>
+                ) : null}
+                <h3
+                  className={`landing-title text-[24px] text-white ${
+                    plan.featured ? "mt-4" : plan.badgeGradient ? "mt-4" : ""
+                  }`}
+                >
+                  {plan.name}
+                </h3>
+                <p className="mt-2 text-center text-[13px] italic text-[#888888]">
+                  {plan.tagline}
+                </p>
+                <p className="mt-3 text-center">
+                  <span className="text-[40px] font-bold text-white">
+                    {plan.price}
+                  </span>
+                  <span className="text-[#888888]">/mois</span>
+                </p>
+                {plan.note ? (
+                  <p
+                    className={`mt-1 text-center text-[13px] ${
+                      plan.noteAccent ? "text-[#FF2D87]" : "text-[#888888]"
+                    }`}
+                  >
+                    {plan.note}
+                  </p>
+                ) : null}
+                <PriceList items={plan.items} />
+                <Link
+                  href="/register"
+                  className={`landing-btn mt-auto flex h-[52px] w-full items-center justify-center rounded-[12px] px-3 text-center text-sm font-bold ${
+                    plan.id === "gratuit"
+                      ? "border border-[#1E1E1E] text-white"
+                      : "text-white"
+                  }`}
+                  style={plan.id === "gratuit" ? undefined : gradient}
+                >
+                  {plan.id === "gratuit"
+                    ? "Créer mon compte"
+                    : "Essayer gratuitement"}
+                </Link>
+              </article>
+            ))}
           </div>
           <p className="mt-8 text-center text-[13px] text-[#555555]">
             Paiement sécurisé via Stripe. Sans engagement, résiliable à tout
@@ -504,6 +506,7 @@ export function LandingPage() {
           </p>
         </div>
       </footer>
+      <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} />
     </div>
   );
 }

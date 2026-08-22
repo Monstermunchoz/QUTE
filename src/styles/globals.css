@@ -176,6 +176,15 @@ img.logo-icon-hero {
   object-fit: contain;
   margin: 0 auto 32px;
   box-shadow: 0 0 120px rgba(255, 45, 135, 0.15);
+  mix-blend-mode: screen;
+}
+
+img.logo-icon-shop {
+  height: 56px;
+  width: auto;
+  max-height: 56px;
+  object-fit: contain;
+  mix-blend-mode: screen;
 }
 
 .landing-title {
@@ -232,8 +241,8 @@ img.logo-icon-hero {
   color: #cccccc;
   font-size: 14px;
   line-height: 1.7;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #1e1e1e;
   text-align: center;
 }

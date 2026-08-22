@@ -1,10 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
+import { ShopModal } from "@/components/ui/ShopModal";
 import { abonnementLabel, isQutePlus } from "@/lib/abonnement";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/types";
@@ -70,6 +71,7 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
   const router = useRouter();
   const pathname = usePathname();
   const plus = isQutePlus(profile?.abonnement);
+  const [shopOpen, setShopOpen] = useState(false);
 
   useEffect(() => {
     onClose();
@@ -103,11 +105,9 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
     router.refresh();
   }
 
-  if (!open) {
-    return null;
-  }
-
   return (
+    <>
+      {open ? (
     <div className="fixed inset-0 z-50">
       <button
         type="button"
@@ -159,6 +159,20 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
 
         <div className="h-px bg-[#1E1E1E]" />
         <nav>
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              setShopOpen(true);
+            }}
+            className="flex w-full items-center gap-3 px-5 py-[14px] text-left text-[#CCCCCC] hover:bg-[#1E1E1E] hover:text-white"
+          >
+            <ShopIcon />
+            <span className="flex-1">QUTE Shop</span>
+            <span className="rounded-[8px] bg-[#1E1E1E] px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#FF2D87]">
+              BIENTÔT
+            </span>
+          </button>
           {OTHER.map((item) => (
             <MenuLink key={item.href} {...item} onClose={onClose} />
           ))}
@@ -173,6 +187,24 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
         </nav>
       </aside>
     </div>
+      ) : null}
+      <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} />
+    </>
+  );
+}
+
+function ShopIcon() {
+  return (
+    <svg className="icon" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="url(#shop-icon-grad)" strokeWidth="1.8" aria-hidden>
+      <defs>
+        <linearGradient id="shop-icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FF2D87" />
+          <stop offset="100%" stopColor="#7B2FFF" />
+        </linearGradient>
+      </defs>
+      <path d="M6 8h12l-1 12H7L6 8z" />
+      <path d="M9 8V6.5a3 3 0 0 1 6 0V8" />
+    </svg>
   );
 }
 
