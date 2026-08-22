@@ -1,6 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { User } from "@supabase/supabase-js";
+import {
+  supabaseCookieEncode,
+  supabaseCookieOptions,
+} from "@/lib/supabase/cookies";
 import { getPublicSupabaseEnv } from "@/lib/supabase/env";
 
 type SessionResult = {
@@ -8,10 +12,33 @@ type SessionResult = {
   user: User | null;
 };
 
-export async function updateSession(request: NextRequest): Promise<SessionResult> {
+function applyAuthHeaders(
+  response: NextResponse,
+  headers?: Record<string, string>,
+) {
+  response.headers.set(
+    "Cache-Control",
+    "private, no-cache, no-store, must-revalidate, max-age=0",
+  );
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+
+  if (!headers) {
+    return;
+  }
+
+  Object.entries(headers).forEach(([key, value]) => {
+    response.headers.set(key, value);
+  });
+}
+
+export async function updateSession(
+  request: NextRequest,
+): Promise<SessionResult> {
   let supabaseResponse = NextResponse.next({
     request,
   });
+  applyAuthHeaders(supabaseResponse);
 
   const { url: supabaseUrl, anonKey: supabaseAnonKey } = getPublicSupabaseEnv();
 
@@ -20,11 +47,13 @@ export async function updateSession(request: NextRequest): Promise<SessionResult
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookieOptions: supabaseCookieOptions,
     cookies: {
+      encode: supabaseCookieEncode,
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, headers) {
         cookiesToSet.forEach(({ name, value }) =>
           request.cookies.set(name, value),
         );
@@ -32,8 +61,12 @@ export async function updateSession(request: NextRequest): Promise<SessionResult
           request,
         });
         cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options),
+          supabaseResponse.cookies.set(name, value, {
+            ...supabaseCookieOptions,
+            ...options,
+          }),
         );
+        applyAuthHeaders(supabaseResponse, headers);
       },
     },
   });

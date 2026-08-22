@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
@@ -11,7 +10,6 @@ import { createClient } from "@/lib/supabase/client";
 import { loginSchema, type LoginValues } from "@/lib/validation/auth";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
 
   const {
@@ -36,8 +34,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/accueil");
-    router.refresh();
+    window.location.assign("/accueil");
   }
 
   return (

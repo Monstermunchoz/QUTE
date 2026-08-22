@@ -29,10 +29,27 @@ function matchesRoute(pathname: string, routes: string[]) {
 
 function redirectWithCookies(url: URL, source: NextResponse) {
   const redirectResponse = NextResponse.redirect(url);
+  const setCookies =
+    typeof source.headers.getSetCookie === "function"
+      ? source.headers.getSetCookie()
+      : [];
 
-  source.cookies.getAll().forEach((cookie) => {
-    redirectResponse.cookies.set(cookie);
-  });
+  if (setCookies.length > 0) {
+    setCookies.forEach((cookie) => {
+      redirectResponse.headers.append("Set-Cookie", cookie);
+    });
+  } else {
+    source.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+  }
+
+  const cacheControl = source.headers.get("Cache-Control");
+  if (cacheControl) {
+    redirectResponse.headers.set("Cache-Control", cacheControl);
+  }
+  redirectResponse.headers.set("Pragma", "no-cache");
+  redirectResponse.headers.set("Expires", "0");
 
   return redirectResponse;
 }

@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
@@ -19,7 +18,6 @@ const turnstileSiteKey = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "").trim
 const turnstileEnabled = turnstileSiteKey.length > 0;
 
 export default function RegisterPage() {
-  const router = useRouter();
   const turnstileRef = useRef<TurnstileInstance>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -112,8 +110,7 @@ export default function RegisterPage() {
       return;
     }
 
-    router.push("/accueil");
-    router.refresh();
+    window.location.assign("/accueil");
   }
 
   return (

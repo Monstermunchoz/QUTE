@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        "qute.fr",
+        "www.qute.fr",
+        "qute-olive.vercel.app",
+        "jomdujtmvwikjflscnmc.supabase.co",
+      ],
+    },
+  },
   headers: async () => [
     {
       source: "/(.*)",
