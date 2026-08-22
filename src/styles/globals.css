@@ -545,6 +545,27 @@ img.logo-icon-shop {
   display: none;
 }
 
+.notif-row {
+  transition: opacity 0.2s ease;
+}
+
+.notif-row.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.notif-delete {
+  color: #666666;
+  font-size: 20px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+}
+
+.notif-delete-hit:hover .notif-delete {
+  color: #ff4444;
+}
+
 .chat-shell {
   position: fixed;
   inset-inline: 0;

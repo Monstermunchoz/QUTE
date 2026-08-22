@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -41,7 +41,8 @@ export function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [items, setItems] = useState<AppNotification[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [leaving, setLeaving] = useState<Set<string>>(new Set());
+  const [confirmClear, setConfirmClear] = useState(false);
 
   const unreadCount = items.filter((item) => !item.lu).length;
 
@@ -163,6 +164,84 @@ export function NotificationBell() {
     setItems((current) => current.map((item) => ({ ...item, lu: true })));
   }
 
+  function markLeaving(ids: string[]) {
+    setLeaving((current) => {
+      const next = new Set(current);
+      ids.forEach((id) => next.add(id));
+      return next;
+    });
+  }
+
+  function removeItems(ids: string[]) {
+    window.setTimeout(() => {
+      setItems((current) => current.filter((item) => !ids.includes(item.id)));
+      setLeaving((current) => {
+        const next = new Set(current);
+        ids.forEach((id) => next.delete(id));
+        return next;
+      });
+    }, 200);
+  }
+
+  async function deleteOne(event: MouseEvent<HTMLButtonElement>, notificationId: string) {
+    event.stopPropagation();
+    markLeaving([notificationId]);
+
+    try {
+      const response = await fetch("/api/notifications/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notification_id: notificationId }),
+      });
+
+      if (!response.ok) {
+        console.error("[notifications/delete]", response.status);
+        setLeaving((current) => {
+          const next = new Set(current);
+          next.delete(notificationId);
+          return next;
+        });
+        return;
+      }
+
+      removeItems([notificationId]);
+    } catch (error) {
+      console.error("[notifications/delete]", error);
+      setLeaving((current) => {
+        const next = new Set(current);
+        next.delete(notificationId);
+        return next;
+      });
+    }
+  }
+
+  async function deleteAll() {
+    const ids = items.map((item) => item.id);
+    markLeaving(ids);
+
+    try {
+      const response = await fetch("/api/notifications/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+
+      if (!response.ok) {
+        console.error("[notifications/delete-all]", response.status);
+        setLeaving(new Set());
+        setConfirmClear(false);
+        return;
+      }
+
+      setConfirmClear(false);
+      removeItems(ids);
+    } catch (error) {
+      console.error("[notifications/delete-all]", error);
+      setLeaving(new Set());
+      setConfirmClear(false);
+    }
+  }
+
   const panel =
     open && mounted
       ? createPortal(
@@ -196,15 +275,47 @@ export function NotificationBell() {
                     ✕
                   </button>
                 </div>
-                {unreadCount > 0 ? (
-                  <div className="px-5 pb-3">
+                {items.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 pb-3">
+                    {unreadCount > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => void markAllRead()}
+                        className="text-sm font-bold text-[#FF2D87]"
+                      >
+                        Tout marquer comme lu
+                      </button>
+                    ) : null}
                     <button
                       type="button"
-                      onClick={() => void markAllRead()}
-                      className="text-sm font-bold text-[#FF2D87]"
+                      onClick={() => setConfirmClear(true)}
+                      className="text-sm font-bold text-[#FF4444]"
                     >
-                      Tout marquer comme lu
+                      Tout supprimer
                     </button>
+                  </div>
+                ) : null}
+                {confirmClear ? (
+                  <div className="px-5 pb-3">
+                    <p className="text-sm text-[#CCCCCC]">
+                      Supprimer toutes les notifications ?
+                    </p>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => void deleteAll()}
+                        className="rounded-[10px] bg-[#FF4444] px-3 py-2 text-sm font-bold text-white"
+                      >
+                        Confirmer
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmClear(false)}
+                        className="rounded-[10px] border border-[#1E1E1E] px-3 py-2 text-sm font-bold text-white"
+                      >
+                        Annuler
+                      </button>
+                    </div>
                   </div>
                 ) : null}
               </div>
@@ -215,11 +326,16 @@ export function NotificationBell() {
               ) : (
                 <ul>
                   {visible.map((item) => (
-                    <li key={item.id} className="border-t border-white/5">
+                    <li
+                      key={item.id}
+                      className={`notif-row flex items-stretch border-t border-white/5 ${
+                        leaving.has(item.id) ? "is-leaving" : ""
+                      }`}
+                    >
                       <button
                         type="button"
                         onClick={() => void markRead(item)}
-                        className={`w-full px-5 py-4 text-left ${
+                        className={`min-w-0 flex-1 px-5 py-4 text-left ${
                           item.lu
                             ? "opacity-65"
                             : "border-l-[3px] border-[#FF2D87] bg-[rgba(255,45,135,0.06)]"
@@ -236,6 +352,16 @@ export function NotificationBell() {
                         <p className="mt-1 text-xs text-[#666666]">
                           {formatNotifDate(item.created_at)}
                         </p>
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Supprimer la notification"
+                        onClick={(event) => void deleteOne(event, item.id)}
+                        className="notif-delete-hit flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 items-center justify-center self-center"
+                      >
+                        <span className="notif-delete" aria-hidden>
+                          ✕
+                        </span>
                       </button>
                     </li>
                   ))}
