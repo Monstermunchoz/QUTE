@@ -35,28 +35,28 @@ export default async function AdminSignalementsPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold text-white">Signalements</h1>
+      <h1 className="text-xl font-bold text-white md:text-2xl">Signalements</h1>
       {signalements.length === 0 ? (
-        <p className="text-sm text-[#888888]">Rien en attente.</p>
+        <p className="text-[15px] text-[#888888]">Rien en attente.</p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid grid-cols-1 gap-3">
           {signalements.map((item) => (
             <li
               key={item.id}
-              className="flex flex-col gap-3 rounded-[12px] border border-[#1E1E1E] bg-[#111111] p-4"
+              className="flex flex-col gap-3 break-words rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
             >
-              <p className="text-sm text-[#888888]">
+              <p className="text-[15px] text-[#888888]">
                 {new Date(item.created_at).toLocaleString("fr-FR")} · {item.type}
               </p>
-              <p className="text-white">
+              <p className="text-[15px] text-white">
                 <span className="text-[#888888]">Rapporteur :</span>{" "}
                 {profilesById[item.rapporteur_id]?.pseudo ?? "QUTE"}
               </p>
-              <p className="text-white">
+              <p className="text-[15px] text-white">
                 <span className="text-[#888888]">Cible :</span>{" "}
                 {profilesById[item.cible_id]?.pseudo ?? "QUTE"}
               </p>
-              <p className="text-white">{item.raison}</p>
+              <p className="text-[15px] text-white">{item.raison}</p>
               <SignalementActions
                 signalementId={item.id}
                 cibleId={item.cible_id}

@@ -20,7 +20,7 @@ export default async function AdminProfilsPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold text-white">Profils</h1>
+      <h1 className="text-xl font-bold text-white md:text-2xl">Profils</h1>
       <ProfilsTable
         currentUserId={user.id}
         profiles={

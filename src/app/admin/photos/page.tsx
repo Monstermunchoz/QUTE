@@ -30,17 +30,17 @@ export default async function AdminPhotosPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold text-white">Photos</h1>
+      <h1 className="text-xl font-bold text-white md:text-2xl">Photos</h1>
       {withPreview.length === 0 ? (
-        <p className="text-sm text-[#888888]">Aucune photo pending.</p>
+        <p className="text-[15px] text-[#888888]">Aucune photo pending.</p>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2">
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {withPreview.map((profile) => (
             <li
               key={profile.id}
-              className="flex flex-col gap-3 rounded-[12px] border border-[#1E1E1E] bg-[#111111] p-4"
+              className="flex flex-col gap-3 break-words rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
             >
-              <p className="font-bold text-white">{profile.pseudo}</p>
+              <p className="text-[17px] font-bold text-white">{profile.pseudo}</p>
               {profile.previewUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

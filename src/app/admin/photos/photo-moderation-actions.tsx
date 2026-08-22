@@ -64,12 +64,12 @@ export function PhotoModerationActions({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <button
           type="button"
           disabled={Boolean(loading)}
           onClick={() => void approve()}
-          className="h-10 rounded-[12px] bg-[#22C55E] px-4 text-sm font-bold text-white disabled:opacity-50"
+          className="h-11 w-full rounded-[12px] bg-[#22C55E] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
           Approuver
         </button>
@@ -77,7 +77,7 @@ export function PhotoModerationActions({
           type="button"
           disabled={Boolean(loading)}
           onClick={() => void reject()}
-          className="h-10 rounded-[12px] bg-[#FF4444] px-4 text-sm font-bold text-white disabled:opacity-50"
+          className="h-11 w-full rounded-[12px] bg-[#FF4444] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
         >
           Rejeter
         </button>

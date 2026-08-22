@@ -79,7 +79,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Recherche par pseudo"
-        className="h-[52px] w-full max-w-md rounded-[12px] border border-[#333333] bg-[#1E1E1E] px-4 text-white outline-none placeholder:text-[#555555] focus:border-[#FF2D87]"
+        className="h-[52px] w-full max-w-md rounded-[12px] border border-[#333333] bg-[#1E1E1E] px-4 text-[16px] text-white outline-none placeholder:text-[#555555] focus:border-[#FF2D87]"
       />
       {error ? <p className="text-sm text-[#FF4444]">{error}</p> : null}
       {filtered.length === 0 ? (
@@ -89,19 +89,21 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
           {filtered.map((profile) => (
             <li
               key={profile.id}
-              className="flex flex-col gap-3 rounded-[12px] border border-[#1E1E1E] bg-[#111111] p-4"
+              className="flex flex-col gap-3 break-words rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
             >
               <div>
-                <p className="font-bold text-white">{profile.pseudo}</p>
-                <p className="text-sm text-[#888888]">
+                <p className="text-[17px] font-bold text-white">
+                  {profile.pseudo}
+                </p>
+                <p className="mt-1 text-[15px] text-[#888888]">
                   {profile.ville || "Lyon"} · {profile.role}
                   {profile.compte_verifie ? " · vérifié" : ""}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <Link
                   href={`/explorer/${profile.id}`}
-                  className="flex h-10 items-center rounded-[12px] border border-[#1E1E1E] px-4 text-sm font-bold text-white"
+                  className="flex h-11 w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] px-4 text-[15px] font-bold text-white sm:w-auto"
                 >
                   Voir profil
                 </Link>
@@ -111,7 +113,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                       type="button"
                       disabled={loading === profile.id}
                       onClick={() => void makeModerator(profile.id)}
-                      className="h-10 rounded-[12px] bg-[#22C55E] px-4 text-sm font-bold text-white disabled:opacity-50"
+                      className="h-11 w-full rounded-[12px] bg-[#22C55E] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
                     >
                       Passer moderateur
                     </button>
@@ -119,7 +121,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                       type="button"
                       disabled={loading === profile.id}
                       onClick={() => void banUser(profile.id)}
-                      className="h-10 rounded-[12px] bg-[#FF4444] px-4 text-sm font-bold text-white disabled:opacity-50"
+                      className="h-11 w-full rounded-[12px] bg-[#FF4444] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
                     >
                       Bannir
                     </button>

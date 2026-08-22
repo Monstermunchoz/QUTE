@@ -45,24 +45,22 @@ export function ShopModal({ open, onClose, club = false }: ShopModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="shop-modal-title"
-        className="modal-shell relative rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-10"
+        className="shop-modal-shell relative overflow-visible rounded-[16px] border border-[#1E1E1E] bg-[#111111] px-8 pb-8 pt-12"
       >
-        <div className="modal-header -mx-10 -mt-10 mb-2 flex justify-end bg-[#111111] px-4 py-3">
-          <button
-            type="button"
-            aria-label="Fermer"
-            onClick={onClose}
-            className="text-xl text-[#888888] hover:text-white"
-          >
-            ✕
-          </button>
-        </div>
-        <div className="flex flex-col items-center text-center">
+        <button
+          type="button"
+          aria-label="Fermer"
+          onClick={onClose}
+          className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center text-xl text-[#888888] hover:text-white"
+        >
+          ✕
+        </button>
+        <div className="flex flex-col items-center overflow-visible text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-icon.png"
             alt=""
-            height={56}
+            height={48}
             className="logo-icon-shop"
           />
           <h2

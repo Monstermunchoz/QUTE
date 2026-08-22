@@ -34,32 +34,32 @@ export default async function AdminEvenementsPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold text-white">Événements</h1>
+      <h1 className="text-xl font-bold text-white md:text-2xl">Événements</h1>
       {evenements.length === 0 ? (
-        <p className="text-sm text-[#888888]">Aucun événement pending.</p>
+        <p className="text-[15px] text-[#888888]">Aucun événement pending.</p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid grid-cols-1 gap-3">
           {evenements.map((event) => (
             <li
               key={event.id}
-              className="flex flex-col gap-2 rounded-[12px] border border-[#1E1E1E] bg-[#111111] p-4"
+              className="flex flex-col gap-2 break-words rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
             >
-              <h2 className="font-bold text-white">{event.titre}</h2>
-              <p className="text-sm text-[#888888]">
+              <h2 className="text-[17px] font-bold text-white">{event.titre}</h2>
+              <p className="text-[15px] text-[#888888]">
                 Créateur :{" "}
                 {event.createur_id
                   ? (profilesById[event.createur_id]?.pseudo ?? "QUTE")
                   : "—"}
               </p>
-              <p className="font-bold text-white">
+              <p className="text-[15px] font-bold text-white">
                 {formatEventDate(event.date_debut)}
               </p>
-              <p className="text-sm text-[#888888]">
+              <p className="text-[15px] text-[#888888]">
                 {[event.lieu_nom, event.adresse].filter(Boolean).join(" · ") ||
                   "Lieu non précisé"}
               </p>
               {event.description ? (
-                <p className="text-white">{event.description}</p>
+                <p className="text-[15px] text-white">{event.description}</p>
               ) : null}
               <EventModerationActions evenementId={event.id} />
             </li>

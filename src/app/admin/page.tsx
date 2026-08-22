@@ -43,18 +43,20 @@ export default async function AdminDashboardPage() {
 
   return (
     <main className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold text-white">Tableau de bord</h1>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <h1 className="text-xl font-bold text-white md:text-2xl">
+        Tableau de bord
+      </h1>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {cards.map((card) => (
           <Link
             key={card.href}
             href={card.href}
-            className="rounded-[12px] border border-[#1E1E1E] bg-[#111111] p-4"
+            className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
           >
             <p className="text-[32px] font-bold leading-none text-white">
               {card.value}
             </p>
-            <p className="mt-2 text-sm text-[#888888]">{card.label}</p>
+            <p className="mt-2 text-[15px] text-[#CCCCCC]">{card.label}</p>
           </Link>
         ))}
       </div>

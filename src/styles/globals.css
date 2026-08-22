@@ -279,11 +279,19 @@ img.logo-icon-hero {
 }
 
 img.logo-icon-shop {
-  height: 56px;
+  display: block;
+  height: 48px;
   width: auto;
-  max-height: 56px;
+  max-height: 48px;
   object-fit: contain;
+  overflow: visible;
   mix-blend-mode: screen;
+}
+
+.shop-modal-shell {
+  width: calc(100% - 40px);
+  max-width: 440px;
+  overflow: visible;
 }
 
 .landing-title {
@@ -504,23 +512,17 @@ img.logo-icon-shop {
   z-index: 2;
 }
 
-.notif-sheet {
-  animation: notif-slide-up 0.3s ease;
+.notif-modal {
+  width: calc(100% - 40px);
+  max-width: 420px;
+  max-height: 75vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-@keyframes notif-slide-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@media (min-width: 640px) {
-  .notif-sheet {
-    animation: none;
-  }
+.notif-modal::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-shell {
