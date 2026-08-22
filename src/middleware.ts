@@ -12,6 +12,10 @@ const PROTECTED_ROUTES = [
   "/lieux",
   "/evenements",
   "/admin",
+  "/abonnement",
+  "/parametres",
+  "/securite",
+  "/aide",
 ];
 const AUTH_ROUTES = ["/login", "/register"];
 const PUBLIC_ROUTES = ["/cgu"];

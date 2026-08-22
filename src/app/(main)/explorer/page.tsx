@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { ExplorerTabs } from "./explorer-tabs";
 import { createClient } from "@/lib/supabase/server";
+import { isQutePlus } from "@/lib/abonnement";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
 import type {
   Evenement,
@@ -54,6 +55,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     { data: lieuRows },
     { data: eventRows },
     { data: jeSorsRows },
+    { data: meRow },
   ] = await Promise.all([
     query,
     supabase.from("salons").select("*").order("created_at", { ascending: true }),
@@ -66,6 +68,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       .gte("date_debut", nowIso)
       .order("date_debut", { ascending: true }),
     supabase.from("je_sors").select("user_id, statut, zone, expires_at").gt("expires_at", nowIso),
+    supabase.from("profiles").select("abonnement").eq("id", user.id).maybeSingle(),
   ]);
 
   const evenements = (eventRows ?? []) as Evenement[];
@@ -87,8 +90,14 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     "id" | "pseudo" | "ville" | "photo_url" | "photo_status"
   >[];
 
+  const requestedTab = searchParams.tab;
   const initialTab =
-    searchParams.tab === "evenements" ? "evenements" : "personnes";
+    requestedTab === "evenements" ||
+    requestedTab === "lieux" ||
+    requestedTab === "salons" ||
+    requestedTab === "groupes"
+      ? requestedTab
+      : "personnes";
 
   const jeSorsByUserId = Object.fromEntries(
     ((jeSorsRows ?? []) as Pick<JeSors, "user_id" | "statut" | "zone" | "expires_at">[])
@@ -106,6 +115,9 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       participations={participations}
       currentUserId={user.id}
       initialTab={initialTab}
+      canCreateSalon={isQutePlus(
+        (meRow as { abonnement?: string } | null)?.abonnement,
+      )}
       jeSorsByUserId={jeSorsByUserId}
     />
   );

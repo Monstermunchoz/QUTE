@@ -11,6 +11,9 @@ type Outing = {
   profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">;
   statut: JeSorsStatut;
   zone: string | null;
+  lieu: { id: string; nom: string } | null;
+  lieuLibre: string | null;
+  evenement: { id: string; titre: string } | null;
 };
 
 type CeSoirHubProps = {
@@ -75,7 +78,7 @@ export function CeSoirHub({
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto">
+      <div className="tabs-scroll flex gap-2">
         {FILTERS.map((item) => (
           <button
             key={item.id}
@@ -100,11 +103,32 @@ export function CeSoirHub({
           ) : (
             <div className="grid grid-cols-2 gap-3">
               {outings.map((item) => (
-                <ProfileCard
-                  key={item.profile.id}
-                  profile={item.profile}
-                  jeSors={{ statut: item.statut, zone: item.zone }}
-                />
+                <div key={item.profile.id} className="flex flex-col gap-2">
+                  <ProfileCard
+                    profile={item.profile}
+                    jeSors={{ statut: item.statut, zone: item.zone }}
+                  />
+                  {item.lieu ? (
+                    <Link
+                      href={`/lieux/${item.lieu.id}`}
+                      className="truncate text-center text-xs font-bold text-[#FF2D87]"
+                    >
+                      {item.lieu.nom}
+                    </Link>
+                  ) : item.lieuLibre ? (
+                    <p className="truncate text-center text-xs text-[#888888]">
+                      {item.lieuLibre}
+                    </p>
+                  ) : null}
+                  {item.evenement ? (
+                    <Link
+                      href={`/evenements/${item.evenement.id}`}
+                      className="truncate text-center text-xs font-bold text-[#FF2D87]"
+                    >
+                      À {item.evenement.titre}
+                    </Link>
+                  ) : null}
+                </div>
               ))}
             </div>
           )}

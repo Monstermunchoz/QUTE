@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { AvatarUpload } from "./avatar-upload";
+import { PhotoAlbum } from "./photo-album";
 import { JeSorsBlock } from "./je-sors-block";
 import { createClient } from "@/lib/supabase/client";
-import type { JeSors, Profile } from "@/types";
+import type { AlbumPhoto, JeSors, Profile } from "@/types";
 
 type FormValues = {
   pseudo: string;
@@ -23,6 +24,7 @@ type ProfilePanelProps = {
   qrushCount: number;
   matchCount: number;
   jeSors: JeSors | null;
+  photos: AlbumPhoto[];
 };
 
 export function ProfilePanel({
@@ -30,6 +32,7 @@ export function ProfilePanel({
   qrushCount,
   matchCount,
   jeSors,
+  photos,
 }: ProfilePanelProps) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -110,6 +113,8 @@ export function ProfilePanel({
           {matchCount === 1 ? "" : "s"}
         </p>
       </div>
+
+      <PhotoAlbum userId={profile.id} photos={photos} />
 
       <JeSorsBlock current={jeSors} />
 

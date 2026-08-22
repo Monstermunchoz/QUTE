@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { BottomBar } from "@/components/layout/BottomBar";
 import { TopBar } from "@/components/layout/TopBar";
 
@@ -10,7 +11,9 @@ export default function MainLayout({
     <div className="min-h-screen bg-[#0A0A0A]">
       <TopBar />
       <div className="mx-auto w-full max-w-lg px-4 pb-24 pt-16">{children}</div>
-      <BottomBar />
+      <Suspense fallback={null}>
+        <BottomBar />
+      </Suspense>
     </div>
   );
 }

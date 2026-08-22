@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
 import { parisDayBounds } from "@/lib/utils/je-sors";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
-import type { Evenement, JeSors, Profile, Salon, SalonMessage } from "@/types";
+import type { Evenement, JeSors, Lieu, Profile, Salon, SalonMessage } from "@/types";
 
 async function signOut() {
   "use server";
@@ -93,9 +93,56 @@ export default async function AccueilPage() {
         profile: outingProfile,
         statut: row.statut,
         zone: row.zone,
+        lieu: null as { id: string; nom: string } | null,
+        lieuLibre: row.lieu_libre ?? null,
+        evenement: null as { id: string; titre: string } | null,
+        lieuId: row.lieu_id,
+        evenementId: row.evenement_id,
       },
     ];
   });
+
+  const outingLieuIds = outings
+    .map((item) => item.lieuId)
+    .filter((id): id is string => Boolean(id));
+  const outingEventIds = outings
+    .map((item) => item.evenementId)
+    .filter((id): id is string => Boolean(id));
+
+  let lieuxById: Record<string, Pick<Lieu, "id" | "nom">> = {};
+  let eventsById: Record<string, Pick<Evenement, "id" | "titre">> = {};
+
+  if (outingLieuIds.length > 0 || outingEventIds.length > 0) {
+    const [{ data: lieuNameRows }, { data: eventNameRows }] = await Promise.all([
+      outingLieuIds.length > 0
+        ? supabase.from("lieux").select("id, nom").in("id", outingLieuIds)
+        : Promise.resolve({ data: [] }),
+      outingEventIds.length > 0
+        ? supabase.from("evenements").select("id, titre").in("id", outingEventIds)
+        : Promise.resolve({ data: [] }),
+    ]);
+
+    lieuxById = Object.fromEntries(
+      ((lieuNameRows ?? []) as Pick<Lieu, "id" | "nom">[]).map((lieu) => [
+        lieu.id,
+        lieu,
+      ]),
+    );
+    eventsById = Object.fromEntries(
+      ((eventNameRows ?? []) as Pick<Evenement, "id" | "titre">[]).map(
+        (event) => [event.id, event],
+      ),
+    );
+  }
+
+  const outingsWithPlaces = outings.map((item) => ({
+    profile: item.profile,
+    statut: item.statut,
+    zone: item.zone,
+    lieu: item.lieuId ? (lieuxById[item.lieuId] ?? null) : null,
+    lieuLibre: item.lieuLibre,
+    evenement: item.evenementId ? (eventsById[item.evenementId] ?? null) : null,
+  }));
 
   const lieuKeys = new Set<string>();
 
@@ -142,7 +189,7 @@ export default async function AccueilPage() {
         peopleCount={jeSors.length}
         eventsCount={eventsTonight.length}
         lieuxCount={lieuKeys.size}
-        outings={outings}
+        outings={outingsWithPlaces}
         eventsTonight={eventsTonight}
         salons={salons}
       />

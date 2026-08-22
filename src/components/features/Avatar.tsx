@@ -1,8 +1,10 @@
-type AvatarSize = "sm" | "md" | "lg" | "xl";
+type AvatarSize = "xs" | "sm" | "md" | "drawer" | "lg" | "xl";
 
 const SIZE_PX: Record<AvatarSize, number> = {
+  xs: 32,
   sm: 40,
   md: 64,
+  drawer: 56,
   lg: 96,
   xl: 120,
 };

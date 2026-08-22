@@ -3,64 +3,55 @@
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-type Tab = {
+type SideTab = {
   href: string;
   label: string;
+  match: "accueil" | "salons" | "qrush" | "messages";
   icon: ReactNode;
 };
 
-const iconClassName = "icon";
-
-const tabs: Tab[] = [
+const sideTabs: SideTab[] = [
   {
     href: "/accueil",
-    label: "ACCUEIL",
+    label: "CE SOIR",
+    match: "accueil",
     icon: (
-      <svg className={iconClassName} width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-        <path d="M4 10.5 12 4l8 6.5V20H4z" />
-        <path d="M9 20v-6h6v6" />
+      <svg className="tab-icon" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        <path d="M14.5 4.2A6.2 6.2 0 1 0 19 14.8 5.4 5.4 0 0 1 14.5 4.2z" />
       </svg>
     ),
   },
   {
-    href: "/explorer",
-    label: "EXPLORER",
+    href: "/explorer?tab=salons",
+    label: "SALONS",
+    match: "salons",
     icon: (
-      <svg className={iconClassName} width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" />
+      <svg className="tab-icon" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        <path d="M5 7h8v7H8l-3 2.5V7z" />
+        <path d="M11 10h8v7h-3l-3 2.5V10z" />
       </svg>
     ),
   },
   {
-    href: "/creer",
-    label: "CRÉER",
+    href: "/qute?tab=qrush",
+    label: "QRUSH",
+    match: "qrush",
     icon: (
-      <svg className={iconClassName} width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-        <circle cx="12" cy="12" r="8" />
-        <path d="M12 8v8M8 12h8" />
+      <svg className="tab-icon" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        <path d="M13 3 5 14h7l-1 7 8-11h-7l1-7z" />
       </svg>
     ),
   },
   {
     href: "/qute",
-    label: "QUTE",
+    label: "MESSAGES",
+    match: "messages",
     icon: (
-      <svg className={iconClassName} width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-        <path d="M12 3l2.1 6.3H21l-5.4 3.9 2.1 6.3L12 15.6 6.3 19.5l2.1-6.3L3 9.3h6.9z" />
-      </svg>
-    ),
-  },
-  {
-    href: "/moi",
-    label: "MOI",
-    icon: (
-      <svg className={iconClassName} width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-        <circle cx="12" cy="8" r="3.2" />
-        <path d="M5 19c1.5-3.2 4-4.8 7-4.8s5.5 1.6 7 4.8" />
+      <svg className="tab-icon" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+        <path d="M5 6h14v10H8l-3 3V6z" />
       </svg>
     ),
   },
@@ -68,6 +59,9 @@ const tabs: Tab[] = [
 
 export function BottomBar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const explorerTab = searchParams.get("tab");
+  const quteTab = searchParams.get("tab");
   const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
@@ -95,29 +89,98 @@ export function BottomBar() {
     void loadPending();
   }, [pathname]);
 
+  function isActive(match: SideTab["match"]) {
+    if (match === "accueil") {
+      return pathname === "/accueil";
+    }
+
+    if (match === "salons") {
+      return pathname === "/explorer" && explorerTab === "salons";
+    }
+
+    if (match === "qrush") {
+      return pathname === "/qute" && quteTab === "qrush";
+    }
+
+    return (
+      (pathname === "/qute" && quteTab !== "qrush") ||
+      pathname.startsWith("/qute/")
+    );
+  }
+
+  const profilsActive =
+    (pathname === "/explorer" && (!explorerTab || explorerTab === "personnes")) ||
+    pathname.startsWith("/explorer/");
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-[#1E1E1E] bg-[#0A0A0A] pb-[env(safe-area-inset-bottom)]">
-      <ul className="mx-auto grid h-16 w-full max-w-lg grid-cols-5">
-        {tabs.map((tab) => {
-          const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
-          return (
-            <li key={tab.href} className="h-full">
-              <Link
-                href={tab.href}
-                className={`relative flex h-full flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-wide ${
-                  active ? "text-[#FF2D87]" : "text-[#888888]"
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-                {tab.href === "/qute" && pendingCount > 0 ? (
-                  <span className="absolute right-3 top-1 h-2 w-2 rounded-full bg-[#FF4444]" />
-                ) : null}
-              </Link>
-            </li>
-          );
-        })}
+    <nav className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-[#1E1E1E] bg-[#0A0A0A] pb-[env(safe-area-inset-bottom)]">
+      <ul className="mx-auto grid h-16 w-full max-w-lg grid-cols-5 overflow-visible">
+        <SideLink tab={sideTabs[0]} active={isActive("accueil")} />
+        <SideLink tab={sideTabs[1]} active={isActive("salons")} />
+        <li className="relative flex h-16 items-center justify-center overflow-visible">
+          <Link
+            href="/explorer"
+            aria-label="Profils"
+            className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#0A0A0A] text-white ${
+              profilsActive ? "opacity-100" : "opacity-95"
+            }`}
+            style={{
+              transform: "translateY(-20px)",
+              background: "linear-gradient(135deg, #FF2D87, #7B2FFF)",
+              boxShadow: "0 4px 20px rgba(255, 45, 135, 0.4)",
+            }}
+          >
+            <svg
+              className="fab-icon"
+              width={28}
+              height={28}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              aria-hidden
+            >
+              <circle cx="8.5" cy="8" r="2.4" />
+              <path d="M4 18c.4-2.6 2-4 4.5-4s4.1 1.4 4.5 4" />
+              <circle cx="15.5" cy="8.2" r="2.1" />
+              <path d="M12.2 18c.3-2 1.6-3.2 3.3-3.2 1.7 0 3 1.2 3.5 3.2" />
+            </svg>
+          </Link>
+        </li>
+        <SideLink tab={sideTabs[2]} active={isActive("qrush")} />
+        <SideLink
+          tab={sideTabs[3]}
+          active={isActive("messages")}
+          badge={pendingCount > 0}
+        />
       </ul>
     </nav>
+  );
+}
+
+function SideLink({
+  tab,
+  active,
+  badge = false,
+}: {
+  tab: SideTab;
+  active: boolean;
+  badge?: boolean;
+}) {
+  return (
+    <li className="h-full">
+      <Link
+        href={tab.href}
+        className={`relative flex h-full flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-wide ${
+          active ? "text-[#FF2D87]" : "text-[#888888]"
+        }`}
+      >
+        {tab.icon}
+        {tab.label}
+        {badge ? (
+          <span className="absolute right-3 top-1 h-2 w-2 rounded-full bg-[#FF4444]" />
+        ) : null}
+      </Link>
+    </li>
   );
 }

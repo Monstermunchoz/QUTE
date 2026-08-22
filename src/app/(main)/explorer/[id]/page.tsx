@@ -3,7 +3,7 @@ import { Avatar } from "@/components/features/Avatar";
 import { ProfileActions } from "./profile-actions";
 import { createClient } from "@/lib/supabase/server";
 import { isJeSorsActive, jeSorsLabel } from "@/lib/utils/je-sors";
-import type { JeSors, Profile } from "@/types";
+import type { AlbumPhoto, JeSors, Profile } from "@/types";
 
 type ProfilePageProps = {
   params: { id: string };
@@ -70,17 +70,27 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
     )
     .maybeSingle();
 
-  const { data: jeSorsRow } = await supabase
-    .from("je_sors")
-    .select("statut, zone, expires_at")
-    .eq("user_id", profile.id)
-    .gt("expires_at", new Date().toISOString())
-    .maybeSingle();
+  const [{ data: jeSorsRow }, { data: albumRows }] = await Promise.all([
+    supabase
+      .from("je_sors")
+      .select("statut, zone, expires_at")
+      .eq("user_id", profile.id)
+      .gt("expires_at", new Date().toISOString())
+      .maybeSingle(),
+    supabase
+      .from("photos")
+      .select("id, url, ordre")
+      .eq("user_id", profile.id)
+      .eq("statut", "approved")
+      .order("ordre", { ascending: true })
+      .limit(6),
+  ]);
 
   const jeSors =
     jeSorsRow && isJeSorsActive(jeSorsRow as Pick<JeSors, "expires_at">)
       ? (jeSorsRow as Pick<JeSors, "statut" | "zone" | "expires_at">)
       : null;
+  const album = (albumRows ?? []) as Pick<AlbumPhoto, "id" | "url" | "ordre">[];
 
   return (
     <main className="flex flex-col items-center gap-4 pb-4 text-center">
@@ -110,6 +120,20 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
         <div className="w-full rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4">
           <p className="text-[14px] text-[#888888]">Ce que je cherche</p>
           <p className="mt-1 text-white">{profile.ce_que_je_cherche}</p>
+        </div>
+      ) : null}
+
+      {album.length > 0 ? (
+        <div className="grid w-full grid-cols-3 gap-2">
+          {album.map((photo, index) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={photo.id}
+              src={photo.url}
+              alt={`Photo ${index + 1} de ${profile.pseudo}`}
+              className="aspect-square w-full rounded-[12px] object-cover"
+            />
+          ))}
         </div>
       ) : null}
 

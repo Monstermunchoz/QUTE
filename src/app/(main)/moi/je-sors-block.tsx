@@ -9,14 +9,32 @@ import {
   JE_SORS_STATUTS,
   endOfNightParis,
   formatRemaining,
+  parisDayBounds,
 } from "@/lib/utils/je-sors";
-import type { JeSors, JeSorsStatut, JeSorsVisibilite } from "@/types";
+import type {
+  Evenement,
+  JeSors,
+  JeSorsStatut,
+  JeSorsVisibilite,
+  Lieu,
+  LieuCategorie,
+} from "@/types";
 
 type JeSorsBlockProps = {
   current: JeSors | null;
 };
 
 type DurationId = "1h" | "2h" | "3h" | "nuit" | "custom";
+
+const LIEU_GROUPS: { id: LieuCategorie; label: string }[] = [
+  { id: "bar", label: "Bars" },
+  { id: "club", label: "Clubs" },
+  { id: "cafe", label: "Cafés" },
+  { id: "association", label: "Associations" },
+  { id: "culture", label: "Culture" },
+];
+
+const AUTRE_LIEU = "__autre__";
 
 export function JeSorsBlock({ current }: JeSorsBlockProps) {
   const router = useRouter();
@@ -30,6 +48,13 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
   const [message, setMessage] = useState("");
   const [zone, setZone] = useState("");
   const [visibilite, setVisibilite] = useState<JeSorsVisibilite>("tous");
+  const [lieux, setLieux] = useState<Lieu[]>([]);
+  const [eventsTonight, setEventsTonight] = useState<
+    Pick<Evenement, "id" | "titre">[]
+  >([]);
+  const [lieuChoice, setLieuChoice] = useState("");
+  const [lieuLibre, setLieuLibre] = useState("");
+  const [evenementId, setEvenementId] = useState("");
 
   const active = Boolean(
     current && new Date(current.expires_at).getTime() > now,
@@ -39,6 +64,32 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const { start, end } = parisDayBounds();
+
+    async function load() {
+      const [{ data: lieuRows }, { data: eventRows }] = await Promise.all([
+        supabase
+          .from("lieux")
+          .select("id, nom, adresse, categorie")
+          .order("nom", { ascending: true }),
+        supabase
+          .from("evenements")
+          .select("id, titre")
+          .eq("statut", "publie")
+          .gte("date_debut", start.toISOString())
+          .lt("date_debut", end.toISOString())
+          .order("date_debut", { ascending: true }),
+      ]);
+
+      setLieux((lieuRows ?? []) as Lieu[]);
+      setEventsTonight((eventRows ?? []) as Pick<Evenement, "id" | "titre">[]);
+    }
+
+    void load();
   }, []);
 
   function expiresAtFromDuration() {
@@ -74,6 +125,7 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
       return;
     }
 
+    const pickedLieu = lieuChoice && lieuChoice !== AUTRE_LIEU ? lieuChoice : null;
     const { error: upsertError } = await supabase.from("je_sors").upsert(
       {
         user_id: user.id,
@@ -82,6 +134,12 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
         zone: zone.trim() || null,
         visibilite,
         expires_at: expiresAtFromDuration().toISOString(),
+        lieu_id: pickedLieu,
+        lieu_libre:
+          lieuChoice === AUTRE_LIEU
+            ? lieuLibre.trim().slice(0, 100) || null
+            : null,
+        evenement_id: evenementId || null,
       },
       { onConflict: "user_id" },
     );
@@ -226,6 +284,85 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
               <p className="mt-1 text-right text-xs text-[#888888]">
                 {message.length}/200
               </p>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <label htmlFor="lieu-select" className="text-[14px] text-[#888888]">
+                Où tu sors ?
+              </label>
+              <select
+                id="lieu-select"
+                value={lieuChoice}
+                onChange={(event) => setLieuChoice(event.target.value)}
+                className="h-[52px] w-full rounded-[12px] border border-[#333333] bg-[#1E1E1E] px-4 text-white outline-none focus:border-[#FF2D87]"
+              >
+                <option value="">Choisir un lieu</option>
+                {LIEU_GROUPS.map((group) => {
+                  const items = lieux.filter((lieu) => lieu.categorie === group.id);
+                  if (items.length === 0) {
+                    return null;
+                  }
+                  return (
+                    <optgroup key={group.id} label={group.label}>
+                      {items.map((lieu) => (
+                        <option key={lieu.id} value={lieu.id}>
+                          {lieu.nom}
+                          {lieu.adresse ? ` · ${lieu.adresse}` : ""}
+                        </option>
+                      ))}
+                    </optgroup>
+                  );
+                })}
+                {lieux.filter(
+                  (lieu) =>
+                    !LIEU_GROUPS.some((group) => group.id === lieu.categorie),
+                ).length > 0 ? (
+                  <optgroup label="Autres">
+                    {lieux
+                      .filter(
+                        (lieu) =>
+                          !LIEU_GROUPS.some((group) => group.id === lieu.categorie),
+                      )
+                      .map((lieu) => (
+                        <option key={lieu.id} value={lieu.id}>
+                          {lieu.nom}
+                          {lieu.adresse ? ` · ${lieu.adresse}` : ""}
+                        </option>
+                      ))}
+                  </optgroup>
+                ) : null}
+                <option value={AUTRE_LIEU}>Autre lieu</option>
+              </select>
+              {lieuChoice === AUTRE_LIEU ? (
+                <Input
+                  label="Précise le lieu"
+                  maxLength={100}
+                  value={lieuLibre}
+                  onChange={(event) =>
+                    setLieuLibre(event.target.value.slice(0, 100))
+                  }
+                  placeholder="Où ça ? (ex: chez des potes, Croix-Rousse…)"
+                />
+              ) : null}
+            </div>
+
+            <div className="mt-4 flex flex-col gap-2">
+              <label htmlFor="event-select" className="text-[14px] text-[#888888]">
+                Événement (optionnel)
+              </label>
+              <select
+                id="event-select"
+                value={evenementId}
+                onChange={(event) => setEvenementId(event.target.value)}
+                className="h-[52px] w-full rounded-[12px] border border-[#333333] bg-[#1E1E1E] px-4 text-white outline-none focus:border-[#FF2D87]"
+              >
+                <option value="">Aucun événement</option>
+                {eventsTonight.map((event) => (
+                  <option key={event.id} value={event.id}>
+                    {event.titre}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mt-4">

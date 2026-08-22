@@ -15,9 +15,9 @@ function BellIcon() {
       strokeWidth="1.8"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="icon"
-      width={20}
-      height={20}
+      className="bell-icon"
+      width={22}
+      height={22}
       aria-hidden
     >
       <path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
@@ -144,7 +144,7 @@ export function NotificationBell() {
   }
 
   return (
-    <div className="absolute right-4" ref={panelRef}>
+    <div className="relative" ref={panelRef}>
       <button
         type="button"
         aria-label="Notifications"

@@ -72,7 +72,7 @@ export function EventsTab({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2 overflow-x-auto">
+      <div className="tabs-scroll flex gap-2">
         {FILTERS.map((item) => (
           <button
             key={item.id}

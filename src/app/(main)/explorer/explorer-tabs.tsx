@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProfileCard } from "@/components/features/ProfileCard";
 import { EventsTab } from "./events-tab";
 import type {
@@ -33,6 +33,7 @@ type ExplorerTabsProps = {
   participations: Participation[];
   currentUserId: string;
   initialTab?: TabId;
+  canCreateSalon?: boolean;
   jeSorsByUserId?: Record<string, { statut: JeSorsStatut; zone: string | null }>;
 };
 
@@ -61,10 +62,15 @@ export function ExplorerTabs({
   participations,
   currentUserId,
   initialTab = "personnes",
+  canCreateSalon = false,
   jeSorsByUserId = {},
 }: ExplorerTabsProps) {
   const [tab, setTab] = useState<TabId>(initialTab);
   const [category, setCategory] = useState<"tous" | LieuCategorie>("tous");
+
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
 
   const filteredLieux = useMemo(
     () =>
@@ -81,7 +87,7 @@ export function ExplorerTabs({
         <p className="text-sm text-[#888888]">Qui QUTE dans le coin.</p>
       </header>
 
-      <div className="flex gap-2 overflow-x-auto">
+      <div className="tabs-scroll flex gap-2">
         {TABS.map((item) => {
           const active = tab === item.id;
           return (
@@ -118,32 +124,72 @@ export function ExplorerTabs({
       ) : null}
 
       {tab === "salons" ? (
-        salons.length === 0 ? (
-          <p className="pt-16 text-center text-[#888888]">
-            Aucun salon pour le moment.
-          </p>
-        ) : (
-        <ul className="flex flex-col gap-3">
-          {salons.map((salon) => (
-            <li key={salon.id}>
-              <Link
-                href={`/salons/${salon.id}`}
-                className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
+        <div className="flex flex-col gap-3">
+          {canCreateSalon ? (
+            <Link
+              href="/salons/creer"
+              className="flex h-[52px] items-center justify-center rounded-[12px] text-sm font-bold text-white"
+              style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
+            >
+              Créer mon salon
+            </Link>
+          ) : (
+            <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-6">
+              <svg
+                width={28}
+                height={28}
+                viewBox="0 0 24 24"
+                fill="url(#salon-star)"
+                aria-hidden
               >
-                <p className="font-bold text-white">{salon.nom}</p>
-                <p className="mt-1 text-sm text-[#888888]">
-                  {salon.description}
-                </p>
-                {salon.theme ? (
-                  <span className="mt-3 inline-block rounded-[8px] bg-[#1E1E1E] px-2 py-1 text-xs text-[#FF2D87]">
-                    {salon.theme}
-                  </span>
-                ) : null}
+                <defs>
+                  <linearGradient id="salon-star" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FF2D87" />
+                    <stop offset="100%" stopColor="#7B2FFF" />
+                  </linearGradient>
+                </defs>
+                <path d="M12 3 14.4 9.2 21 10l-4.2 3.9L18 21l-6-3.4L6 21l1.2-7.1L3 10l6.6-.8z" />
+              </svg>
+              <h2 className="mt-3 font-bold text-white">Crée ton propre salon</h2>
+              <p className="mt-2 text-sm text-[#888888]">
+                Réservé aux membres QUTE+ et QUTE Club.
+              </p>
+              <Link
+                href="/abonnement"
+                className="mt-4 flex h-[52px] items-center justify-center rounded-[12px] text-sm font-bold text-white"
+                style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
+              >
+                Découvrir QUTE+
               </Link>
-            </li>
-          ))}
-        </ul>
-        )
+            </article>
+          )}
+          {salons.length === 0 ? (
+            <p className="pt-8 text-center text-[#888888]">
+              Aucun salon pour le moment.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-3">
+              {salons.map((salon) => (
+                <li key={salon.id}>
+                  <Link
+                    href={`/salons/${salon.id}`}
+                    className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
+                  >
+                    <p className="font-bold text-white">{salon.nom}</p>
+                    <p className="mt-1 text-sm text-[#888888]">
+                      {salon.description}
+                    </p>
+                    {salon.theme ? (
+                      <span className="mt-3 inline-block rounded-[8px] bg-[#1E1E1E] px-2 py-1 text-xs text-[#FF2D87]">
+                        {salon.theme}
+                      </span>
+                    ) : null}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       ) : null}
 
       {tab === "groupes" ? (
@@ -191,7 +237,7 @@ export function ExplorerTabs({
       {tab === "lieux" ? (
         <div className="flex flex-col gap-3">
           <PlacesMap lieux={filteredLieux} />
-          <div className="flex gap-2 overflow-x-auto">
+          <div className="tabs-scroll flex gap-2">
             {CATEGORY_FILTERS.map((item) => (
               <button
                 key={item.id}

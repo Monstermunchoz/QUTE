@@ -12,12 +12,22 @@ export type Profile = {
   photo_status: PhotoStatus;
   compte_verifie: boolean;
   role: "user" | "moderateur" | "admin";
+  abonnement?: "gratuit" | "qute_plus" | "qute_club";
   identites: string[];
   orientations: string[];
   ce_que_je_cherche: string | null;
   interets: string[];
   created_at: string;
   updated_at: string;
+};
+
+export type AlbumPhoto = {
+  id: string;
+  user_id: string;
+  url: string;
+  ordre: number;
+  statut: PhotoStatus;
+  created_at: string;
 };
 
 export type Qrush = {
@@ -91,6 +101,7 @@ export type Salon = {
   theme: string | null;
   region: string | null;
   est_public: boolean;
+  createur_id?: string | null;
   created_at: string;
 };
 
@@ -171,6 +182,7 @@ export type JeSors = {
   statut: JeSorsStatut;
   evenement_id: string | null;
   lieu_id: string | null;
+  lieu_libre?: string | null;
   message: string | null;
   zone: string | null;
   visibilite: JeSorsVisibilite;

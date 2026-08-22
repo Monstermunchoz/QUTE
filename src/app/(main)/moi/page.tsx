@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ProfilePanel } from "./profile-panel";
 import { createClient } from "@/lib/supabase/server";
-import type { JeSors, Profile } from "@/types";
+import type { AlbumPhoto, JeSors, Profile } from "@/types";
 
 export default async function MoiPage() {
   const supabase = createClient();
@@ -25,8 +25,12 @@ export default async function MoiPage() {
 
   const profile = data as Profile;
 
-  const [{ count: qrushCount }, { count: matchCount }, { data: jeSorsRow }] =
-    await Promise.all([
+  const [
+    { count: qrushCount },
+    { count: matchCount },
+    { data: jeSorsRow },
+    { data: photoRows },
+  ] = await Promise.all([
     supabase
       .from("qrushs")
       .select("*", { count: "exact", head: true })
@@ -36,9 +40,16 @@ export default async function MoiPage() {
       .select("*", { count: "exact", head: true })
       .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`),
     supabase.from("je_sors").select("*").eq("user_id", user.id).maybeSingle(),
+    supabase
+      .from("photos")
+      .select("id, user_id, url, ordre, statut, created_at")
+      .eq("user_id", user.id)
+      .order("ordre", { ascending: true })
+      .limit(6),
   ]);
 
   const jeSors = (jeSorsRow as JeSors | null) ?? null;
+  const photos = (photoRows ?? []) as AlbumPhoto[];
 
   return (
     <ProfilePanel
@@ -46,6 +57,7 @@ export default async function MoiPage() {
       qrushCount={qrushCount ?? 0}
       matchCount={matchCount ?? 0}
       jeSors={jeSors}
+      photos={photos}
     />
   );
 }
