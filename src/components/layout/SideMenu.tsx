@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
+import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { ShopModal } from "@/components/ui/ShopModal";
-import { abonnementLabel, isQutePlus } from "@/lib/abonnement";
+import { estClub, estPremium } from "@/lib/subscription";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/types";
 
@@ -15,7 +16,7 @@ type SideMenuProps = {
   onClose: () => void;
   profile: Pick<
     Profile,
-    "id" | "pseudo" | "ville" | "photo_url" | "abonnement"
+    "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "abonnement_statut"
   > | null;
 };
 
@@ -106,7 +107,8 @@ function MenuLink({
 export function SideMenu({ open, onClose, profile }: SideMenuProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const plus = isQutePlus(profile?.abonnement);
+  const plus = estPremium(profile);
+  const club = estClub(profile);
   const [shopOpen, setShopOpen] = useState(false);
 
   useEffect(() => {
@@ -165,16 +167,7 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
             <p className="text-sm text-[#888888]">
               {profile?.ville || "Lyon Métropole"}
             </p>
-            {plus ? (
-              <span
-                className="rounded-[8px] px-2 py-1 text-[10px] font-bold text-white"
-                style={{
-                  background: "linear-gradient(135deg, #FF2D87, #7B2FFF)",
-                }}
-              >
-                {abonnementLabel(profile?.abonnement)}
-              </span>
-            ) : null}
+            <BadgeAbonnement abonnement={profile?.abonnement} />
           </div>
           <button
             type="button"
@@ -251,7 +244,7 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
       </aside>
     </div>
       ) : null}
-      <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} />
+      <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} club={club} />
     </>
   );
 }

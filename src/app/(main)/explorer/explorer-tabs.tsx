@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ProfileCard } from "@/components/features/ProfileCard";
 import { EventsTab } from "./events-tab";
+import { IDENTITES, ZONES_LYON } from "@/lib/profile/options";
+import { getAge } from "@/lib/utils/age";
 import type {
   Evenement,
   Groupe,
@@ -25,7 +27,17 @@ const PlacesMap = dynamic(
 type TabId = "personnes" | "salons" | "groupes" | "lieux" | "evenements";
 
 type ExplorerTabsProps = {
-  profiles: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">[];
+  profiles: Pick<
+    Profile,
+    | "id"
+    | "pseudo"
+    | "ville"
+    | "zone"
+    | "photo_url"
+    | "abonnement"
+    | "identites"
+    | "date_naissance"
+  >[];
   salons: Salon[];
   groupes: Groupe[];
   lieux: Lieu[];
@@ -34,6 +46,7 @@ type ExplorerTabsProps = {
   currentUserId: string;
   initialTab?: TabId;
   canCreateSalon?: boolean;
+  canFilter?: boolean;
   jeSorsByUserId?: Record<string, { statut: JeSorsStatut; zone: string | null }>;
 };
 
@@ -63,10 +76,15 @@ export function ExplorerTabs({
   currentUserId,
   initialTab = "personnes",
   canCreateSalon = false,
+  canFilter = false,
   jeSorsByUserId = {},
 }: ExplorerTabsProps) {
   const [tab, setTab] = useState<TabId>(initialTab);
   const [category, setCategory] = useState<"tous" | LieuCategorie>("tous");
+  const [identite, setIdentite] = useState("");
+  const [zone, setZone] = useState("");
+  const [ageMin, setAgeMin] = useState("");
+  const [ageMax, setAgeMax] = useState("");
 
   useEffect(() => {
     setTab(initialTab);
@@ -79,6 +97,36 @@ export function ExplorerTabs({
         : lieux.filter((lieu) => lieu.categorie === category),
     [category, lieux],
   );
+
+  const filteredProfiles = useMemo(() => {
+    if (!canFilter) {
+      return profiles;
+    }
+
+    return profiles.filter((profile) => {
+      if (identite && !(profile.identites ?? []).includes(identite)) {
+        return false;
+      }
+
+      if (zone && profile.zone !== zone) {
+        return false;
+      }
+
+      const age = getAge(profile.date_naissance);
+      const min = Number(ageMin);
+      const max = Number(ageMax);
+
+      if (ageMin && (age == null || age < min)) {
+        return false;
+      }
+
+      if (ageMax && (age == null || age > max)) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [ageMax, ageMin, canFilter, identite, profiles, zone]);
 
   return (
     <main className="flex flex-col gap-4 pb-4">
@@ -106,13 +154,70 @@ export function ExplorerTabs({
       </div>
 
       {tab === "personnes" ? (
-        profiles.length === 0 ? (
+        <div className="flex flex-col gap-3">
+          {canFilter ? (
+            <div className="grid grid-cols-2 gap-2">
+              <select
+                value={identite}
+                onChange={(event) => setIdentite(event.target.value)}
+                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white"
+              >
+                <option value="">Identité</option>
+                {IDENTITES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={zone}
+                onChange={(event) => setZone(event.target.value)}
+                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white"
+              >
+                <option value="">Zone</option>
+                {ZONES_LYON.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min={18}
+                max={99}
+                placeholder="Âge min"
+                value={ageMin}
+                onChange={(event) => setAgeMin(event.target.value)}
+                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white outline-none"
+              />
+              <input
+                type="number"
+                min={18}
+                max={99}
+                placeholder="Âge max"
+                value={ageMax}
+                onChange={(event) => setAgeMax(event.target.value)}
+                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white outline-none"
+              />
+            </div>
+          ) : (
+            <Link
+              href="/abonnement"
+              className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
+            >
+              <p className="text-sm font-bold text-white">Filtres avancés</p>
+              <p className="mt-1 text-sm text-[#888888]">
+                Identité, âge et zone — réservés à QUTE+.
+              </p>
+            </Link>
+          )}
+          {filteredProfiles.length === 0 ? (
           <p className="pt-16 text-center text-[#888888]">
             Bon… personne n&apos;a bougé. 😏
           </p>
         ) : (
           <div className="grid-responsive">
-            {profiles.map((profile) => (
+            {filteredProfiles.map((profile) => (
               <ProfileCard
                 key={profile.id}
                 profile={profile}
@@ -120,7 +225,8 @@ export function ExplorerTabs({
               />
             ))}
           </div>
-        )
+        )}
+        </div>
       ) : null}
 
       {tab === "salons" ? (

@@ -1,26 +1,266 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/ui/BackButton";
 import { ShopModal } from "@/components/ui/ShopModal";
 import type { Abonnement } from "@/lib/abonnement";
 import { PLANS } from "@/lib/plans";
+import { PLANS as STRIPE_PLANS } from "@/lib/stripe/config";
+import { estClub, estPremium, joursRestants } from "@/lib/subscription";
+import type { AbonnementStatut } from "@/lib/subscription";
 
 const gradient = { background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" };
 
-type AbonnementViewProps = {
-  current: Abonnement;
+type Paiement = {
+  id: string;
+  montant: number;
+  devise: string;
+  statut: string;
+  plan: string | null;
+  facture_url: string | null;
+  created_at: string;
 };
 
-export function AbonnementView({ current }: AbonnementViewProps) {
+type AbonnementViewProps = {
+  current: Abonnement;
+  statut: AbonnementStatut;
+  fin: string | null;
+  essaiUtilise: boolean;
+  hasCustomer: boolean;
+  paiements: Paiement[];
+  banner: "success" | "annule" | null;
+};
+
+function formatDate(iso: string | null) {
+  if (!iso) {
+    return null;
+  }
+
+  return new Date(iso).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function formatMontant(cents: number, devise: string) {
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: devise.toUpperCase(),
+  }).format(cents / 100);
+}
+
+export function AbonnementView({
+  current,
+  statut,
+  fin,
+  essaiUtilise,
+  hasCustomer,
+  paiements,
+  banner,
+}: AbonnementViewProps) {
+  const router = useRouter();
   const [shopOpen, setShopOpen] = useState(false);
+  const [periode, setPeriode] = useState<"mensuel" | "annuel">("mensuel");
+  const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<"success" | "annule" | null>(banner);
+  const premium = estPremium({ abonnement: current, abonnement_statut: statut });
+  const club = estClub({ abonnement: current, abonnement_statut: statut });
+  const jours = joursRestants(fin);
+  const finLabel = formatDate(fin);
+
+  useEffect(() => {
+    if (!banner) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setNotice(null);
+      router.replace("/abonnement", { scroll: false });
+    }, 5000);
+
+    return () => window.clearTimeout(timeout);
+  }, [banner, router]);
+
+  async function goCheckout(priceId: string, key: string) {
+    setError(null);
+    setLoading(key);
+
+    const response = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId }),
+    });
+    const payload = (await response.json().catch(() => null)) as {
+      url?: string;
+      error?: string;
+    } | null;
+
+    if (!response.ok || !payload?.url) {
+      setLoading(null);
+      setError(payload?.error ?? "Impossible de lancer le paiement.");
+      return;
+    }
+
+    window.location.href = payload.url;
+  }
+
+  async function goPortal() {
+    setError(null);
+    setLoading("portal");
+
+    const response = await fetch("/api/stripe/portal", { method: "POST" });
+    const payload = (await response.json().catch(() => null)) as {
+      url?: string;
+      error?: string;
+    } | null;
+
+    if (!response.ok || !payload?.url) {
+      setLoading(null);
+      setError(payload?.error ?? "Portail indisponible pour le moment.");
+      return;
+    }
+
+    window.location.href = payload.url;
+  }
 
   return (
     <main className="flex flex-col gap-6">
       <PageTitle title="Mon abonnement" />
 
+      {notice === "success" ? (
+        <p className="rounded-[12px] bg-[#22C55E]/15 px-4 py-3 text-center text-sm font-bold text-[#22C55E]">
+          Bienvenue dans QUTE+ 🎉
+        </p>
+      ) : null}
+      {notice === "annule" ? (
+        <p className="rounded-[12px] bg-[#1E1E1E] px-4 py-3 text-center text-sm text-[#888888]">
+          Paiement annulé
+        </p>
+      ) : null}
+
+      {current === "gratuit" ? (
+        <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5">
+          <h2 className="text-lg font-bold text-white">
+            Tu es sur l&apos;offre Gratuit
+          </h2>
+          <p className="mt-2 text-sm text-[#888888]">
+            Découvre QUTE+ : qui t&apos;a QRUSHé, salons, événements et filtres
+            avancés — 7 jours offerts.
+          </p>
+        </article>
+      ) : (
+        <article
+          className="rounded-[16px] p-[2px]"
+          style={gradient}
+        >
+          <div className="rounded-[14px] bg-[#111111] p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-lg font-bold text-white">
+                {current === "qute_club" ? "QUTE Club" : "QUTE+"}
+              </h2>
+              {statut === "essai" ? (
+                <span className="text-sm font-bold text-[#FF2D87]">
+                  Essai gratuit — {jours} jour{jours === 1 ? "" : "s"} restant
+                  {jours === 1 ? "" : "s"}
+                </span>
+              ) : null}
+              {statut === "actif" ? (
+                <span className="text-sm font-bold text-[#22C55E]">Actif</span>
+              ) : null}
+              {statut === "annule" ? (
+                <span className="text-sm font-bold text-[#888888]">
+                  Actif jusqu&apos;au {finLabel ?? "…"}
+                </span>
+              ) : null}
+              {statut === "impaye" ? (
+                <span className="text-sm font-bold text-[#FF4444]">
+                  Paiement en échec
+                </span>
+              ) : null}
+            </div>
+            {finLabel && statut !== "annule" ? (
+              <p className="mt-2 text-sm text-[#888888]">
+                {statut === "essai"
+                  ? `Fin de l'essai le ${finLabel}`
+                  : `Prochain prélèvement le ${finLabel}`}
+              </p>
+            ) : null}
+            {hasCustomer ? (
+              <button
+                type="button"
+                onClick={() => void goPortal()}
+                disabled={loading !== null}
+                className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-sm font-bold text-white disabled:opacity-50"
+              >
+                {loading === "portal"
+                  ? "Ouverture…"
+                  : statut === "impaye"
+                    ? "Mettre à jour"
+                    : "Gérer mon abonnement"}
+              </button>
+            ) : null}
+          </div>
+        </article>
+      )}
+
+      <div className="flex rounded-[12px] bg-[#111111] p-1">
+        <button
+          type="button"
+          onClick={() => setPeriode("mensuel")}
+          className={`flex-1 rounded-[10px] py-2.5 text-sm font-bold ${
+            periode === "mensuel" ? "text-white" : "text-[#888888]"
+          }`}
+          style={periode === "mensuel" ? gradient : undefined}
+        >
+          Mensuel
+        </button>
+        <button
+          type="button"
+          onClick={() => setPeriode("annuel")}
+          className={`relative flex flex-1 items-center justify-center gap-2 rounded-[10px] py-2.5 text-sm font-bold ${
+            periode === "annuel" ? "text-white" : "text-[#888888]"
+          }`}
+          style={periode === "annuel" ? gradient : undefined}
+        >
+          Annuel
+          <span className="rounded-[6px] bg-white/15 px-1.5 py-0.5 text-[10px] font-bold text-white">
+            2 mois offerts
+          </span>
+        </button>
+      </div>
+
       {PLANS.map((plan) => {
         const isCurrent = plan.id === current;
+        const stripePlan =
+          plan.id === "qute_plus"
+            ? STRIPE_PLANS.qute_plus
+            : plan.id === "qute_club"
+              ? STRIPE_PLANS.qute_club
+              : null;
+        const price =
+          plan.id === "gratuit"
+            ? "0€"
+            : periode === "annuel"
+              ? stripePlan?.annuel.montant
+              : stripePlan?.mensuel.montant;
+        const suffix = plan.id === "gratuit" ? "/mois" : periode === "annuel" ? "/an" : "/mois";
+        const priceId =
+          periode === "annuel"
+            ? stripePlan?.annuel.priceId
+            : stripePlan?.mensuel.priceId;
+        const ctaKey = `${plan.id}-${periode}`;
+        let cta = "Choisir";
+
+        if (!essaiUtilise && !premium) {
+          cta = "Essayer 7 jours gratuitement";
+        } else if (essaiUtilise && !premium) {
+          cta = "S'abonner";
+        } else if (premium && !isCurrent) {
+          cta = "Passer à ce plan";
+        }
 
         return (
           <article
@@ -33,7 +273,7 @@ export function AbonnementView({ current }: AbonnementViewProps) {
           >
             {isCurrent ? (
               <p className="mb-3 w-fit rounded-[8px] bg-[#FF2D87] px-2 py-1 text-[10px] font-bold text-white">
-                Ton plan actuel
+                Ton plan
               </p>
             ) : plan.badge ? (
               <p
@@ -46,7 +286,8 @@ export function AbonnementView({ current }: AbonnementViewProps) {
             <div className="flex items-baseline justify-between">
               <h2 className="text-lg font-bold text-white">{plan.name}</h2>
               <p className="text-sm text-[#888888]">
-                <span className="font-bold text-white">{plan.price}</span>/mois
+                <span className="font-bold text-white">{price}</span>
+                {suffix}
               </p>
             </div>
             <p className="mt-1 text-[13px] italic text-[#888888]">
@@ -58,7 +299,9 @@ export function AbonnementView({ current }: AbonnementViewProps) {
                   plan.noteAccent ? "text-[#FF2D87]" : "text-[#888888]"
                 }`}
               >
-                {plan.note}
+                {periode === "annuel" && plan.id !== "gratuit"
+                  ? "2 mois offerts"
+                  : plan.note}
               </p>
             ) : null}
             <ul className="mt-3">
@@ -75,24 +318,42 @@ export function AbonnementView({ current }: AbonnementViewProps) {
                 </li>
               ))}
             </ul>
-            {!isCurrent && plan.id !== "gratuit" ? (
+            {plan.id !== "gratuit" ? (
               <button
                 type="button"
-                disabled
-                className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] bg-[#1E1E1E] text-sm font-bold text-[#888888]"
+                disabled={isCurrent || loading !== null || !priceId}
+                onClick={() => {
+                  if (!priceId) {
+                    return;
+                  }
+
+                  void goCheckout(priceId, ctaKey);
+                }}
+                className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-[#1E1E1E] disabled:text-[#888888]"
+                style={isCurrent ? undefined : gradient}
               >
-                Passer à {plan.name}
+                {isCurrent
+                  ? "Ton plan"
+                  : loading === ctaKey
+                    ? "Redirection…"
+                    : cta}
               </button>
             ) : null}
           </article>
         );
       })}
 
+      {error ? (
+        <p className="text-center text-sm text-[#FF4444]">{error}</p>
+      ) : null}
+
       <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5">
         <h2 className="text-lg font-bold text-white">QUTE Shop</h2>
         <p className="mt-2 text-sm text-[#888888]">
-          Vêtements et accessoires queer. Les membres QUTE Club profitent de 10%
-          de remise permanente.
+          Vêtements et accessoires queer.
+          {club
+            ? " Ta remise Club de 10% s'appliquera dès l'ouverture."
+            : " Les membres QUTE Club profitent de 10% de remise permanente."}
         </p>
         <button
           type="button"
@@ -104,7 +365,56 @@ export function AbonnementView({ current }: AbonnementViewProps) {
         </button>
       </article>
 
-      <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} />
+      {paiements.length > 0 ? (
+        <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5">
+          <h2 className="text-lg font-bold text-white">Historique</h2>
+          <ul className="mt-3 flex flex-col">
+            {paiements.map((paiement, index) => (
+              <li
+                key={paiement.id}
+                className={`flex items-center justify-between gap-3 py-3 ${
+                  index < paiements.length - 1 ? "border-b border-[#1E1E1E]" : ""
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-white">
+                    {formatMontant(paiement.montant, paiement.devise)}
+                    {paiement.plan ? (
+                      <span className="ml-2 font-normal text-[#888888]">
+                        {paiement.plan}
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="text-xs text-[#888888]">
+                    {formatDate(paiement.created_at)}
+                  </p>
+                </div>
+                {paiement.facture_url ? (
+                  <a
+                    href={paiement.facture_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="shrink-0 text-xs font-bold text-[#FF2D87]"
+                  >
+                    Facture
+                  </a>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ) : null}
+
+      <p className="pb-2 text-center text-[12px] leading-relaxed text-[#888888]">
+        Paiement sécurisé par Stripe · Résiliable à tout moment · CB, Apple Pay,
+        Google Pay, PayPal
+      </p>
+
+      <ShopModal
+        open={shopOpen}
+        onClose={() => setShopOpen(false)}
+        club={club}
+      />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { QuteHub } from "./qute-hub";
 import { createClient } from "@/lib/supabase/server";
+import { estPremium } from "@/lib/subscription";
 import type { Conversation, Match, Profile, Qrush } from "@/types";
 
 type QutePageProps = {
@@ -17,36 +18,46 @@ export default async function QutePage({ searchParams }: QutePageProps) {
     redirect("/login");
   }
 
-  const [{ data: matchRows }, { data: pendingRows }, { data: qrushRows }] =
-    await Promise.all([
-      supabase
-        .from("matchs")
-        .select("*")
-        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("conversations")
-        .select("*")
-        .eq("destinataire_id", user.id)
-        .eq("statut", "en_attente")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("qrushs")
-        .select("*")
-        .eq("receveur_id", user.id)
-        .order("created_at", { ascending: false }),
-    ]);
+  const [
+    { data: matchRows },
+    { data: pendingRows },
+    { data: qrushRows },
+    { data: meRow },
+  ] = await Promise.all([
+    supabase
+      .from("matchs")
+      .select("*")
+      .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("conversations")
+      .select("*")
+      .eq("destinataire_id", user.id)
+      .eq("statut", "en_attente")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("qrushs")
+      .select("*")
+      .eq("receveur_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("profiles")
+      .select("abonnement, abonnement_statut")
+      .eq("id", user.id)
+      .maybeSingle(),
+  ]);
 
   const matches = (matchRows ?? []) as Match[];
   const pending = (pendingRows ?? []) as Conversation[];
   const qrushs = (qrushRows ?? []) as Qrush[];
+  const canSeeQrush = estPremium(meRow);
 
   const otherIds = [
     ...matches.map((match) =>
       match.user1_id === user.id ? match.user2_id : match.user1_id,
     ),
     ...pending.map((conversation) => conversation.initiateur_id).filter(Boolean),
-    ...qrushs.map((qrush) => qrush.envoyeur_id),
+    ...(canSeeQrush ? qrushs.map((qrush) => qrush.envoyeur_id) : []),
   ] as string[];
 
   let profilesById: Record<string, Profile> = {};
@@ -67,7 +78,9 @@ export default async function QutePage({ searchParams }: QutePageProps) {
       currentUserId={user.id}
       matches={matches}
       pending={pending}
-      qrushs={qrushs}
+      qrushs={canSeeQrush ? qrushs : []}
+      qrushCount={qrushs.length}
+      canSeeQrush={canSeeQrush}
       profilesById={profilesById}
       initialTab={searchParams.tab === "qrush" ? "qrush" : undefined}
     />

@@ -10,7 +10,7 @@ import type { Profile } from "@/types";
 
 type MiniProfile = Pick<
   Profile,
-  "id" | "pseudo" | "ville" | "photo_url" | "abonnement"
+  "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "abonnement_statut"
 >;
 
 export function TopBar() {
@@ -32,7 +32,7 @@ export function TopBar() {
 
       const { data } = await supabase
         .from("profiles")
-        .select("id, pseudo, ville, photo_url, abonnement")
+        .select("id, pseudo, ville, photo_url, abonnement, abonnement_statut")
         .eq("id", user.id)
         .maybeSingle();
 
@@ -49,8 +49,9 @@ export function TopBar() {
 
       if (fallback.data) {
         setProfile({
-          ...(fallback.data as Omit<MiniProfile, "abonnement">),
+          ...(fallback.data as Omit<MiniProfile, "abonnement" | "abonnement_statut">),
           abonnement: "gratuit",
+          abonnement_statut: "inactif",
         });
       }
     }

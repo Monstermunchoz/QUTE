@@ -40,16 +40,22 @@ export default async function SalonPage({ params }: SalonPageProps) {
     new Set(messages.map((message) => message.auteur_id)),
   );
 
-  let authors: Record<string, Pick<Profile, "id" | "pseudo" | "photo_url">> = {};
+  let authors: Record<
+    string,
+    Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement">
+  > = {};
 
   if (authorIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, photo_url")
+      .select("id, pseudo, photo_url, abonnement")
       .in("id", authorIds);
 
     authors = Object.fromEntries(
-      ((profiles ?? []) as Pick<Profile, "id" | "pseudo" | "photo_url">[]).map(
+      ((profiles ?? []) as Pick<
+        Profile,
+        "id" | "pseudo" | "photo_url" | "abonnement"
+      >[]).map(
         (profile) => [profile.id, profile],
       ),
     );

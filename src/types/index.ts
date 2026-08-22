@@ -13,6 +13,12 @@ export type Profile = {
   compte_verifie: boolean;
   role: "user" | "moderateur" | "admin";
   abonnement?: "gratuit" | "qute_plus" | "qute_club";
+  abonnement_statut?: "inactif" | "essai" | "actif" | "annule" | "impaye";
+  abonnement_fin?: string | null;
+  essai_utilise?: boolean;
+  stripe_customer_id?: string | null;
+  stripe_subscription_id?: string | null;
+  mode_discret?: boolean;
   identites: string[];
   orientations: string[];
   ce_que_je_cherche: string | null;

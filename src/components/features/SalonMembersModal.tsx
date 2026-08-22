@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Avatar } from "@/components/features/Avatar";
-import { abonnementLabel, isQutePlus } from "@/lib/abonnement";
+import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { createClient } from "@/lib/supabase/client";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
 import type { JeSors, Profile } from "@/types";
@@ -191,11 +191,7 @@ export function SalonMembersModal({
                   {member.jeSors ? (
                     <span className="text-xs font-bold text-[#FF2D87]">🔥</span>
                   ) : null}
-                  {isQutePlus(member.abonnement) ? (
-                    <span className="rounded-[8px] bg-[#1E1E1E] px-2 py-1 text-[10px] font-bold text-[#FF2D87]">
-                      {abonnementLabel(member.abonnement)}
-                    </span>
-                  ) : null}
+                  <BadgeAbonnement abonnement={member.abonnement} />
                 </button>
               </li>
             ))

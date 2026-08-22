@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { Avatar } from "@/components/features/Avatar";
+import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { jeSorsLabel } from "@/lib/utils/je-sors";
 import type { JeSorsStatut, Profile } from "@/types";
 
 type ProfileCardProps = {
-  profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">;
+  profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement">;
   jeSors?: { statut: JeSorsStatut; zone: string | null } | null;
 };
 
@@ -18,6 +19,9 @@ export function ProfileCard({ profile, jeSors }: ProfileCardProps) {
         <Avatar pseudo={profile.pseudo} photoUrl={profile.photo_url} size="md" />
         <div className="min-w-0">
           <p className="truncate font-bold text-white">{profile.pseudo}</p>
+          <div className="mt-1 flex justify-center">
+            <BadgeAbonnement abonnement={profile.abonnement} />
+          </div>
           {jeSors ? (
             <>
               <span className="mt-1 inline-block rounded-[8px] bg-[#FF2D87] px-2 py-1 text-xs font-bold text-white">

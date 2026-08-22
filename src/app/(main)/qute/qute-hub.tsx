@@ -12,6 +12,8 @@ type QuteHubProps = {
   matches: Match[];
   pending: Conversation[];
   qrushs: Qrush[];
+  qrushCount?: number;
+  canSeeQrush?: boolean;
   profilesById: Record<string, Profile>;
   initialTab?: "matchs" | "attente" | "qrush";
 };
@@ -21,6 +23,8 @@ export function QuteHub({
   matches,
   pending,
   qrushs,
+  qrushCount,
+  canSeeQrush = true,
   profilesById,
   initialTab,
 }: QuteHubProps) {
@@ -59,9 +63,9 @@ export function QuteHub({
           }`}
         >
           QRUSH
-          {qrushs.length > 0 ? (
+          { (qrushCount ?? qrushs.length) > 0 ? (
             <span className="ml-2 rounded-full bg-[#FF4444] px-2 py-0.5 text-[10px] text-white">
-              {qrushs.length}
+              {qrushCount ?? qrushs.length}
             </span>
           ) : null}
         </button>
@@ -82,7 +86,26 @@ export function QuteHub({
       </div>
 
       {tab === "qrush" ? (
-        qrushs.length === 0 ? (
+        !canSeeQrush ? (
+          <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-6 text-center">
+            <p className="text-lg font-bold text-white">
+              {(qrushCount ?? 0) > 0
+                ? `${qrushCount} personne${(qrushCount ?? 0) > 1 ? "s t'ont" : " t'a"} QRUSHé`
+                : "Vois qui t'a QRUSHé"}
+            </p>
+            <p className="mt-2 text-sm text-[#888888]">
+              Les profils restent masqués sur l&apos;offre Gratuit. Passe à
+              QUTE+ pour les découvrir.
+            </p>
+            <Link
+              href="/abonnement"
+              className="mt-4 flex h-[52px] items-center justify-center rounded-[12px] text-sm font-bold text-white"
+              style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
+            >
+              Découvrir QUTE+
+            </Link>
+          </article>
+        ) : qrushs.length === 0 ? (
           <p className="pt-16 text-center text-[#888888]">
             Personne ne t&apos;a encore QRUSHé.
           </p>

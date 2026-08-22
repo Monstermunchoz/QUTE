@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ExplorerTabs } from "./explorer-tabs";
 import { createClient } from "@/lib/supabase/server";
-import { isQutePlus } from "@/lib/abonnement";
+import { estPremium } from "@/lib/subscription";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
 import type {
   Evenement,
@@ -36,7 +36,9 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
 
   let query = supabase
     .from("profiles")
-    .select("id, pseudo, ville, photo_url, photo_status")
+    .select(
+      "id, pseudo, ville, zone, photo_url, photo_status, abonnement, identites, date_naissance",
+    )
     .neq("id", user.id)
     .not("photo_status", "eq", "rejected")
     .order("created_at", { ascending: false })
@@ -68,7 +70,11 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       .gte("date_debut", nowIso)
       .order("date_debut", { ascending: true }),
     supabase.from("je_sors").select("user_id, statut, zone, expires_at").gt("expires_at", nowIso),
-    supabase.from("profiles").select("abonnement").eq("id", user.id).maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("abonnement, abonnement_statut")
+      .eq("id", user.id)
+      .maybeSingle(),
   ]);
 
   const evenements = (eventRows ?? []) as Evenement[];
@@ -87,7 +93,15 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
 
   const profiles = (profileRows ?? []) as Pick<
     Profile,
-    "id" | "pseudo" | "ville" | "photo_url" | "photo_status"
+    | "id"
+    | "pseudo"
+    | "ville"
+    | "zone"
+    | "photo_url"
+    | "photo_status"
+    | "abonnement"
+    | "identites"
+    | "date_naissance"
   >[];
 
   const requestedTab = searchParams.tab;
@@ -115,9 +129,8 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       participations={participations}
       currentUserId={user.id}
       initialTab={initialTab}
-      canCreateSalon={isQutePlus(
-        (meRow as { abonnement?: string } | null)?.abonnement,
-      )}
+      canCreateSalon={estPremium(meRow)}
+      canFilter={estPremium(meRow)}
       jeSorsByUserId={jeSorsByUserId}
     />
   );

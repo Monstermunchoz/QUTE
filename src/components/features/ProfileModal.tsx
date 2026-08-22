@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
 import { BadgeList } from "@/components/ui/ChipSelect";
+import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { Button } from "@/components/ui/Button";
-import { abonnementLabel, isQutePlus } from "@/lib/abonnement";
 import { friendLabel, isFriendLocked } from "@/lib/amis";
 import { canSeeChamp } from "@/lib/profile/options";
+import { qrushDuJour, quotaQrushAtteint } from "@/lib/qrush";
 import { createClient } from "@/lib/supabase/client";
 import { getAge } from "@/lib/utils/age";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
@@ -186,6 +187,21 @@ export function ProfileModal({
     setLoading("qrush");
     setError(null);
     const supabase = createClient();
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("abonnement, abonnement_statut")
+      .eq("id", currentUserId)
+      .maybeSingle();
+    const used = await qrushDuJour(supabase, currentUserId);
+
+    if (quotaQrushAtteint(me, used)) {
+      setLoading(null);
+      setError(
+        "Tu as utilisé tes 20 QRUSH du jour. Passe à QUTE+ pour en envoyer sans limite.",
+      );
+      return;
+    }
+
     const { error: insertError } = await supabase.from("qrushs").insert({
       envoyeur_id: currentUserId,
       receveur_id: profileId,
@@ -193,7 +209,11 @@ export function ProfileModal({
     setLoading(null);
 
     if (insertError) {
-      setError(insertError.message);
+      setError(
+        insertError.message.includes("quota_qrush")
+          ? "Tu as utilisé tes 20 QRUSH du jour. Passe à QUTE+ pour en envoyer sans limite."
+          : insertError.message,
+      );
       return;
     }
 
@@ -367,11 +387,7 @@ export function ProfileModal({
               {location || "Lyon Métropole"}
             </p>
             <div className="mt-2 flex flex-wrap justify-center gap-2">
-              {isQutePlus(profile.abonnement) ? (
-                <span className="rounded-[8px] bg-[#FF2D87] px-2 py-1 text-[10px] font-bold text-white">
-                  {abonnementLabel(profile.abonnement)}
-                </span>
-              ) : null}
+              <BadgeAbonnement abonnement={profile.abonnement} />
               {jeSors ? (
                 <span className="rounded-[8px] bg-[#FF2D87] px-2 py-1 text-xs font-bold text-white">
                   🔥 Sort ce soir

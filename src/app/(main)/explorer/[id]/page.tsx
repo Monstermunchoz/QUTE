@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
 import { BackButton } from "@/components/ui/BackButton";
 import { BadgeList } from "@/components/ui/ChipSelect";
-import { abonnementLabel, isQutePlus } from "@/lib/abonnement";
+import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { canSeeChamp } from "@/lib/profile/options";
 import { createClient } from "@/lib/supabase/server";
 import { getAge } from "@/lib/utils/age";
@@ -170,11 +170,7 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">
-          {isQutePlus(profile.abonnement) ? (
-            <span className="rounded-[8px] bg-[#FF2D87] px-2 py-1 text-xs font-bold text-white">
-              {abonnementLabel(profile.abonnement)}
-            </span>
-          ) : null}
+          <BadgeAbonnement abonnement={profile.abonnement} />
           {jeSors ? (
             <span className="rounded-[8px] bg-[#FF2D87] px-2 py-1 text-xs font-bold text-white">
               🔥 Sort ce soir

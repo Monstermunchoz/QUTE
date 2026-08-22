@@ -5,10 +5,11 @@ import { Avatar } from "@/components/features/Avatar";
 import { ProfileModal } from "@/components/features/ProfileModal";
 import { SalonMembersModal } from "@/components/features/SalonMembersModal";
 import { BackButton } from "@/components/ui/BackButton";
+import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile, Salon, SalonMessage } from "@/types";
 
-type Author = Pick<Profile, "id" | "pseudo" | "photo_url">;
+type Author = Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement">;
 
 type SalonRoomProps = {
   salon: Salon;
@@ -79,7 +80,7 @@ export function SalonRoom({
           if (!authorsRef.current[message.auteur_id]) {
             void supabase
               .from("profiles")
-              .select("id, pseudo, photo_url")
+              .select("id, pseudo, photo_url, abonnement")
               .eq("id", message.auteur_id)
               .maybeSingle()
               .then(({ data }) => {
@@ -187,7 +188,14 @@ export function SalonRoom({
                   />
                 </button>
                 <div className={`min-w-0 ${mine ? "items-end text-right" : ""}`}>
-                  <p className="text-sm font-bold text-white">{pseudo}</p>
+                  <p
+                    className={`flex items-center gap-1.5 text-sm font-bold text-white ${
+                      mine ? "justify-end" : ""
+                    }`}
+                  >
+                    {pseudo}
+                    <BadgeAbonnement abonnement={author?.abonnement} />
+                  </p>
                   <p
                     className={`chat-bubble inline-block ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
                   >

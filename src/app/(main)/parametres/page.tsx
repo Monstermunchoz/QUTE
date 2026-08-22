@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { PageTitle } from "@/components/ui/BackButton";
 import { Switch } from "@/components/ui/Switch";
+import { createClient } from "@/lib/supabase/client";
+import { estPremium } from "@/lib/subscription";
+import Link from "next/link";
 
 export default function ParametresPage() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -64,6 +67,75 @@ export default function ParametresPage() {
           onToggle={() => setTheme(dark ? "light" : "dark")}
         />
       </section>
+
+      <ModeDiscretSection />
     </main>
+  );
+}
+
+function ModeDiscretSection() {
+  const [premium, setPremium] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    async function load() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        return;
+      }
+
+      setUserId(user.id);
+      const { data } = await supabase
+        .from("profiles")
+        .select("abonnement, abonnement_statut, mode_discret")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      setPremium(estPremium(data));
+      setChecked(Boolean(data?.mode_discret));
+    }
+
+    void load();
+  }, []);
+
+  async function toggle() {
+    if (!premium || !userId) {
+      return;
+    }
+
+    const next = !checked;
+    setChecked(next);
+    const supabase = createClient();
+    await supabase.from("profiles").update({ mode_discret: next }).eq("id", userId);
+  }
+
+  return (
+    <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)]">
+      <h2 className="px-4 pt-4 text-sm font-bold text-[var(--text)]">
+        Mode discret
+      </h2>
+      <p className="px-4 pb-2 text-sm text-[var(--text-muted)]">
+        Navigue sans apparaître en ligne. Réservé à QUTE+.
+      </p>
+      {premium ? (
+        <Switch label="Mode discret" checked={checked} onToggle={() => void toggle()} />
+      ) : (
+        <div className="px-4 pb-4">
+          <Link
+            href="/abonnement"
+            className="flex h-[52px] items-center justify-center rounded-[12px] text-sm font-bold text-white"
+            style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
+          >
+            Débloquer avec QUTE+
+          </Link>
+        </div>
+      )}
+    </section>
   );
 }

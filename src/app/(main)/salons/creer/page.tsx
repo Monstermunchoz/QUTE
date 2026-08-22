@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { PageTitle } from "@/components/ui/BackButton";
 import { CreateSalonForm } from "./create-salon-form";
-import { isQutePlus } from "@/lib/abonnement";
+import { estPremium } from "@/lib/subscription";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function CreateSalonPage() {
@@ -16,11 +16,11 @@ export default async function CreateSalonPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("abonnement")
+    .select("abonnement, abonnement_statut")
     .eq("id", user.id)
     .maybeSingle();
 
-  if (!isQutePlus((profile as { abonnement?: string } | null)?.abonnement)) {
+  if (!estPremium(profile)) {
     redirect("/abonnement");
   }
 

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/client";
 import { friendLabel, isFriendLocked } from "@/lib/amis";
 import { openConversation } from "@/app/(main)/qute/actions";
+import { qrushDuJour, quotaQrushAtteint } from "@/lib/qrush";
 import type { Ami, Conversation } from "@/types";
 
 type ProfileActionsProps = {
@@ -71,6 +72,21 @@ export function ProfileActions({
       return;
     }
 
+    const { data: me } = await supabase
+      .from("profiles")
+      .select("abonnement, abonnement_statut")
+      .eq("id", user.id)
+      .maybeSingle();
+    const used = await qrushDuJour(supabase, user.id);
+
+    if (quotaQrushAtteint(me, used)) {
+      setQrushLoading(false);
+      setError(
+        "Tu as utilisé tes 20 QRUSH du jour. Passe à QUTE+ pour en envoyer sans limite.",
+      );
+      return;
+    }
+
     const { error: insertError } = await supabase.from("qrushs").insert({
       envoyeur_id: user.id,
       receveur_id: profileId,
@@ -78,7 +94,11 @@ export function ProfileActions({
 
     if (insertError) {
       setQrushLoading(false);
-      setError(insertError.message);
+      setError(
+        insertError.message.includes("quota_qrush")
+          ? "Tu as utilisé tes 20 QRUSH du jour. Passe à QUTE+ pour en envoyer sans limite."
+          : insertError.message,
+      );
       return;
     }
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageTitle } from "@/components/ui/BackButton";
-import { isQutePlus } from "@/lib/abonnement";
+import { estPremium } from "@/lib/subscription";
 import { createClient } from "@/lib/supabase/server";
 import { CreateEventForm } from "./create-event-form";
 import type { Lieu } from "@/types";
@@ -18,11 +18,11 @@ export default async function CreerPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("abonnement")
+    .select("abonnement, abonnement_statut")
     .eq("id", user.id)
     .maybeSingle();
 
-  if (!isQutePlus((profile as { abonnement?: string } | null)?.abonnement)) {
+  if (!estPremium(profile)) {
     return (
       <main className="flex flex-col gap-4">
         <PageTitle title="Créer un événement" />

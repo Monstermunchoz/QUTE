@@ -5,9 +5,10 @@ import { useEffect } from "react";
 type ShopModalProps = {
   open: boolean;
   onClose: () => void;
+  club?: boolean;
 };
 
-export function ShopModal({ open, onClose }: ShopModalProps) {
+export function ShopModal({ open, onClose, club = false }: ShopModalProps) {
   useEffect(() => {
     if (!open) {
       return;
@@ -73,6 +74,9 @@ export function ShopModal({ open, onClose }: ShopModalProps) {
           <p className="mt-3 text-sm leading-relaxed text-[#888888]">
             Le QUTE Shop arrive bientôt. Vêtements et accessoires queer, livrés
             partout en France.
+            {club
+              ? " Ta remise Club de 10% s'appliquera automatiquement."
+              : ""}
           </p>
           <button
             type="button"
