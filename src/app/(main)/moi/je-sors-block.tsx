@@ -207,7 +207,7 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
 
       {open ? (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 px-4 py-6 sm:items-center"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/70 px-4 py-6 sm:items-center"
           role="dialog"
           aria-modal="true"
           aria-labelledby="je-sors-title"

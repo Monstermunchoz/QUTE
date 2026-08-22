@@ -345,7 +345,7 @@ export function ProfileModal({
     mine || canSeeChamp(profile?.visibilite_orientations, isMatch);
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
       <button
         type="button"
         aria-label="Fermer"

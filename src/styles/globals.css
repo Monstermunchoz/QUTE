@@ -459,11 +459,31 @@ img.logo-icon-shop {
   max-width: 100%;
   background: var(--qute-black);
   font-family: inherit;
+  z-index: 0 !important;
+}
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-pane,
+.leaflet-overlay-pane,
+.leaflet-shadow-pane,
+.leaflet-marker-pane,
+.leaflet-tooltip-pane,
+.leaflet-popup-pane {
+  z-index: 0 !important;
+}
+
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 1 !important;
 }
 
 .top-bar {
   padding-top: env(safe-area-inset-top);
   height: calc(64px + env(safe-area-inset-top));
+  z-index: 30;
 }
 
 .bottom-bar {

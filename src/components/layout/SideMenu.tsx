@@ -146,14 +146,14 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
   return (
     <>
       {open ? (
-    <div className="fixed inset-0 z-50">
+        <>
       <button
         type="button"
         aria-label="Fermer le menu"
-        className="absolute inset-0 bg-black/60"
+        className="fixed inset-0 z-40 bg-black/60"
         onClick={onClose}
       />
-      <aside className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-white/10 bg-[#0D0D0D]">
+      <aside className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col overflow-y-auto border-r border-white/10 bg-[#0D0D0D]">
         <div className="flex items-start justify-between bg-white/[0.04] px-5 py-5">
           <div className="flex flex-col items-start gap-2">
             <Avatar
@@ -242,7 +242,7 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
           </div>
         </nav>
       </aside>
-    </div>
+        </>
       ) : null}
       <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} club={club} />
     </>

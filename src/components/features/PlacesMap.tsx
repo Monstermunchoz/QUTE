@@ -33,7 +33,7 @@ export function PlacesMap({
     <MapContainer
       center={center}
       zoom={zoom}
-      className="h-56 w-full overflow-hidden rounded-[16px] border border-[#1E1E1E]"
+      className="relative z-0 h-56 w-full overflow-hidden rounded-[16px] border border-[#1E1E1E]"
       scrollWheelZoom={interactive}
       dragging={interactive}
       doubleClickZoom={interactive}

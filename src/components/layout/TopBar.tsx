@@ -61,7 +61,7 @@ export function TopBar() {
 
   return (
     <>
-      <header className="top-bar fixed inset-x-0 top-0 z-40 border-b border-[var(--border)] bg-[var(--bg)]">
+      <header className="top-bar fixed inset-x-0 top-0 z-30 border-b border-[var(--border)] bg-[var(--bg)]">
         <div className="mx-auto grid h-16 w-full max-w-[900px] grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8">
           <button
             type="button"

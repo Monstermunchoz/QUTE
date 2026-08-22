@@ -7,7 +7,7 @@ export default function AuthLayout({
 }>) {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#000000]">
-      <header className="top-bar fixed inset-x-0 top-0 z-40 border-b border-[#1E1E1E] bg-[#000000]">
+      <header className="top-bar fixed inset-x-0 top-0 z-30 border-b border-[#1E1E1E] bg-[#000000]">
         <div className="relative mx-auto flex h-16 w-full max-w-lg items-center justify-center px-5">
           <Link
             href="/"
