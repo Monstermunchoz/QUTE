@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 import { PageTitle } from "@/components/ui/BackButton";
+import { OpenMapsButton } from "@/components/ui/OpenMapsButton";
 import { createClient } from "@/lib/supabase/server";
 import type { Lieu } from "@/types";
 
@@ -58,6 +59,8 @@ export default async function LieuPage({ params }: LieuPageProps) {
           interactive={false}
         />
       ) : null}
+
+      <OpenMapsButton nom={lieu.nom} adresse={lieu.adresse} />
 
       {lieu.site_web ? (
         <a

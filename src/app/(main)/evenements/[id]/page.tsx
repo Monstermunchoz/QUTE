@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
 import { PageTitle } from "@/components/ui/BackButton";
+import { OpenMapsButton } from "@/components/ui/OpenMapsButton";
 import { eventCategoryLabel } from "@/lib/events/categories";
 import { formatEventDate } from "@/lib/utils/event-date";
 import { createClient } from "@/lib/supabase/server";
@@ -111,6 +112,8 @@ export default async function EventPage({ params }: EventPageProps) {
 
   const hasCoordinates = lieu?.latitude != null && lieu?.longitude != null;
   const lieuLine = [event.lieu_nom, event.adresse].filter(Boolean).join(" · ");
+  const mapsNom = lieu?.nom || event.lieu_nom || event.titre;
+  const mapsAdresse = event.adresse || lieu?.adresse || "";
 
   return (
     <main className="flex flex-col gap-4">
@@ -144,6 +147,8 @@ export default async function EventPage({ params }: EventPageProps) {
           interactive={false}
         />
       ) : null}
+
+      <OpenMapsButton nom={mapsNom} adresse={mapsAdresse} />
 
       {event.statut === "publie" ? (
         <ParticipationActions

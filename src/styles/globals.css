@@ -719,6 +719,7 @@ img.logo-icon-shop {
 
 .leaflet-popup-content {
   margin: 12px;
+  min-width: 220px;
 }
 
 .leaflet-popup-content a {

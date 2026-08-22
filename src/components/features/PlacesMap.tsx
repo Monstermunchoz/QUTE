@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { OpenMapsButton } from "@/components/ui/OpenMapsButton";
 import type { Lieu } from "@/types";
 
 const LYON: [number, number] = [45.764, 4.8357];
@@ -57,6 +58,12 @@ export function PlacesMap({
               {lieu.categorie ? (
                 <p className="text-xs text-[#FF2D87]">{lieu.categorie}</p>
               ) : null}
+              {lieu.adresse ? (
+                <p className="mt-1 text-xs text-[#888888]">{lieu.adresse}</p>
+              ) : null}
+              <div className="mt-3">
+                <OpenMapsButton nom={lieu.nom} adresse={lieu.adresse} />
+              </div>
               <Link
                 href={`/lieux/${lieu.id}`}
                 className="mt-2 inline-block text-sm font-bold text-white underline"
