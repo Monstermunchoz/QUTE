@@ -62,20 +62,20 @@ export default async function AccueilPage() {
   const outingIds = jeSors.slice(0, 10).map((row) => row.user_id);
   let profilesById: Record<
     string,
-    Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">
+    Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role">
   > = {};
 
   if (outingIds.length > 0) {
     const { data: outingProfiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, ville, photo_url")
+      .select("id, pseudo, ville, photo_url, abonnement, role")
       .in("id", outingIds);
 
     profilesById = Object.fromEntries(
       (
         (outingProfiles ?? []) as Pick<
           Profile,
-          "id" | "pseudo" | "ville" | "photo_url"
+          "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role"
         >[]
       ).map((item) => [item.id, item]),
     );

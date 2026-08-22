@@ -233,7 +233,14 @@ export function AbonnementView({
                     ? "Mettre à jour"
                     : "Gérer mon abonnement"}
               </button>
-            ) : null}
+            ) : (
+              <a
+                href="mailto:bonjour@qute.app"
+                className="mt-4 flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-sm font-bold text-white"
+              >
+                Contacter le support
+              </a>
+            )}
           </div>
         </article>
       )}

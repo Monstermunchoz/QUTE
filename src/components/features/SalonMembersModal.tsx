@@ -9,7 +9,7 @@ import type { JeSors, Profile } from "@/types";
 
 type Member = Pick<
   Profile,
-  "id" | "pseudo" | "ville" | "photo_url" | "abonnement"
+  "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role"
 > & {
   jeSors: boolean;
 };
@@ -77,7 +77,7 @@ export function SalonMembersModal({
       const [{ data: profiles }, { data: jeSorsRows }] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id, pseudo, ville, photo_url, abonnement")
+          .select("id, pseudo, ville, photo_url, abonnement, role")
           .in("id", orderedIds),
         supabase
           .from("je_sors")
@@ -96,7 +96,7 @@ export function SalonMembersModal({
         (
           (profiles ?? []) as Pick<
             Profile,
-            "id" | "pseudo" | "ville" | "photo_url" | "abonnement"
+            "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role"
           >[]
         ).map((profile) => [profile.id, profile]),
       );
@@ -191,7 +191,10 @@ export function SalonMembersModal({
                   {member.jeSors ? (
                     <span className="text-xs font-bold text-[#FF2D87]">🔥</span>
                   ) : null}
-                  <BadgeAbonnement abonnement={member.abonnement} />
+                  <BadgeAbonnement
+                    abonnement={member.abonnement}
+                    role={member.role}
+                  />
                 </button>
               </li>
             ))

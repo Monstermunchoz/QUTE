@@ -35,6 +35,7 @@ type ExplorerTabsProps = {
     | "zone"
     | "photo_url"
     | "abonnement"
+    | "role"
     | "identites"
     | "date_naissance"
   >[];

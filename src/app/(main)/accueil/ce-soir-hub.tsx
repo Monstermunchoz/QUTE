@@ -8,7 +8,7 @@ import { eventCategoryLabel } from "@/lib/events/categories";
 import type { Evenement, JeSorsStatut, Profile, Salon } from "@/types";
 
 type Outing = {
-  profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">;
+  profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role">;
   statut: JeSorsStatut;
   zone: string | null;
   lieu: { id: string; nom: string } | null;

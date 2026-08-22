@@ -9,7 +9,7 @@ import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile, Salon, SalonMessage } from "@/types";
 
-type Author = Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement">;
+type Author = Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement" | "role">;
 
 type SalonRoomProps = {
   salon: Salon;
@@ -80,7 +80,7 @@ export function SalonRoom({
           if (!authorsRef.current[message.auteur_id]) {
             void supabase
               .from("profiles")
-              .select("id, pseudo, photo_url, abonnement")
+              .select("id, pseudo, photo_url, abonnement, role")
               .eq("id", message.auteur_id)
               .maybeSingle()
               .then(({ data }) => {
@@ -194,7 +194,10 @@ export function SalonRoom({
                     }`}
                   >
                     {pseudo}
-                    <BadgeAbonnement abonnement={author?.abonnement} />
+                    <BadgeAbonnement
+                      abonnement={author?.abonnement}
+                      role={author?.role}
+                    />
                   </p>
                   <p
                     className={`chat-bubble inline-block ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}

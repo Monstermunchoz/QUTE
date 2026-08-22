@@ -5,7 +5,7 @@ import { jeSorsLabel } from "@/lib/utils/je-sors";
 import type { JeSorsStatut, Profile } from "@/types";
 
 type ProfileCardProps = {
-  profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement">;
+  profile: Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role">;
   jeSors?: { statut: JeSorsStatut; zone: string | null } | null;
 };
 
@@ -20,7 +20,7 @@ export function ProfileCard({ profile, jeSors }: ProfileCardProps) {
         <div className="min-w-0">
           <p className="truncate font-bold text-white">{profile.pseudo}</p>
           <div className="mt-1 flex justify-center">
-            <BadgeAbonnement abonnement={profile.abonnement} />
+            <BadgeAbonnement abonnement={profile.abonnement} role={profile.role} />
           </div>
           {jeSors ? (
             <>

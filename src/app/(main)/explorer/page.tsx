@@ -37,7 +37,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
   let query = supabase
     .from("profiles")
     .select(
-      "id, pseudo, ville, zone, photo_url, photo_status, abonnement, identites, date_naissance",
+      "id, pseudo, ville, zone, photo_url, photo_status, abonnement, role, identites, date_naissance",
     )
     .neq("id", user.id)
     .not("photo_status", "eq", "rejected")
@@ -100,6 +100,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     | "photo_url"
     | "photo_status"
     | "abonnement"
+    | "role"
     | "identites"
     | "date_naissance"
   >[];

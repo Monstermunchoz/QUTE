@@ -387,7 +387,7 @@ export function ProfileModal({
               {location || "Lyon Métropole"}
             </p>
             <div className="mt-2 flex flex-wrap justify-center gap-2">
-              <BadgeAbonnement abonnement={profile.abonnement} />
+              <BadgeAbonnement abonnement={profile.abonnement} role={profile.role} />
               {jeSors ? (
                 <span className="rounded-[8px] bg-[#FF2D87] px-2 py-1 text-xs font-bold text-white">
                   🔥 Sort ce soir

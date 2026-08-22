@@ -16,7 +16,7 @@ type SideMenuProps = {
   onClose: () => void;
   profile: Pick<
     Profile,
-    "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "abonnement_statut"
+    "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "abonnement_statut" | "role"
   > | null;
 };
 
@@ -167,7 +167,10 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
             <p className="text-sm text-[#888888]">
               {profile?.ville || "Lyon Métropole"}
             </p>
-            <BadgeAbonnement abonnement={profile?.abonnement} />
+            <BadgeAbonnement
+              abonnement={profile?.abonnement}
+              role={profile?.role}
+            />
           </div>
           <button
             type="button"
