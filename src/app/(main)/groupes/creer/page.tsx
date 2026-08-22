@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { CreateGroupeForm } from "./create-groupe-form";
+import { PageTitle } from "@/components/ui/BackButton";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function CreateGroupePage() {
@@ -22,7 +23,7 @@ export default async function CreateGroupePage() {
 
   return (
     <main className="flex flex-col gap-4 pb-4">
-      <h1 className="text-2xl font-bold text-white">Créer un groupe</h1>
+      <PageTitle title="Créer un groupe" />
       {verified ? (
         <CreateGroupeForm />
       ) : (

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { InterestButton } from "./interest-button";
 import { eventCategoryLabel } from "@/lib/events/categories";
@@ -11,13 +14,34 @@ type EventCardProps = {
   myStatut: ParticipationStatut | null;
 };
 
+function isGoing(statut: ParticipationStatut | null) {
+  return statut === "interesse" || statut === "participe";
+}
+
 export function EventCard({
   event,
   interestedCount,
   currentUserId,
   myStatut,
 }: EventCardProps) {
+  const [count, setCount] = useState(interestedCount);
+  const [statut, setStatut] = useState(myStatut);
   const lieuLine = [event.lieu_nom, event.adresse].filter(Boolean).join(" · ");
+
+  function onStatusChange(next: ParticipationStatut) {
+    setCount((current) => {
+      const was = isGoing(statut);
+      const now = isGoing(next);
+      if (!was && now) {
+        return current + 1;
+      }
+      if (was && !now) {
+        return Math.max(0, current - 1);
+      }
+      return current;
+    });
+    setStatut(next);
+  }
 
   return (
     <article className="flex flex-col gap-3 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4">
@@ -31,13 +55,14 @@ export function EventCard({
           </span>
         ) : null}
         <p className="text-sm text-[#888888]">
-          {interestedCount} intéressé{interestedCount > 1 ? "s" : ""}
+          {count} intéressé{count > 1 ? "s" : ""}
         </p>
       </Link>
       <InterestButton
         evenementId={event.id}
         currentUserId={currentUserId}
-        initialStatut={myStatut}
+        initialStatut={statut}
+        onStatusChange={onStatusChange}
       />
     </article>
   );

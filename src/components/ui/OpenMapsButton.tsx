@@ -5,7 +5,7 @@ type OpenMapsButtonProps = {
   adresse?: string | null;
 };
 
-export function openMaps(adresse: string, nom: string) {
+export function openMaps(nom: string, adresse: string) {
   const query = encodeURIComponent(`${nom} ${adresse}`.trim());
   window.open(
     `https://www.google.com/maps/search/?api=1&query=${query}`,
@@ -46,7 +46,7 @@ export function OpenMapsButton({ nom, adresse }: OpenMapsButtonProps) {
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        openMaps(address, name);
+        openMaps(name, address);
       }}
       className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[12px] border border-[#1E1E1E] bg-transparent text-base font-bold tracking-wide text-white"
     >

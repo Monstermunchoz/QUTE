@@ -9,11 +9,13 @@ type InterestButtonProps = {
   evenementId: string;
   currentUserId: string;
   initialStatut: ParticipationStatut | null;
+  onStatusChange?: (statut: ParticipationStatut) => void;
 };
 
 export function InterestButton({
   evenementId,
   initialStatut,
+  onStatusChange,
 }: InterestButtonProps) {
   const router = useRouter();
   const [statut, setStatut] = useState(initialStatut);
@@ -28,6 +30,8 @@ export function InterestButton({
 
     if (!result.error) {
       setStatut("interesse");
+      onStatusChange?.("interesse");
+      window.dispatchEvent(new Event("qute:ce-soir-changed"));
       router.refresh();
     }
   }

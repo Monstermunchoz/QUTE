@@ -80,14 +80,21 @@ export function SalonRoom({
           if (!authorsRef.current[message.auteur_id]) {
             void supabase
               .from("profiles")
-              .select("id, pseudo, photo_url, abonnement, role")
+              .select("id, pseudo, photo_url, photo_status, abonnement, role")
               .eq("id", message.auteur_id)
               .maybeSingle()
               .then(({ data }) => {
                 if (data) {
+                  const row = data as Author & { photo_status?: string };
                   setAuthors((current) => ({
                     ...current,
-                    [data.id]: data as Author,
+                    [row.id]: {
+                      id: row.id,
+                      pseudo: row.pseudo,
+                      photo_url: row.photo_status === "approved" ? row.photo_url : null,
+                      abonnement: row.abonnement,
+                      role: row.role,
+                    },
                   }));
                 }
               });
@@ -206,11 +213,11 @@ export function SalonRoom({
                     />
                   </p>
                   <p
-                    className={`chat-bubble inline-block !mx-0 !max-w-full ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
+                    className={`chat-bubble ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
                   >
                     {message.contenu}
                   </p>
-                  <p className="chat-time !mx-0">{formatTime(message.created_at)}</p>
+                  <p className="chat-time">{formatTime(message.created_at)}</p>
                 </div>
               </div>
             );

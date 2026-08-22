@@ -61,6 +61,25 @@ export default function RegisterPage() {
       return;
     }
 
+    if (turnstileEnabled) {
+      const captcha = await fetch("/api/auth/verify-turnstile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+      const captchaPayload = (await captcha.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+      } | null;
+
+      if (!captcha.ok || !captchaPayload?.ok) {
+        setFormError(captchaPayload?.error ?? "Captcha invalide.");
+        turnstileRef.current?.reset();
+        setTurnstileToken("");
+        return;
+      }
+    }
+
     const { url, anonKey } = getPublicSupabaseEnv();
 
     if (!url || !anonKey) {
@@ -83,7 +102,7 @@ export default function RegisterPage() {
       } | null;
 
       if (banPayload?.banni) {
-        setFormError("Cette adresse email a été bannie de QUTE.");
+        setFormError("Cette adresse ne peut pas être utilisée.");
         return;
       }
     } catch (banCheckError) {
@@ -108,7 +127,7 @@ export default function RegisterPage() {
         error.message.toLowerCase().includes("banned");
       setFormError(
         banned
-          ? "Cette adresse email a été bannie de QUTE."
+          ? "Cette adresse ne peut pas être utilisée."
           : error.message,
       );
       return;

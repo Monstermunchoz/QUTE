@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/ui/BackButton";
 import { ShopModal } from "@/components/ui/ShopModal";
@@ -190,11 +191,10 @@ export function AbonnementView({
         redirect?: string;
       } | null;
 
-      if (!response.ok || !payload?.url) {
+      if (!payload?.url) {
         console.error("[portal]", response.status, payload);
         setLoading(null);
-        setError(payload?.error ?? "Aucun abonnement actif via Stripe.");
-        router.replace(payload?.redirect ?? "/abonnement");
+        setError("Aucun abonnement géré par Stripe pour ce compte.");
         return;
       }
 
@@ -202,8 +202,7 @@ export function AbonnementView({
     } catch (err) {
       console.error("[portal]", err);
       setLoading(null);
-      setError("Aucun abonnement actif via Stripe.");
-      router.replace("/abonnement");
+      setError("Aucun abonnement géré par Stripe pour ce compte.");
     }
   }
 
@@ -430,7 +429,14 @@ export function AbonnementView({
       })}
 
       {error ? (
-        <p className="text-center text-sm text-[#FF4444]">{error}</p>
+        <p className="text-center text-sm text-[#FF4444]">
+          {error}{" "}
+          {error.includes("Stripe") ? (
+            <Link href="/aide" className="font-bold text-[#FF2D87]">
+              Aide
+            </Link>
+          ) : null}
+        </p>
       ) : null}
 
       <article className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5">

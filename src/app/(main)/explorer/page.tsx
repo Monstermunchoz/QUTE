@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { ExplorerTabs } from "./explorer-tabs";
 import { createClient } from "@/lib/supabase/server";
+import { publicPhotoUrl } from "@/lib/photos";
 import { estPremium } from "@/lib/subscription";
 import { eventOverlapsParisDay } from "@/lib/utils/event-date";
 import { isJeSorsActive, parisDayBounds } from "@/lib/utils/je-sors";
@@ -115,19 +116,24 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     participations = (participationRows ?? []) as Participation[];
   }
 
-  const profiles = (profileRows ?? []) as Pick<
-    Profile,
-    | "id"
-    | "pseudo"
-    | "ville"
-    | "zone"
-    | "photo_url"
-    | "photo_status"
-    | "abonnement"
-    | "role"
-    | "identites"
-    | "date_naissance"
-  >[];
+  const profiles = (
+    (profileRows ?? []) as Pick<
+      Profile,
+      | "id"
+      | "pseudo"
+      | "ville"
+      | "zone"
+      | "photo_url"
+      | "photo_status"
+      | "abonnement"
+      | "role"
+      | "identites"
+      | "date_naissance"
+    >[]
+  ).map((profile) => ({
+    ...profile,
+    photo_url: publicPhotoUrl(profile.photo_status, profile.photo_url),
+  }));
 
   const likeCounts: Record<string, number> = {};
 

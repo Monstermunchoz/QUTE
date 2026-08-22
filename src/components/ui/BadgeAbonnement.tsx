@@ -4,7 +4,7 @@ type BadgeAbonnementProps = {
 };
 
 const pill =
-  "inline-flex items-center rounded-[20px] px-2 py-[3px] text-[11px] font-bold leading-none";
+  "inline-flex items-center rounded-[20px] px-2 py-[3px] text-[11px] font-bold leading-none tracking-[0.08em]";
 
 export function BadgeAbonnement({ abonnement, role }: BadgeAbonnementProps) {
   if (role === "admin") {
@@ -30,7 +30,7 @@ export function BadgeAbonnement({ abonnement, role }: BadgeAbonnementProps) {
         className={`${pill} text-[#FFB800]`}
         style={{ background: "transparent", border: "1px solid #FFB800" }}
       >
-        ✦ QUTE Club
+        ✦ Club
       </span>
     );
   }
@@ -38,7 +38,7 @@ export function BadgeAbonnement({ abonnement, role }: BadgeAbonnementProps) {
   if (abonnement === "qute_plus") {
     return (
       <span
-        className={`${pill} tracking-[0.08em] text-[#FF2D87]`}
+        className={`${pill} text-[#FF2D87]`}
         style={{ background: "transparent", border: "1px solid #FF2D87" }}
       >
         QUTE+

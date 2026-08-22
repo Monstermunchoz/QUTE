@@ -9,6 +9,7 @@ type ParticipationActionsProps = {
   evenementId: string;
   currentUserId: string;
   initialStatut: ParticipationStatut | null;
+  initialCount: number;
 };
 
 const ACTIONS: { id: ParticipationStatut; label: string }[] = [
@@ -17,12 +18,18 @@ const ACTIONS: { id: ParticipationStatut; label: string }[] = [
   { id: "absent", label: "Absent·e" },
 ];
 
+function isGoing(statut: ParticipationStatut | null) {
+  return statut === "interesse" || statut === "participe";
+}
+
 export function ParticipationActions({
   evenementId,
   initialStatut,
+  initialCount,
 }: ParticipationActionsProps) {
   const router = useRouter();
   const [statut, setStatut] = useState(initialStatut);
+  const [count, setCount] = useState(initialCount);
   const [loading, setLoading] = useState<ParticipationStatut | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,12 +46,27 @@ export function ParticipationActions({
       return;
     }
 
+    setCount((current) => {
+      const was = isGoing(statut);
+      const now = isGoing(next);
+      if (!was && now) {
+        return current + 1;
+      }
+      if (was && !now) {
+        return Math.max(0, current - 1);
+      }
+      return current;
+    });
     setStatut(next);
+    window.dispatchEvent(new Event("qute:ce-soir-changed"));
     router.refresh();
   }
 
   return (
     <div className="flex flex-col gap-2">
+      <p className="text-sm text-[#888888]">
+        {count} participant{count > 1 ? "s" : ""}
+      </p>
       {ACTIONS.map((action) => {
         const active = statut === action.id;
         const isParticipate = action.id === "participe";

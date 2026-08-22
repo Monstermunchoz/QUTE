@@ -67,7 +67,8 @@ body {
 }
 
 img,
-video {
+video,
+iframe {
   max-width: 100%;
   height: auto;
 }
@@ -562,6 +563,48 @@ img.logo-icon-shop {
   -ms-overflow-style: none;
 }
 
+.notif-sheet {
+  width: 100%;
+  max-height: 75vh;
+  overflow-y: auto;
+  border-radius: 20px 20px 0 0;
+  border: 1px solid #1e1e1e;
+  background: #111111;
+  animation: notif-slide-up 0.3s ease;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.notif-dropdown {
+  position: absolute;
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  max-height: 75vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  border: 1px solid #1e1e1e;
+  background: #111111;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.notif-grab {
+  width: 40px;
+  height: 4px;
+  margin: 10px auto 4px;
+  border-radius: 999px;
+  background: #333333;
+}
+
+@keyframes notif-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 .notif-modal::-webkit-scrollbar {
   display: none;
 }
@@ -603,7 +646,7 @@ img.logo-icon-shop {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
-  padding-bottom: 80px;
+  padding-bottom: 88px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -625,13 +668,13 @@ img.logo-icon-shop {
 
 .chat-bubble-out {
   margin-left: auto;
-  margin-right: 16px;
+  margin-right: 8px;
   border-radius: 18px 18px 4px 18px;
   background: linear-gradient(135deg, #ff2d87, #7b2fff);
 }
 
 .chat-bubble-in {
-  margin-left: 16px;
+  margin-left: 8px;
   margin-right: auto;
   border-radius: 18px 18px 18px 4px;
   background: #1e1e1e;
@@ -645,12 +688,12 @@ img.logo-icon-shop {
 }
 
 .chat-row-out .chat-time {
-  margin-right: 16px;
+  margin-right: 8px;
   text-align: right;
 }
 
 .chat-row-in .chat-time {
-  margin-left: 16px;
+  margin-left: 8px;
   text-align: left;
 }
 
@@ -669,7 +712,7 @@ img.logo-icon-shop {
 }
 
 .chat-composer textarea {
-  width: calc(100% - 72px);
+  width: calc(100% - 60px);
   height: 48px;
   min-height: 48px;
   max-height: 120px;
@@ -724,8 +767,14 @@ img.logo-icon-shop {
 
 .grid-responsive {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .grid-responsive {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (min-width: 768px) {

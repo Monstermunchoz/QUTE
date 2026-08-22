@@ -11,5 +11,11 @@ export default function RegisterLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  if (!(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "").trim()) {
+    console.warn(
+      "[turnstile] NEXT_PUBLIC_TURNSTILE_SITE_KEY vide — captcha désactivé, inscription non bloquée.",
+    );
+  }
+
   return children;
 }

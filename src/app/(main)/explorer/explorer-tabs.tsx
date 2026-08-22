@@ -380,7 +380,7 @@ export function ExplorerTabs({
                   className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
                 >
                   <p className="font-bold text-white">{lieu.nom}</p>
-                  <p className="mt-1 text-xs text-[#888888]">
+                  <p className="mt-1 text-[12px] text-[#888888]">
                     ❤️ {lieuLikeCounts[lieu.id] ?? 0}
                   </p>
                   {lieu.categorie ? (

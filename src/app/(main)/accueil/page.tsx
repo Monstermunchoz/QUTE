@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { CeSoirHub } from "./ce-soir-hub";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
-import { eventOverlapsParisDay } from "@/lib/utils/event-date";
+import { publicPhotoUrl } from "@/lib/photos";
+import { isEventTonight } from "@/lib/utils/event-date";
 import { parisDayBounds } from "@/lib/utils/je-sors";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
 import type { Evenement, JeSors, Lieu, Profile, Salon, SalonMessage } from "@/types";
@@ -63,27 +64,10 @@ export default async function AccueilPage() {
 
   const jeSors = ((jeSorsRows ?? []) as JeSors[]).filter(isJeSorsActive);
   const eventsTonight = ((eventRows ?? []) as Evenement[]).filter((event) =>
-    eventOverlapsParisDay(event, start, end),
+    isEventTonight(event.date_debut),
   );
 
-  const goingOutIds = new Set(jeSors.map((row) => row.user_id));
-
-  if (eventsTonight.length > 0) {
-    const { data: participationRows } = await supabase
-      .from("participations")
-      .select("user_id, statut")
-      .in(
-        "evenement_id",
-        eventsTonight.map((event) => event.id),
-      )
-      .in("statut", ["participe", "interesse"]);
-
-    for (const row of participationRows ?? []) {
-      goingOutIds.add(row.user_id as string);
-    }
-  }
-
-  const peopleCount = goingOutIds.size;
+  const peopleCount = new Set(jeSors.map((row) => row.user_id)).size;
 
   const outingIds = jeSors.slice(0, 10).map((row) => row.user_id);
   let profilesById: Record<
@@ -94,16 +78,32 @@ export default async function AccueilPage() {
   if (outingIds.length > 0) {
     const { data: outingProfiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, ville, photo_url, abonnement, role")
+      .select("id, pseudo, ville, photo_url, photo_status, abonnement, role")
       .in("id", outingIds);
 
     profilesById = Object.fromEntries(
       (
         (outingProfiles ?? []) as Pick<
           Profile,
-          "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role"
+          | "id"
+          | "pseudo"
+          | "ville"
+          | "photo_url"
+          | "photo_status"
+          | "abonnement"
+          | "role"
         >[]
-      ).map((item) => [item.id, item]),
+      ).map((item) => [
+        item.id,
+        {
+          id: item.id,
+          pseudo: item.pseudo,
+          ville: item.ville,
+          photo_url: publicPhotoUrl(item.photo_status, item.photo_url),
+          abonnement: item.abonnement,
+          role: item.role,
+        },
+      ]),
     );
   }
 

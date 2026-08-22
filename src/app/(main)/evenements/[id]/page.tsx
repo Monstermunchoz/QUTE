@@ -155,6 +155,7 @@ export default async function EventPage({ params }: EventPageProps) {
           evenementId={event.id}
           currentUserId={user.id}
           initialStatut={myStatut}
+          initialCount={attendees.length}
         />
       ) : null}
 

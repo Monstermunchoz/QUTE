@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -44,6 +44,9 @@ export function NotificationBell() {
   const [leaving, setLeaving] = useState<Set<string>>(new Set());
   const [confirmClear, setConfirmClear] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const bellRef = useRef<HTMLButtonElement>(null);
+  const [isSheet, setIsSheet] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 56, right: 16 });
 
   const unreadCount = items.filter((item) => !item.lu).length;
 
@@ -56,6 +59,28 @@ export function NotificationBell() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 639px)");
+    function sync() {
+      setIsSheet(media.matches);
+    }
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (!open || isSheet || !bellRef.current) {
+      return;
+    }
+
+    const rect = bellRef.current.getBoundingClientRect();
+    setDropdownPos({
+      top: rect.bottom + 8,
+      right: Math.max(12, window.innerWidth - rect.right),
+    });
+  }, [open, isSheet]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -277,7 +302,11 @@ export function NotificationBell() {
   const panel =
     open && mounted
       ? createPortal(
-          <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div
+            className={`fixed inset-0 z-[60] ${
+              isSheet ? "flex items-end" : ""
+            }`}
+          >
             <button
               type="button"
               aria-label="Fermer les notifications"
@@ -288,8 +317,14 @@ export function NotificationBell() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="notif-modal-title"
-              className="notif-modal relative z-10 rounded-[16px] border border-[#1E1E1E] bg-[#111111]"
+              className={`relative z-10 ${isSheet ? "notif-sheet" : "notif-dropdown"}`}
+              style={
+                isSheet
+                  ? undefined
+                  : { top: dropdownPos.top, right: dropdownPos.right }
+              }
             >
+              {isSheet ? <div className="notif-grab" /> : null}
               <div className="modal-header bg-[#111111]">
                 <div className="flex items-center justify-between px-4 py-2">
                   <p
@@ -408,6 +443,7 @@ export function NotificationBell() {
   return (
     <>
       <button
+        ref={bellRef}
         type="button"
         aria-label="Notifications"
         aria-expanded={open}

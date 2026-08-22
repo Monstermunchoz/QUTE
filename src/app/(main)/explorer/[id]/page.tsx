@@ -3,6 +3,7 @@ import { Avatar } from "@/components/features/Avatar";
 import { BackButton } from "@/components/ui/BackButton";
 import { BadgeList } from "@/components/ui/ChipSelect";
 import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
+import { publicPhotoUrl } from "@/lib/photos";
 import { canSeeChamp } from "@/lib/profile/options";
 import { createClient } from "@/lib/supabase/server";
 import { getAge } from "@/lib/utils/age";
@@ -162,7 +163,7 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
       <div className="flex flex-col items-center gap-3 text-center">
         <Avatar
           pseudo={profile.pseudo}
-          photoUrl={profile.photo_url}
+          photoUrl={publicPhotoUrl(profile.photo_status, profile.photo_url)}
           size="xl"
           abonnement={profile.abonnement}
           role={profile.role}

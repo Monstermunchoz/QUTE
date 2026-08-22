@@ -153,6 +153,7 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
     }
 
     setOpen(false);
+    window.dispatchEvent(new Event("qute:ce-soir-changed"));
     await revalidateCeSoir();
     router.refresh();
   }
@@ -175,6 +176,7 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
     }
 
     await revalidateCeSoir();
+    window.dispatchEvent(new Event("qute:ce-soir-changed"));
     router.refresh();
   }
 

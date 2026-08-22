@@ -81,7 +81,7 @@ export function PhotoAlbum({ userId, photos }: PhotoAlbumProps) {
       user_id: userId,
       url: signed?.signedUrl ?? path,
       ordre: photos.length,
-      statut: "approved",
+      statut: "pending",
     });
 
     setLoading(false);
@@ -116,7 +116,7 @@ export function PhotoAlbum({ userId, photos }: PhotoAlbumProps) {
       <div>
         <h2 className="text-lg font-bold text-white">Mon album</h2>
         <p className="mt-1 text-sm text-[#888888]">
-          Ajoute jusqu&apos;à 6 photos. Elles seront visibles sur ton profil.
+          Ajoute jusqu&apos;à 6 photos. Elles seront visibles après validation.
         </p>
       </div>
 
@@ -130,6 +130,11 @@ export function PhotoAlbum({ userId, photos }: PhotoAlbumProps) {
                 alt={`Photo ${index + 1}`}
                 className="h-full w-full object-cover"
               />
+              {photo.statut === "pending" ? (
+                <span className="absolute bottom-1 left-1 rounded-[8px] bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-[#FF2D87]">
+                  En attente
+                </span>
+              ) : null}
               <button
                 type="button"
                 aria-label="Supprimer la photo"

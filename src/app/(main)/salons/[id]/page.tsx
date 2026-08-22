@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { SalonRoom } from "./salon-room";
+import { publicPhotoUrl } from "@/lib/photos";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile, Salon, SalonMessage } from "@/types";
 
@@ -48,16 +49,23 @@ export default async function SalonPage({ params }: SalonPageProps) {
   if (authorIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, photo_url, abonnement, role")
+      .select("id, pseudo, photo_url, photo_status, abonnement, role")
       .in("id", authorIds);
 
     authors = Object.fromEntries(
       ((profiles ?? []) as Pick<
         Profile,
-        "id" | "pseudo" | "photo_url" | "abonnement" | "role"
-      >[]).map(
-        (profile) => [profile.id, profile],
-      ),
+        "id" | "pseudo" | "photo_url" | "photo_status" | "abonnement" | "role"
+      >[]).map((profile) => [
+        profile.id,
+        {
+          id: profile.id,
+          pseudo: profile.pseudo,
+          photo_url: publicPhotoUrl(profile.photo_status, profile.photo_url),
+          abonnement: profile.abonnement,
+          role: profile.role,
+        },
+      ]),
     );
   }
 

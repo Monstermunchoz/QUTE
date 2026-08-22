@@ -7,7 +7,8 @@ export default async function AdminDashboardPage() {
   const [
     { count: reportsCount },
     { count: eventsCount },
-    { count: photosCount },
+    { count: avatarCount },
+    { count: albumCount },
   ] = await Promise.all([
     supabase
       .from("signalements")
@@ -21,7 +22,13 @@ export default async function AdminDashboardPage() {
       .from("profiles")
       .select("*", { count: "exact", head: true })
       .eq("photo_status", "pending"),
+    supabase
+      .from("photos")
+      .select("*", { count: "exact", head: true })
+      .eq("statut", "pending"),
   ]);
+
+  const photosCount = (avatarCount ?? 0) + (albumCount ?? 0);
 
   const cards = [
     {

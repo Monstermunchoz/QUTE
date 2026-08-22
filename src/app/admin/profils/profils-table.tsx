@@ -224,10 +224,9 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-[#CCCCCC]">
               {pending.type === "bannir"
-                ? "Bannir et supprimer ce compte ? L'adresse email sera définitivement bloquée. Action irréversible."
-                : "Supprimer ce compte ? L'utilisateur pourra se réinscrire."}
+                ? `Bannir et supprimer le compte de ${pending.pseudo} ? L'adresse email sera définitivement bloquée. Action irréversible.`
+                : `Supprimer le compte de ${pending.pseudo} ? L'utilisateur pourra se réinscrire.`}
             </p>
-            <p className="mt-2 text-sm text-[#888888]">{pending.pseudo}</p>
             <div className="mt-5 flex flex-col gap-2 sm:flex-row-reverse">
               <button
                 type="button"

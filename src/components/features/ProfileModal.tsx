@@ -7,6 +7,7 @@ import { BadgeList } from "@/components/ui/ChipSelect";
 import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
 import { Button } from "@/components/ui/Button";
 import { friendLabel, isFriendLocked } from "@/lib/amis";
+import { publicPhotoUrl } from "@/lib/photos";
 import { canSeeChamp } from "@/lib/profile/options";
 import { qrushDuJour, quotaQrushAtteint } from "@/lib/qrush";
 import { createClient } from "@/lib/supabase/client";
@@ -372,7 +373,7 @@ export function ProfileModal({
           <div className="flex flex-col items-center text-center">
             <Avatar
               pseudo={profile.pseudo}
-              photoUrl={profile.photo_url}
+              photoUrl={publicPhotoUrl(profile.photo_status, profile.photo_url)}
               size="lg"
               abonnement={profile.abonnement}
               role={profile.role}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ProfileCard } from "@/components/features/ProfileCard";
 import { formatEventDate } from "@/lib/utils/event-date";
@@ -45,6 +45,45 @@ export function CeSoirHub({
   salons,
 }: CeSoirHubProps) {
   const [filter, setFilter] = useState<FilterId>("tous");
+  const [counts, setCounts] = useState({
+    peopleCount,
+    eventsCount,
+    lieuxCount,
+  });
+
+  useEffect(() => {
+    setCounts({ peopleCount, eventsCount, lieuxCount });
+  }, [peopleCount, eventsCount, lieuxCount]);
+
+  useEffect(() => {
+    async function refreshCounts() {
+      try {
+        const response = await fetch("/api/ce-soir/counts");
+        if (!response.ok) {
+          return;
+        }
+        const payload = (await response.json()) as {
+          peopleCount?: number;
+          eventsCount?: number;
+          lieuxCount?: number;
+        };
+        setCounts({
+          peopleCount: payload.peopleCount ?? 0,
+          eventsCount: payload.eventsCount ?? 0,
+          lieuxCount: payload.lieuxCount ?? 0,
+        });
+      } catch {
+        // keep last known counts
+      }
+    }
+
+    function onChange() {
+      void refreshCounts();
+    }
+
+    window.addEventListener("qute:ce-soir-changed", onChange);
+    return () => window.removeEventListener("qute:ce-soir-changed", onChange);
+  }, []);
 
   const showSorties = filter === "tous" || filter === "sorties";
   const showEvents = filter === "tous" || filter === "evenements";
@@ -62,7 +101,7 @@ export function CeSoirHub({
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <div className="min-w-0 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-2 text-center sm:p-3">
           <p className="text-[28px] font-bold leading-none text-white">
-            {peopleCount}
+            {counts.peopleCount}
           </p>
           <p className="mt-2 text-[12px] leading-tight text-[#888888]">
             personnes sortent
@@ -70,7 +109,7 @@ export function CeSoirHub({
         </div>
         <div className="min-w-0 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-2 text-center sm:p-3">
           <p className="text-[28px] font-bold leading-none text-white">
-            {eventsCount}
+            {counts.eventsCount}
           </p>
           <p className="mt-2 text-[12px] leading-tight text-[#888888]">
             événements ce soir
@@ -78,7 +117,7 @@ export function CeSoirHub({
         </div>
         <div className="min-w-0 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-2 text-center sm:p-3">
           <p className="text-[28px] font-bold leading-none text-white">
-            {lieuxCount}
+            {counts.lieuxCount}
           </p>
           <p className="mt-2 text-[12px] leading-tight text-[#888888]">
             lieux actifs
@@ -109,7 +148,7 @@ export function CeSoirHub({
               Personne n&apos;a encore allumé JE SORS.
             </p>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid-responsive">
               {outings.map((item) => (
                 <div key={item.profile.id} className="flex flex-col gap-2">
                   <ProfileCard
