@@ -42,6 +42,7 @@ type ExplorerTabsProps = {
   salons: Salon[];
   groupes: Groupe[];
   lieux: Lieu[];
+  lieuLikeCounts?: Record<string, number>;
   evenements: Evenement[];
   participations: Participation[];
   currentUserId: string;
@@ -72,6 +73,7 @@ export function ExplorerTabs({
   salons,
   groupes,
   lieux,
+  lieuLikeCounts = {},
   evenements,
   participations,
   currentUserId,
@@ -91,13 +93,20 @@ export function ExplorerTabs({
     setTab(initialTab);
   }, [initialTab]);
 
-  const filteredLieux = useMemo(
-    () =>
+  const filteredLieux = useMemo(() => {
+    const filtered =
       category === "tous"
         ? lieux
-        : lieux.filter((lieu) => lieu.categorie === category),
-    [category, lieux],
-  );
+        : lieux.filter((lieu) => lieu.categorie === category);
+
+    return filtered.slice().sort((a, b) => {
+      const delta = (lieuLikeCounts[b.id] ?? 0) - (lieuLikeCounts[a.id] ?? 0);
+      if (delta !== 0) {
+        return delta;
+      }
+      return a.nom.localeCompare(b.nom, "fr");
+    });
+  }, [category, lieuLikeCounts, lieux]);
 
   const filteredProfiles = useMemo(() => {
     if (!canFilter) {
@@ -371,6 +380,9 @@ export function ExplorerTabs({
                   className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
                 >
                   <p className="font-bold text-white">{lieu.nom}</p>
+                  <p className="mt-1 text-xs text-[#888888]">
+                    ❤️ {lieuLikeCounts[lieu.id] ?? 0}
+                  </p>
                   {lieu.categorie ? (
                     <span className="mt-2 inline-block rounded-[8px] bg-[#1E1E1E] px-2 py-1 text-xs text-[#FF2D87]">
                       {lieu.categorie}

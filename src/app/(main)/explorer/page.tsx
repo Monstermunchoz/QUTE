@@ -75,6 +75,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     { data: eventRows },
     { data: jeSorsRows },
     { data: meRow },
+    { data: likeRows },
   ] = await Promise.all([
     query,
     supabase.from("salons").select("*").order("created_at", { ascending: true }),
@@ -93,6 +94,7 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       .select("abonnement, abonnement_statut")
       .eq("id", user.id)
       .maybeSingle(),
+    supabase.from("likes_lieux").select("lieu_id"),
   ]);
 
   const evenements = ((eventRows ?? []) as Evenement[]).filter(
@@ -127,6 +129,21 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
     | "date_naissance"
   >[];
 
+  const likeCounts: Record<string, number> = {};
+
+  for (const row of likeRows ?? []) {
+    const lieuId = row.lieu_id as string;
+    likeCounts[lieuId] = (likeCounts[lieuId] ?? 0) + 1;
+  }
+
+  const lieux = ((lieuRows ?? []) as Lieu[]).slice().sort((a, b) => {
+    const delta = (likeCounts[b.id] ?? 0) - (likeCounts[a.id] ?? 0);
+    if (delta !== 0) {
+      return delta;
+    }
+    return a.nom.localeCompare(b.nom, "fr");
+  });
+
   const requestedTab = searchParams.tab;
   const initialTab =
     requestedTab === "evenements" ||
@@ -147,7 +164,8 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       profiles={profiles}
       salons={(salonRows ?? []) as Salon[]}
       groupes={(groupeRows ?? []) as Groupe[]}
-      lieux={(lieuRows ?? []) as Lieu[]}
+      lieux={lieux}
+      lieuLikeCounts={likeCounts}
       evenements={evenements}
       participations={participations}
       currentUserId={user.id}

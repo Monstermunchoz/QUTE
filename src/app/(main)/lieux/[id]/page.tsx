@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 import { PageTitle } from "@/components/ui/BackButton";
 import { OpenMapsButton } from "@/components/ui/OpenMapsButton";
+import { LieuLikeButton } from "../lieu-like-button";
 import { createClient } from "@/lib/supabase/server";
 import type { Lieu } from "@/types";
 
@@ -38,9 +39,27 @@ export default async function LieuPage({ params }: LieuPageProps) {
   const lieu = data as Lieu;
   const hasCoordinates = lieu.latitude != null && lieu.longitude != null;
 
+  const [{ count: likeCount }, { data: myLike }] = await Promise.all([
+    supabase
+      .from("likes_lieux")
+      .select("*", { count: "exact", head: true })
+      .eq("lieu_id", lieu.id),
+    supabase
+      .from("likes_lieux")
+      .select("id")
+      .eq("lieu_id", lieu.id)
+      .eq("user_id", user.id)
+      .maybeSingle(),
+  ]);
+
   return (
     <main className="flex flex-col gap-4">
       <PageTitle title={lieu.nom} />
+      <LieuLikeButton
+        lieuId={lieu.id}
+        initialCount={likeCount ?? 0}
+        initialLiked={Boolean(myLike)}
+      />
       {lieu.categorie ? (
         <span className="w-fit rounded-[8px] bg-[#1E1E1E] px-2 py-1 text-xs text-[#FF2D87]">
           {lieu.categorie}

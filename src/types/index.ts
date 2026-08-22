@@ -100,6 +100,13 @@ export type Lieu = {
   created_at: string;
 };
 
+export type LikeLieu = {
+  id: string;
+  lieu_id: string;
+  user_id: string;
+  created_at: string;
+};
+
 export type ChatMessage = {
   id: string;
   conversation_id: string;
