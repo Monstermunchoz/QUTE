@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Switch } from "@/components/ui/Switch";
 import { createClient } from "@/lib/supabase/client";
 
 type FormValues = {
@@ -106,16 +107,11 @@ export function CreateGroupeForm() {
         placeholder="Qui on est, ce qu'on fait…"
         register={register("description")}
       />
-      <button
-        type="button"
-        role="switch"
-        aria-checked={estPrive}
-        onClick={() => setValue("est_prive", !estPrive)}
-        className="flex h-[52px] items-center justify-between rounded-[12px] border border-[#1E1E1E] px-4"
-      >
-        <span className="text-[14px] text-[#888888]">Groupe privé</span>
-        <span className="font-bold text-white">{estPrive ? "Oui" : "Non"}</span>
-      </button>
+      <Switch
+        label="Groupe privé"
+        checked={estPrive}
+        onToggle={() => setValue("est_prive", !estPrive)}
+      />
       {error ? <p className="text-sm text-[#FF4444]">{error}</p> : null}
       <Button type="submit" label="Créer le groupe" loading={isSubmitting} />
     </form>

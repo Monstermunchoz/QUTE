@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PageTitle } from "@/components/ui/BackButton";
 import { ShopModal } from "@/components/ui/ShopModal";
 import type { Abonnement } from "@/lib/abonnement";
 import { PLANS } from "@/lib/plans";
@@ -15,10 +16,8 @@ export function AbonnementView({ current }: AbonnementViewProps) {
   const [shopOpen, setShopOpen] = useState(false);
 
   return (
-    <main className="flex flex-col gap-6 pb-4">
-      <header>
-        <h1 className="text-2xl font-bold text-white">Mon abonnement</h1>
-      </header>
+    <main className="flex flex-col gap-6">
+      <PageTitle title="Mon abonnement" />
 
       {PLANS.map((plan) => {
         const isCurrent = plan.id === current;

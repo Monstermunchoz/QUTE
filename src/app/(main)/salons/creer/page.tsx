@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { PageTitle } from "@/components/ui/BackButton";
 import { CreateSalonForm } from "./create-salon-form";
 import { isQutePlus } from "@/lib/abonnement";
 import { createClient } from "@/lib/supabase/server";
@@ -24,8 +25,8 @@ export default async function CreateSalonPage() {
   }
 
   return (
-    <main className="flex flex-col gap-4 pb-4">
-      <h1 className="text-2xl font-bold text-white">Créer un salon</h1>
+    <main className="flex flex-col gap-4">
+      <PageTitle title="Créer un salon" />
       <CreateSalonForm />
     </main>
   );

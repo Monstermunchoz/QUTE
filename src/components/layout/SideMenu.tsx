@@ -60,7 +60,7 @@ function MenuLink({
     <Link
       href={href}
       onClick={onClose}
-      className="flex items-center gap-3 px-5 py-[14px] text-[#CCCCCC] hover:bg-[#1E1E1E] hover:text-white"
+      className="flex items-center gap-3 px-5 py-[14px] text-[var(--text-muted)] hover:bg-[var(--border)] hover:text-[var(--text)]"
     >
       <span className="text-current">{icon}</span>
       <span>{label}</span>
@@ -116,7 +116,7 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
         className="absolute inset-0 bg-black/60"
         onClick={onClose}
       />
-      <aside className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-[#1E1E1E] bg-[#111111]">
+      <aside className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--surface)]">
         <div className="flex items-start justify-between px-5 py-5">
           <div className="flex flex-col items-start gap-2">
             <Avatar
@@ -124,8 +124,8 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
               photoUrl={profile?.photo_url}
               size="drawer"
             />
-            <p className="font-bold text-white">{profile?.pseudo ?? "QUTE"}</p>
-            <p className="text-sm text-[#888888]">
+            <p className="font-bold text-[var(--text)]">{profile?.pseudo ?? "QUTE"}</p>
+            <p className="text-sm text-[var(--text-muted)]">
               {profile?.ville || "Lyon Métropole"}
             </p>
             {plus ? (
@@ -138,27 +138,27 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
             type="button"
             aria-label="Fermer"
             onClick={onClose}
-            className="text-xl text-[#888888] hover:text-white"
+            className="text-xl text-[var(--text-muted)] hover:text-[var(--text)]"
           >
             ✕
           </button>
         </div>
 
-        <div className="h-px bg-[#1E1E1E]" />
+        <div className="h-px bg-[var(--border)]" />
         <nav>
           {NAV.map((item) => (
             <MenuLink key={item.href} {...item} onClose={onClose} />
           ))}
         </nav>
 
-        <div className="h-px bg-[#1E1E1E]" />
+        <div className="h-px bg-[var(--border)]" />
         <nav>
           {ACCOUNT.map((item) => (
             <MenuLink key={item.href} {...item} onClose={onClose} />
           ))}
         </nav>
 
-        <div className="h-px bg-[#1E1E1E]" />
+        <div className="h-px bg-[var(--border)]" />
         <nav>
           <button
             type="button"

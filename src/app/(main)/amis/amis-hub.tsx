@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Avatar } from "@/components/features/Avatar";
 import { ProfileModal } from "@/components/features/ProfileModal";
+import { PageTitle } from "@/components/ui/BackButton";
 import { otherAmiId } from "@/lib/amis";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -142,17 +143,15 @@ export function AmisHub({
     tab === "amis" ? friends : tab === "recues" ? incoming : outgoing;
 
   return (
-    <main className="flex flex-col gap-4 pb-4">
-      <header>
-        <h1 className="text-2xl font-bold text-white">Mes amis</h1>
-      </header>
+    <main className="flex flex-col gap-4">
+      <PageTitle title="Mes amis" />
 
-      <div className="tabs-scroll flex gap-2">
+      <div className="tabs-scroll flex gap-2 pr-5">
         <button
           type="button"
           onClick={() => setTab("amis")}
           className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold ${
-            tab === "amis" ? "text-[#FF2D87]" : "text-[#888888]"
+            tab === "amis" ? "text-[#FF2D87]" : "text-[var(--text-muted)]"
           }`}
         >
           Mes amis
@@ -161,10 +160,11 @@ export function AmisHub({
           type="button"
           onClick={() => setTab("recues")}
           className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold ${
-            tab === "recues" ? "text-[#FF2D87]" : "text-[#888888]"
+            tab === "recues" ? "text-[#FF2D87]" : "text-[var(--text-muted)]"
           }`}
         >
-          Demandes reçues
+          <span className="md:hidden">Reçues</span>
+          <span className="hidden md:inline">Demandes reçues</span>
           {incoming.length > 0 ? (
             <span className="ml-2 rounded-full bg-[#FF4444] px-2 py-0.5 text-[10px] text-white">
               {incoming.length}
@@ -175,10 +175,11 @@ export function AmisHub({
           type="button"
           onClick={() => setTab("envoyees")}
           className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold ${
-            tab === "envoyees" ? "text-[#FF2D87]" : "text-[#888888]"
+            tab === "envoyees" ? "text-[#FF2D87]" : "text-[var(--text-muted)]"
           }`}
         >
-          Demandes envoyées
+          <span className="md:hidden">Envoyées</span>
+          <span className="hidden md:inline">Demandes envoyées</span>
         </button>
       </div>
 

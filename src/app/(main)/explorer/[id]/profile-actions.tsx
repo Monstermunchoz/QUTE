@@ -339,22 +339,24 @@ export function ProfileActions({
             />
           </div>
         ) : null}
-        <Button
+        <button
           type="button"
-          label="Bloquer"
-          variant="danger"
-          loading={blockLoading}
+          disabled={blockLoading}
           onClick={() => void blockProfile()}
-        />
-        <Button
+          className="mt-2 text-sm text-[#FF4444]"
+        >
+          Bloquer
+        </button>
+        <button
           type="button"
-          label="Signaler"
-          variant="secondary"
           onClick={() => {
             setError(null);
             setReportOpen(true);
           }}
-        />
+          className="text-sm text-[var(--text-muted)]"
+        >
+          Signaler
+        </button>
         {reportDone ? (
           <p className="text-sm text-[#FF2D87]">Signalement envoyé. Merci.</p>
         ) : null}

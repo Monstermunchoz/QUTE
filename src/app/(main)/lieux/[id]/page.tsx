@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
+import { PageTitle } from "@/components/ui/BackButton";
 import { createClient } from "@/lib/supabase/server";
 import type { Lieu } from "@/types";
 
@@ -37,8 +38,8 @@ export default async function LieuPage({ params }: LieuPageProps) {
   const hasCoordinates = lieu.latitude != null && lieu.longitude != null;
 
   return (
-    <main className="flex flex-col gap-4 pb-4">
-      <h1 className="text-2xl font-bold text-white">{lieu.nom}</h1>
+    <main className="flex flex-col gap-4">
+      <PageTitle title={lieu.nom} />
       {lieu.categorie ? (
         <span className="w-fit rounded-[8px] bg-[#1E1E1E] px-2 py-1 text-xs text-[#FF2D87]">
           {lieu.categorie}

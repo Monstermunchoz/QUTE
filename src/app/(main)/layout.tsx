@@ -8,9 +8,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-[#000000]">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <TopBar />
-      <div className="mx-auto w-full max-w-lg px-4 pb-24 pt-16">{children}</div>
+      <div className="mx-auto w-full max-w-lg px-5 pb-[100px] pt-[88px] md:px-8">
+        {children}
+      </div>
       <Suspense fallback={null}>
         <BottomBar />
       </Suspense>

@@ -17,6 +17,12 @@ export type Profile = {
   orientations: string[];
   ce_que_je_cherche: string | null;
   interets: string[];
+  pronoms?: string | null;
+  recherche?: string[];
+  langues?: string[];
+  instagram?: string | null;
+  visibilite_identites?: "public" | "matchs" | "prive";
+  visibilite_orientations?: "public" | "matchs" | "prive";
   created_at: string;
   updated_at: string;
 };

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Switch } from "@/components/ui/Switch";
 import { createClient } from "@/lib/supabase/client";
 
 const THEMES = [
@@ -133,16 +134,11 @@ export function CreateSalonForm() {
           ))}
         </select>
       </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={estPublic}
-        onClick={() => setValue("est_public", !estPublic)}
-        className="flex h-[52px] items-center justify-between rounded-[12px] border border-[#1E1E1E] px-4"
-      >
-        <span className="text-[14px] text-[#888888]">Salon public</span>
-        <span className="font-bold text-white">{estPublic ? "Oui" : "Non"}</span>
-      </button>
+      <Switch
+        label="Salon public"
+        checked={estPublic}
+        onToggle={() => setValue("est_public", !estPublic)}
+      />
       {error ? <p className="text-sm text-[#FF4444]">{error}</p> : null}
       <Button type="submit" label="Créer le salon" loading={isSubmitting} />
     </form>

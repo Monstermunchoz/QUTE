@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { notFound, redirect } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
+import { PageTitle } from "@/components/ui/BackButton";
 import { eventCategoryLabel } from "@/lib/events/categories";
 import { formatEventDate } from "@/lib/utils/event-date";
 import { createClient } from "@/lib/supabase/server";
@@ -107,14 +108,13 @@ export default async function EventPage({ params }: EventPageProps) {
   const lieuLine = [event.lieu_nom, event.adresse].filter(Boolean).join(" · ");
 
   return (
-    <main className="flex flex-col gap-4 pb-4">
+    <main className="flex flex-col gap-4">
+      <PageTitle title={event.titre} />
       {event.statut === "pending" ? (
-        <p className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4 text-sm text-[#FF2D87]">
+        <p className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[#FF2D87]">
           En attente de validation
         </p>
       ) : null}
-
-      <h1 className="text-2xl font-bold text-white">{event.titre}</h1>
       <p className="font-bold text-white">{formatEventDate(event.date_debut)}</p>
       {event.date_fin ? (
         <p className="text-sm text-[#888888]">

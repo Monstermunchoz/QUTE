@@ -23,7 +23,7 @@ export function Input({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <label htmlFor={inputId} className="text-[14px] text-[#888888]">
+      <label htmlFor={inputId} className="text-[14px] text-[var(--text-muted)]">
         {label}
       </label>
       <input
@@ -31,8 +31,8 @@ export function Input({
         type={type}
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
-        className={`h-[52px] w-full rounded-[12px] border bg-[#1E1E1E] px-4 text-white outline-none placeholder:text-[#555555] focus:border-[#FF2D87] ${
-          error ? "border-[#FF4444]" : "border-[#333333]"
+        className={`h-[52px] w-full rounded-[12px] border bg-[var(--chip)] px-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[#FF2D87] ${
+          error ? "border-[#FF4444]" : "border-[var(--border)]"
         } ${className}`}
         {...rest}
         {...register}

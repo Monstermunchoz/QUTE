@@ -60,13 +60,13 @@ export function TopBar() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-[#1E1E1E] bg-[#000000]">
-        <div className="mx-auto grid h-full w-full max-w-lg grid-cols-[1fr_auto_1fr] items-center px-4">
+      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-[var(--border)] bg-[var(--bg)]">
+        <div className="mx-auto grid h-full w-full max-w-lg grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8">
           <button
             type="button"
             aria-label="Ouvrir le menu"
             onClick={() => setMenuOpen(true)}
-            className="justify-self-start text-white"
+            className="justify-self-start text-[var(--text)]"
           >
             <svg
               className="menu-icon"
@@ -90,7 +90,7 @@ export function TopBar() {
               height={26}
               className="logo-icon-nav"
             />
-            <p className="font-bold tracking-[0.15em] text-white">QUTE</p>
+            <p className="font-bold tracking-[0.15em] text-[var(--text)]">QUTE</p>
           </div>
 
           <div className="flex items-center justify-end gap-2">

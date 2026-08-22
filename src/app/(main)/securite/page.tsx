@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { PageTitle } from "@/components/ui/BackButton";
 import { BlockedList } from "./blocked-list";
 import { SecurityControls } from "./security-controls";
 import { createClient } from "@/lib/supabase/server";
@@ -35,15 +36,11 @@ export default async function SecuritePage() {
   }
 
   return (
-    <main className="flex flex-col gap-6 pb-4">
-      <header>
-        <h1 className="text-2xl font-bold text-white">
-          Sécurité et confidentialité
-        </h1>
-      </header>
+    <main className="flex flex-col gap-6">
+      <PageTitle title="Sécurité et confidentialité" />
 
-      <section className="rounded-[16px] border border-[#1E1E1E] bg-[#111111]">
-        <h2 className="px-4 pt-4 text-sm font-bold text-white">
+      <section className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)]">
+        <h2 className="px-4 pt-4 text-sm font-bold text-[var(--text)]">
           Profils bloqués
         </h2>
         <BlockedList profiles={blockedProfiles} />

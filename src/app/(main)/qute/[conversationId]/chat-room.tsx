@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Avatar } from "@/components/features/Avatar";
+import { BackButton } from "@/components/ui/BackButton";
 import { createClient } from "@/lib/supabase/client";
 import type { ChatMessage, Profile } from "@/types";
 
@@ -113,28 +113,11 @@ export function ChatRoom({
   }
 
   return (
-    <div className="flex h-[calc(100vh-10rem)] flex-col bg-[#000000]">
-      <header className="flex shrink-0 items-center gap-3 border-b border-[#1E1E1E] bg-[#000000] py-3">
-        <Link
-          href="/qute"
-          aria-label="Retour"
-          className="flex h-10 w-10 items-center justify-center text-white"
-        >
-          <svg
-            className="icon"
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            aria-hidden
-          >
-            <path d="M15 6 9 12l6 6" />
-          </svg>
-        </Link>
+    <div className="flex h-[calc(100vh-12rem)] flex-col bg-[var(--bg)]">
+      <header className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] bg-[var(--bg)] py-1">
+        <BackButton />
         <Avatar pseudo={other.pseudo} photoUrl={other.photo_url} size="sm" />
-        <p className="truncate font-bold text-white">{other.pseudo}</p>
+        <p className="truncate font-bold text-[var(--text)]">{other.pseudo}</p>
       </header>
 
       <div className="flex-1 space-y-3 overflow-y-auto py-4">

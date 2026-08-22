@@ -13,8 +13,8 @@ type ButtonProps = {
 
 const variantClassName: Record<ButtonVariant, string> = {
   primary: "text-white",
-  secondary: "border border-[#1E1E1E] bg-transparent text-white",
-  ghost: "bg-transparent text-[#888888]",
+  secondary: "border border-[var(--border)] bg-transparent text-[var(--text)]",
+  ghost: "bg-transparent text-[var(--text-muted)]",
   danger: "border border-[#FF4444] bg-transparent text-[#FF4444]",
 };
 

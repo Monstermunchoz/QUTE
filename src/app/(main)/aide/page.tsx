@@ -1,3 +1,5 @@
+import { PageTitle } from "@/components/ui/BackButton";
+
 const FAQ = [
   {
     q: "QUTE, c'est quoi ?",
@@ -19,27 +21,27 @@ const FAQ = [
 
 export default function AidePage() {
   return (
-    <main className="flex flex-col gap-6 pb-4">
-      <header>
-        <h1 className="text-2xl font-bold text-white">Aide</h1>
-        <p className="mt-1 text-sm text-[#888888]">
-          Les réponses rapides, sans prise de tête.
-        </p>
-      </header>
+    <main className="flex flex-col gap-6">
+      <PageTitle
+        title="Aide"
+        subtitle="Les réponses rapides, sans prise de tête."
+      />
 
       {FAQ.map((item) => (
         <article
           key={item.q}
-          className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
+          className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-4"
         >
-          <h2 className="font-bold text-white">{item.q}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#CCCCCC]">{item.a}</p>
+          <h2 className="font-bold text-[var(--text)]">{item.q}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted)]">
+            {item.a}
+          </p>
         </article>
       ))}
 
-      <section className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4">
-        <h2 className="font-bold text-white">Contact</h2>
-        <p className="mt-2 text-sm text-[#CCCCCC]">
+      <section className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-4">
+        <h2 className="font-bold text-[var(--text)]">Contact</h2>
+        <p className="mt-2 text-sm text-[var(--text-muted)]">
           Une question, un souci, une idée ? Écris-nous à{" "}
           <a href="mailto:bonjour@qute.app" className="text-[#FF2D87]">
             bonjour@qute.app

@@ -101,7 +101,7 @@ export function BottomBar() {
 
   return (
     <>
-      <nav className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-[#1E1E1E] bg-[#000000] pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-[var(--border)] bg-[var(--bg)] pb-[env(safe-area-inset-bottom)]">
         <ul className="mx-auto grid h-16 w-full max-w-lg grid-cols-5 overflow-visible">
           <SideLink tab={sideTabs[0]} active={isActive("accueil")} />
           <SideLink tab={sideTabs[1]} active={isActive("salons")} />
@@ -109,7 +109,7 @@ export function BottomBar() {
             <Link
               href="/explorer"
               aria-label="Profils"
-              className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#000000] text-white ${
+              className={`relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-4 border-[var(--bg)] text-white ${
                 profilsActive ? "opacity-100" : "opacity-95"
               }`}
               style={{
@@ -144,7 +144,7 @@ export function BottomBar() {
             <button
               type="button"
               onClick={() => setShopOpen(true)}
-              className="relative flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-wide text-[#888888]"
+              className="relative flex h-full w-full flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-wide text-[var(--text-muted)]"
             >
               <svg className="tab-icon" width={22} height={22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
                 <path d="M6 8h12l-1 12H7L6 8z" />
@@ -174,7 +174,7 @@ function SideLink({
       <Link
         href={tab.href}
         className={`relative flex h-full flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-wide ${
-          active ? "text-[#FF2D87]" : "text-[#888888]"
+          active ? "text-[#FF2D87]" : "text-[var(--text-muted)]"
         }`}
       >
         {tab.icon}

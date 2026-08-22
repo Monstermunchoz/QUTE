@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Avatar } from "@/components/features/Avatar";
+import { BackButton } from "@/components/ui/BackButton";
 import { JoinLeaveButton } from "./join-leave-button";
 import { createClient } from "@/lib/supabase/server";
 import type { Groupe, GroupeMembre, Profile } from "@/types";
@@ -58,26 +59,9 @@ export default async function GroupePage({ params }: GroupePageProps) {
   }
 
   return (
-    <main className="flex flex-col gap-4 pb-4">
-      <header className="flex items-center gap-3">
-        <Link
-          href="/explorer"
-          aria-label="Retour"
-          className="flex h-10 w-10 items-center justify-center text-white"
-        >
-          <svg
-            className="icon"
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            aria-hidden
-          >
-            <path d="M15 6 9 12l6 6" />
-          </svg>
-        </Link>
+    <main className="flex flex-col gap-4">
+      <header className="flex items-center gap-1">
+        <BackButton />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-2xl font-bold text-white">{groupe.nom}</h1>
           <p className="text-sm text-[#888888]">
