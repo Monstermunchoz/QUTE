@@ -325,7 +325,7 @@ export function ProfileModal({
     mine || canSeeChamp(profile?.visibilite_orientations, isMatch);
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center">
       <button
         type="button"
         aria-label="Fermer"
@@ -335,16 +335,18 @@ export function ProfileModal({
       <div
         role="dialog"
         aria-modal="true"
-        className="relative max-h-[85vh] w-full max-w-[400px] overflow-y-auto rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-8 hide-scrollbar"
+        className="modal-shell relative rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-8"
       >
-        <button
-          type="button"
-          aria-label="Fermer"
-          onClick={onClose}
-          className="absolute right-4 top-4 z-10 text-xl text-[var(--text-muted)] hover:text-[var(--text)]"
-        >
-          ✕
-        </button>
+        <div className="modal-header -mx-8 -mt-8 mb-4 flex justify-end bg-[var(--surface)] px-4 py-3">
+          <button
+            type="button"
+            aria-label="Fermer"
+            onClick={onClose}
+            className="text-xl text-[var(--text-muted)] hover:text-[var(--text)]"
+          >
+            ✕
+          </button>
+        </div>
 
         {profile ? (
           <div className="flex flex-col items-center text-center">

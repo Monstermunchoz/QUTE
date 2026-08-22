@@ -33,7 +33,7 @@ export function ShopModal({ open, onClose }: ShopModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
       <button
         type="button"
         aria-label="Fermer"
@@ -44,16 +44,18 @@ export function ShopModal({ open, onClose }: ShopModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="shop-modal-title"
-        className="relative w-full max-w-[400px] rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-10"
+        className="modal-shell relative rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-10"
       >
-        <button
-          type="button"
-          aria-label="Fermer"
-          onClick={onClose}
-          className="absolute right-4 top-4 text-xl text-[#888888] hover:text-white"
-        >
-          ✕
-        </button>
+        <div className="modal-header -mx-10 -mt-10 mb-2 flex justify-end bg-[#111111] px-4 py-3">
+          <button
+            type="button"
+            aria-label="Fermer"
+            onClick={onClose}
+            className="text-xl text-[#888888] hover:text-white"
+          >
+            ✕
+          </button>
+        </div>
         <div className="flex flex-col items-center text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

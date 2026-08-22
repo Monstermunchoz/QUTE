@@ -44,9 +44,9 @@ export function PageTitle({ title, subtitle }: PageTitleProps) {
     <header className="flex items-center gap-1">
       <BackButton />
       <div className="min-w-0">
-        <h1 className="truncate text-2xl font-bold text-[var(--text)]">{title}</h1>
+        <h1 className="page-title mb-0 truncate text-[var(--text)]">{title}</h1>
         {subtitle ? (
-          <p className="text-sm text-[var(--text-muted)]">{subtitle}</p>
+          <p className="page-copy text-[var(--text-muted)]">{subtitle}</p>
         ) : null}
       </div>
     </header>

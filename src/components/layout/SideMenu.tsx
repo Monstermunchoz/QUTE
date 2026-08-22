@@ -23,6 +23,7 @@ type MenuItem = {
   href: string;
   label: string;
   icon: ReactNode;
+  plusBadge?: boolean;
 };
 
 const NAV: MenuItem[] = [
@@ -32,7 +33,7 @@ const NAV: MenuItem[] = [
   { href: "/explorer?tab=groupes", label: "Groupes", icon: <GroupIcon /> },
   { href: "/explorer?tab=lieux", label: "Lieux et carte", icon: <PinIcon /> },
   { href: "/explorer?tab=evenements", label: "Événements", icon: <CalendarIcon /> },
-  { href: "/creer", label: "Créer un événement", icon: <PlusIcon /> },
+  { href: "/creer", label: "Créer un événement", icon: <PlusIcon />, plusBadge: true },
   { href: "/qute?tab=qrush", label: "QRUSH reçus", icon: <BoltIcon /> },
   { href: "/qute", label: "Messages", icon: <BubbleIcon /> },
   { href: "/amis", label: "Mes amis", icon: <FriendsIcon /> },
@@ -50,20 +51,54 @@ const OTHER: MenuItem[] = [
   { href: "/cgu", label: "CGU", icon: <DocIcon /> },
 ];
 
+function isMenuActive(href: string, pathname: string) {
+  if (href === "/explorer") {
+    return pathname === "/explorer" || pathname.startsWith("/explorer/");
+  }
+
+  if (href.startsWith("/explorer?tab=salons")) {
+    return pathname.startsWith("/salons");
+  }
+
+  if (href.startsWith("/explorer?tab=groupes")) {
+    return pathname.startsWith("/groupes");
+  }
+
+  if (href.startsWith("/explorer?tab=lieux")) {
+    return pathname.startsWith("/lieux");
+  }
+
+  if (href.startsWith("/explorer?tab=evenements")) {
+    return pathname.startsWith("/evenements");
+  }
+
+  if (href === "/qute") {
+    return pathname === "/qute" || pathname.startsWith("/qute/");
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 function MenuLink({
   href,
   label,
   icon,
+  plusBadge,
   onClose,
-}: MenuItem & { onClose: () => void }) {
+  active,
+  showPlus,
+}: MenuItem & { onClose: () => void; active: boolean; showPlus?: boolean }) {
   return (
     <Link
       href={href}
       onClick={onClose}
-      className="flex items-center gap-3 px-5 py-[14px] text-[var(--text-muted)] hover:bg-[var(--border)] hover:text-[var(--text)]"
+      className={`menu-item ${active ? "menu-item-active" : ""}`}
     >
-      <span className="text-current">{icon}</span>
-      <span>{label}</span>
+      <span className="menu-item-icon">{icon}</span>
+      <span className="flex-1">{label}</span>
+      {plusBadge && showPlus ? (
+        <span className="text-[11px] font-bold text-[#FF2D87]">QUTE+</span>
+      ) : null}
     </Link>
   );
 }
@@ -116,20 +151,27 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
         className="absolute inset-0 bg-black/60"
         onClick={onClose}
       />
-      <aside className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-[var(--border)] bg-[var(--surface)]">
-        <div className="flex items-start justify-between px-5 py-5">
+      <aside className="absolute left-0 top-0 flex h-full w-[280px] flex-col overflow-y-auto border-r border-white/10 bg-[#0D0D0D]">
+        <div className="flex items-start justify-between bg-white/[0.04] px-5 py-5">
           <div className="flex flex-col items-start gap-2">
             <Avatar
               pseudo={profile?.pseudo ?? "QUTE"}
               photoUrl={profile?.photo_url}
               size="drawer"
             />
-            <p className="font-bold text-[var(--text)]">{profile?.pseudo ?? "QUTE"}</p>
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-lg font-bold text-white">
+              {profile?.pseudo ?? "QUTE"}
+            </p>
+            <p className="text-sm text-[#888888]">
               {profile?.ville || "Lyon Métropole"}
             </p>
             {plus ? (
-              <span className="rounded-[8px] bg-[#FF2D87] px-2 py-1 text-[10px] font-bold text-white">
+              <span
+                className="rounded-[8px] px-2 py-1 text-[10px] font-bold text-white"
+                style={{
+                  background: "linear-gradient(135deg, #FF2D87, #7B2FFF)",
+                }}
+              >
                 {abonnementLabel(profile?.abonnement)}
               </span>
             ) : null}
@@ -138,27 +180,38 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
             type="button"
             aria-label="Fermer"
             onClick={onClose}
-            className="text-xl text-[var(--text-muted)] hover:text-[var(--text)]"
+            className="text-xl text-[#888888] hover:text-white"
           >
             ✕
           </button>
         </div>
 
-        <div className="h-px bg-[var(--border)]" />
+        <p className="menu-section">Navigation</p>
         <nav>
           {NAV.map((item) => (
-            <MenuLink key={item.href} {...item} onClose={onClose} />
+            <MenuLink
+              key={item.href}
+              {...item}
+              onClose={onClose}
+              active={isMenuActive(item.href, pathname)}
+              showPlus={!plus}
+            />
           ))}
         </nav>
 
-        <div className="h-px bg-[var(--border)]" />
+        <p className="menu-section">Mon compte</p>
         <nav>
           {ACCOUNT.map((item) => (
-            <MenuLink key={item.href} {...item} onClose={onClose} />
+            <MenuLink
+              key={item.href}
+              {...item}
+              onClose={onClose}
+              active={isMenuActive(item.href, pathname)}
+            />
           ))}
         </nav>
 
-        <div className="h-px bg-[var(--border)]" />
+        <p className="menu-section">Autres</p>
         <nav>
           <button
             type="button"
@@ -166,25 +219,34 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
               onClose();
               setShopOpen(true);
             }}
-            className="flex w-full items-center gap-3 px-5 py-[14px] text-left text-[#CCCCCC] hover:bg-[#1E1E1E] hover:text-white"
+            className="menu-item"
           >
-            <ShopIcon />
+            <span className="menu-item-icon">
+              <ShopIcon />
+            </span>
             <span className="flex-1">QUTE Shop</span>
             <span className="rounded-[8px] bg-[#1E1E1E] px-2 py-0.5 text-[10px] font-bold tracking-wide text-[#FF2D87]">
               BIENTÔT
             </span>
           </button>
           {OTHER.map((item) => (
-            <MenuLink key={item.href} {...item} onClose={onClose} />
+            <MenuLink
+              key={item.href}
+              {...item}
+              onClose={onClose}
+              active={isMenuActive(item.href, pathname)}
+            />
           ))}
-          <button
-            type="button"
-            onClick={() => void signOut()}
-            className="flex w-full items-center gap-3 px-5 py-[14px] text-left text-[#FF4444] hover:bg-[#1E1E1E]"
-          >
-            <LogoutIcon />
-            Déconnexion
-          </button>
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              className="menu-item text-[#FF4444]"
+            >
+              <LogoutIcon />
+              Déconnexion
+            </button>
+          </div>
         </nav>
       </aside>
     </div>

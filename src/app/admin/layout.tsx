@@ -29,9 +29,11 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#000000] text-white">
+    <div className="flex min-h-screen overflow-x-hidden bg-[#000000] text-white">
       <AdminNav pseudo={(profile?.pseudo as string) ?? "Staff"} />
-      <div className="min-w-0 flex-1 p-6">{children}</div>
+      <div className="min-w-0 flex-1 overflow-x-hidden px-5 py-6 md:px-8">
+        {children}
+      </div>
     </div>
   );
 }

@@ -49,6 +49,7 @@ export const PLANS: Plan[] = [
       "Vois qui t'a QRUSHé",
       "QRUSH illimités",
       "Crée tes propres salons",
+      "Crée tes événements",
       "Filtres avancés — identité, âge, zone",
       "Priorité dans l'exploration",
       "Badge QUTE+ sur ton profil",

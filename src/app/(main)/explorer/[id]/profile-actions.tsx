@@ -365,12 +365,12 @@ export function ProfileActions({
 
       {reportOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
           role="dialog"
           aria-modal="true"
           aria-labelledby="report-title"
         >
-          <div className="w-full max-w-sm rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-6">
+          <div className="modal-shell rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-6">
             <h2 id="report-title" className="text-xl font-bold text-white">
               Signaler ce profil
             </h2>

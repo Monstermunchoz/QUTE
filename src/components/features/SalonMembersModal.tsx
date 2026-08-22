@@ -130,7 +130,7 @@ export function SalonMembersModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
       <button
         type="button"
         aria-label="Fermer"
@@ -140,9 +140,9 @@ export function SalonMembersModal({
       <div
         role="dialog"
         aria-modal="true"
-        className="relative flex max-h-[70vh] w-full max-w-[480px] flex-col rounded-[16px] border border-[#1E1E1E] bg-[#111111]"
+        className="modal-shell relative flex flex-col rounded-[16px] border border-[#1E1E1E] bg-[#111111]"
       >
-        <div className="flex items-center justify-between px-5 py-4">
+        <div className="modal-header flex items-center justify-between bg-[#111111] px-5 py-4">
           <h2 className="text-lg font-bold text-white">Dans ce salon</h2>
           <button
             type="button"

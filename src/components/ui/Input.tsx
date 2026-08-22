@@ -31,7 +31,7 @@ export function Input({
         type={type}
         placeholder={placeholder}
         aria-invalid={Boolean(error)}
-        className={`h-[52px] w-full rounded-[12px] border bg-[var(--chip)] px-4 text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[#FF2D87] ${
+        className={`h-[52px] w-full rounded-[12px] border bg-[var(--chip)] px-4 text-base text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[#FF2D87] ${
           error ? "border-[#FF4444]" : "border-[var(--border)]"
         } ${className}`}
         {...rest}

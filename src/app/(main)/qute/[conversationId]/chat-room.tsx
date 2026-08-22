@@ -33,7 +33,8 @@ export function ChatRoom({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const canSend = draft.trim().length >= 1 && draft.trim().length <= 1000 && !sending;
+  const canSend =
+    draft.trim().length >= 1 && draft.trim().length <= 1000 && !sending;
 
   function addMessage(message: ChatMessage) {
     setMessages((current) =>
@@ -113,14 +114,14 @@ export function ChatRoom({
   }
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] flex-col bg-[var(--bg)]">
-      <header className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] bg-[var(--bg)] py-1">
+    <div className="chat-shell">
+      <header className="flex shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
         <BackButton />
         <Avatar pseudo={other.pseudo} photoUrl={other.photo_url} size="sm" />
         <p className="truncate font-bold text-[var(--text)]">{other.pseudo}</p>
       </header>
 
-      <div className="flex-1 space-y-3 overflow-y-auto py-4">
+      <div className="chat-messages">
         {messages.length === 0 ? (
           <p className="pt-10 text-center text-sm text-[#888888]">
             Le premier mot, c&apos;est le plus dur.
@@ -135,25 +136,11 @@ export function ChatRoom({
                 className={`flex flex-col ${mine ? "items-end" : "items-start"}`}
               >
                 <p
-                  className={`max-w-[80%] px-4 py-2 text-sm text-white ${
-                    mine
-                      ? "rounded-[16px_4px_16px_16px]"
-                      : "rounded-[4px_16px_16px_16px] bg-[#1E1E1E]"
-                  }`}
-                  style={
-                    mine
-                      ? {
-                          background:
-                            "linear-gradient(135deg, #FF2D87, #7B2FFF)",
-                        }
-                      : undefined
-                  }
+                  className={`chat-bubble ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
                 >
                   {message.contenu}
                 </p>
-                <span className="mt-1 text-[12px] text-[#888888]">
-                  {formatTime(message.created_at)}
-                </span>
+                <span className="chat-time">{formatTime(message.created_at)}</span>
               </div>
             );
           })
@@ -162,51 +149,50 @@ export function ChatRoom({
       </div>
 
       {pending ? (
-        <p className="border-t border-[#1E1E1E] pt-3 text-center text-sm text-[#FF2D87]">
+        <p className="border-t border-[#1E1E1E] px-4 py-3 text-center text-sm text-[#FF2D87]">
           Message envoyé ! En attente de réponse.
         </p>
       ) : (
-      <form
-        className="flex shrink-0 items-end gap-2 border-t border-[#1E1E1E] bg-[#000000] pt-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-          void sendMessage();
-        }}
-      >
-        <textarea
-          value={draft}
-          onChange={(event) => setDraft(event.target.value.slice(0, 1000))}
-          onKeyDown={onKeyDown}
-          maxLength={1000}
-          rows={1}
-          placeholder="Écris un message…"
-          className="max-h-32 min-h-[44px] flex-1 resize-none rounded-[24px] border border-[#1E1E1E] bg-[#111111] px-4 py-3 text-sm text-white outline-none placeholder:text-[#555555]"
-        />
-        <button
-          type="submit"
-          disabled={!canSend}
-          aria-label="Envoyer"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full disabled:opacity-40"
-          style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
+        <form
+          className="chat-composer"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void sendMessage();
+          }}
         >
-          <svg
-            className="icon"
-            width={20}
-            height={20}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="1.8"
-            aria-hidden
+          <textarea
+            value={draft}
+            onChange={(event) => setDraft(event.target.value.slice(0, 1000))}
+            onKeyDown={onKeyDown}
+            maxLength={1000}
+            rows={1}
+            placeholder="Écris un message…"
+            className="flex-1 resize-none border border-[#1E1E1E] bg-[#111111] px-4 text-white outline-none placeholder:text-[#555555]"
+          />
+          <button
+            type="submit"
+            disabled={!canSend}
+            aria-label="Envoyer"
+            className="chat-send flex items-center justify-center disabled:opacity-40"
           >
-            <path d="M5 12h12M13 6l6 6-6 6" />
-          </svg>
-        </button>
-      </form>
+            <svg
+              className="icon"
+              width={20}
+              height={20}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="1.8"
+              aria-hidden
+            >
+              <path d="M5 12h12M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </form>
       )}
 
       {error ? (
-        <p className="pt-2 text-center text-sm text-[#FF4444]">{error}</p>
+        <p className="px-4 pb-2 text-center text-sm text-[#FF4444]">{error}</p>
       ) : null}
     </div>
   );

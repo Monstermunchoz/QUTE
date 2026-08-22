@@ -16,7 +16,7 @@ export function MatchModal({ open, onClose, onSeeMatches }: MatchModalProps) {
       aria-modal="true"
       aria-labelledby="match-title"
     >
-      <div className="w-full max-w-sm rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-6 text-center">
+      <div className="modal-shell rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-6 text-center">
         <p id="match-title" className="text-2xl font-bold text-white">
           C&apos;est un match ! 🎉
         </p>

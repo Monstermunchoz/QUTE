@@ -143,8 +143,8 @@ export function SalonRoom({
   }
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] flex-col bg-[var(--bg)]">
-      <header className="flex shrink-0 items-center gap-2 border-b border-[var(--border)] bg-[var(--bg)] py-1">
+    <div className="chat-shell">
+      <header className="flex shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
         <BackButton />
         <div className="min-w-0">
           <h1 className="truncate font-bold text-[var(--text)]">{salon.nom}</h1>
@@ -158,7 +158,7 @@ export function SalonRoom({
         </div>
       </header>
 
-      <div className="flex-1 space-y-4 overflow-y-auto py-4">
+      <div className="chat-messages">
         {messages.length === 0 ? (
           <p className="pt-10 text-center text-sm text-[#888888]">
             Le salon est encore calme. Lance le débat.
@@ -170,7 +170,10 @@ export function SalonRoom({
             const pseudo = author?.pseudo ?? "QUTE";
 
             return (
-              <div key={message.id} className="flex items-start gap-2">
+              <div
+                key={message.id}
+                className={`mb-3 flex items-start gap-2 ${mine ? "flex-row-reverse" : ""}`}
+              >
                 <button
                   type="button"
                   onClick={() => setProfileId(message.auteur_id)}
@@ -183,28 +186,14 @@ export function SalonRoom({
                     size="sm"
                   />
                 </button>
-                <div className="min-w-0 flex-1">
+                <div className={`min-w-0 ${mine ? "items-end text-right" : ""}`}>
                   <p className="text-sm font-bold text-white">{pseudo}</p>
                   <p
-                    className={`mt-1 inline-block max-w-full px-4 py-2 text-sm text-white ${
-                      mine
-                        ? "rounded-[16px_4px_16px_16px]"
-                        : "rounded-[4px_16px_16px_16px] bg-[#1E1E1E]"
-                    }`}
-                    style={
-                      mine
-                        ? {
-                            background:
-                              "linear-gradient(135deg, #FF2D87, #7B2FFF)",
-                          }
-                        : undefined
-                    }
+                    className={`chat-bubble inline-block ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
                   >
                     {message.contenu}
                   </p>
-                  <p className="mt-1 text-[12px] text-[#888888]">
-                    {formatTime(message.created_at)}
-                  </p>
+                  <p className="chat-time">{formatTime(message.created_at)}</p>
                 </div>
               </div>
             );
@@ -214,7 +203,7 @@ export function SalonRoom({
       </div>
 
       <form
-        className="flex shrink-0 items-end gap-2 border-t border-[#1E1E1E] bg-[#000000] pt-3"
+        className="chat-composer"
         onSubmit={(event) => {
           event.preventDefault();
           void sendMessage();
@@ -227,14 +216,13 @@ export function SalonRoom({
           maxLength={1000}
           rows={1}
           placeholder="Écris dans le salon…"
-          className="max-h-32 min-h-[44px] flex-1 resize-none rounded-[24px] border border-[#1E1E1E] bg-[#111111] px-4 py-3 text-sm text-white outline-none placeholder:text-[#555555]"
+          className="flex-1 resize-none border border-[#1E1E1E] bg-[#111111] px-4 text-white outline-none placeholder:text-[#555555]"
         />
         <button
           type="submit"
           disabled={!canSend}
           aria-label="Envoyer"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full disabled:opacity-40"
-          style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
+          className="chat-send flex items-center justify-center disabled:opacity-40"
         >
           <svg
             className="icon"

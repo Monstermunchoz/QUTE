@@ -83,8 +83,8 @@ export function ExplorerTabs({
   return (
     <main className="flex flex-col gap-4 pb-4">
       <header>
-        <h1 className="text-2xl font-bold text-white">Explorer</h1>
-        <p className="text-sm text-[#888888]">Qui QUTE dans le coin.</p>
+        <h1 className="page-title text-white">Explorer</h1>
+        <p className="page-copy text-[#888888]">Qui QUTE dans le coin.</p>
       </header>
 
       <div className="tabs-scroll flex gap-2">
@@ -111,7 +111,7 @@ export function ExplorerTabs({
             Bon… personne n&apos;a bougé. 😏
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid-responsive">
             {profiles.map((profile) => (
               <ProfileCard
                 key={profile.id}

@@ -101,8 +101,8 @@ export function BottomBar() {
 
   return (
     <>
-      <nav className="fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-[var(--border)] bg-[var(--bg)] pb-[env(safe-area-inset-bottom)]">
-        <ul className="mx-auto grid h-16 w-full max-w-lg grid-cols-5 overflow-visible">
+      <nav className="bottom-bar fixed inset-x-0 bottom-0 z-40 overflow-visible border-t border-[var(--border)] bg-[var(--bg)]">
+        <ul className="mx-auto grid h-16 w-full max-w-[900px] grid-cols-5 overflow-visible">
           <SideLink tab={sideTabs[0]} active={isActive("accueil")} />
           <SideLink tab={sideTabs[1]} active={isActive("salons")} />
           <li className="relative flex h-16 items-center justify-center overflow-visible">

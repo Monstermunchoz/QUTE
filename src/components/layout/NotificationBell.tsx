@@ -26,6 +26,15 @@ function BellIcon() {
   );
 }
 
+function formatNotifDate(iso: string) {
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function NotificationBell() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -96,6 +105,16 @@ export function NotificationBell() {
   }, [userId]);
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
     function onClick(event: MouseEvent) {
       if (
         panelRef.current &&
@@ -105,9 +124,13 @@ export function NotificationBell() {
       }
     }
 
+    document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [open]);
 
   async function markRead(notification: AppNotification) {
     const supabase = createClient();
@@ -160,44 +183,64 @@ export function NotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute right-0 z-50 mt-2 w-[min(90vw,320px)] rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-3 shadow-lg">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-sm font-bold text-white">Notifications</p>
-            {unreadCount > 0 ? (
-              <button
-                type="button"
-                onClick={() => void markAllRead()}
-                className="text-xs font-bold text-[#FF2D87]"
-              >
-                Tout marquer comme lu
-              </button>
-            ) : null}
+        <>
+          <button
+            type="button"
+            aria-label="Fermer les notifications"
+            className="fixed inset-0 z-40 bg-black/60 sm:hidden"
+            onClick={() => setOpen(false)}
+          />
+          <div className="notif-sheet fixed inset-x-0 bottom-0 z-50 max-h-[75vh] overflow-hidden rounded-t-[20px] border border-[#1E1E1E] bg-[#111111] sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-[500px] sm:w-[380px] sm:rounded-[16px]">
+            <div className="flex justify-center pt-3 sm:hidden">
+              <span className="h-1 w-10 rounded bg-[#333333]" />
+            </div>
+            <div className="modal-header flex items-center justify-between bg-[#111111] px-5 py-4">
+              <p className="text-[15px] font-bold text-white">Notifications</p>
+              {unreadCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => void markAllRead()}
+                  className="text-sm font-bold text-[#FF2D87]"
+                >
+                  Tout marquer comme lu
+                </button>
+              ) : null}
+            </div>
+            {visible.length === 0 ? (
+              <p className="px-5 py-10 text-center text-sm text-[#888888]">
+                Aucune notification pour le moment.
+              </p>
+            ) : (
+              <ul className="max-h-[60vh] overflow-y-auto sm:max-h-[420px]">
+                {visible.map((item) => (
+                  <li key={item.id} className="border-t border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => void markRead(item)}
+                      className={`w-full px-5 py-4 text-left ${
+                        item.lu
+                          ? "opacity-65"
+                          : "border-l-[3px] border-[#FF2D87] bg-[rgba(255,45,135,0.06)]"
+                      }`}
+                    >
+                      <p className="text-[15px] font-bold text-white">
+                        {item.titre}
+                      </p>
+                      {item.contenu ? (
+                        <p className="mt-1 text-sm text-[#888888]">
+                          {item.contenu}
+                        </p>
+                      ) : null}
+                      <p className="mt-1 text-xs text-[#666666]">
+                        {formatNotifDate(item.created_at)}
+                      </p>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-          {visible.length === 0 ? (
-            <p className="py-6 text-center text-sm text-[#888888]">
-              Rien pour l&apos;instant.
-            </p>
-          ) : (
-            <ul className="max-h-80 overflow-y-auto">
-              {visible.map((item) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => void markRead(item)}
-                    className={`w-full rounded-[12px] px-3 py-3 text-left ${
-                      item.lu ? "opacity-60" : "border-l-[3px] border-[#FF2D87]"
-                    }`}
-                  >
-                    <p className="text-sm font-bold text-white">{item.titre}</p>
-                    {item.contenu ? (
-                      <p className="mt-1 text-xs text-[#888888]">{item.contenu}</p>
-                    ) : null}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        </>
       ) : null}
     </div>
   );
