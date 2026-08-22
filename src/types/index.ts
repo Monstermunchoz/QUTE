@@ -29,6 +29,8 @@ export type Profile = {
   instagram?: string | null;
   visibilite_identites?: "public" | "matchs" | "prive";
   visibilite_orientations?: "public" | "matchs" | "prive";
+  banni?: boolean;
+  email_banni?: string | null;
   created_at: string;
   updated_at: string;
 };

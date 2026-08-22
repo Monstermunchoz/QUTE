@@ -70,8 +70,28 @@ export default function RegisterPage() {
     }
 
     const supabase = createClient();
+    const email = values.email.trim().toLowerCase();
+
+    try {
+      const banResponse = await fetch("/api/auth/email-banni", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const banPayload = (await banResponse.json().catch(() => null)) as {
+        banni?: boolean;
+      } | null;
+
+      if (banPayload?.banni) {
+        setFormError("Cette adresse email a été bannie de QUTE.");
+        return;
+      }
+    } catch (banCheckError) {
+      console.error("[register] email-banni", banCheckError);
+    }
+
     const { data: signUpData, error } = await supabase.auth.signUp({
-      email: values.email,
+      email,
       password: values.password,
       options: {
         data: {
@@ -83,7 +103,14 @@ export default function RegisterPage() {
 
     if (error) {
       console.error("[register] signUp", error);
-      setFormError(error.message);
+      const banned =
+        error.message.toLowerCase().includes("bannie") ||
+        error.message.toLowerCase().includes("banned");
+      setFormError(
+        banned
+          ? "Cette adresse email a été bannie de QUTE."
+          : error.message,
+      );
       return;
     }
 
