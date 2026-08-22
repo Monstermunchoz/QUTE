@@ -3,10 +3,20 @@ Allow: /
 Allow: /cgu
 Allow: /login
 Allow: /register
+
 Disallow: /accueil
 Disallow: /moi
 Disallow: /admin
 Disallow: /explorer
 Disallow: /qute
 Disallow: /creer
-Sitemap: https://qute.fr/sitemap.xml
+Disallow: /salons
+Disallow: /groupes
+Disallow: /lieux
+Disallow: /evenements
+Disallow: /amis
+Disallow: /abonnement
+Disallow: /parametres
+Disallow: /securite
+
+Sitemap: https://qute-olive.vercel.app/sitemap.xml

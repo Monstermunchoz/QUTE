@@ -1,26 +1,52 @@
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { LandingPage } from "@/components/landing/LandingPage";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = {
-  title: "QUTE — Qui • Où • Ce soir | Réseau communautaire LGBTQIA+ Lyon",
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "QUTE",
+  alternateName: "QUTE — Qui, Où, Ce soir",
+  url: "https://qute-olive.vercel.app",
   description:
-    "QUTE est le réseau social communautaire queer de Lyon. Rencontres, sorties, événements, lieux et chat — tout pour la communauté LGBTQIA+ lyonnaise.",
-  keywords:
-    "LGBTQIA Lyon, réseau social queer Lyon, rencontres trans Lyon, communauté gay Lyon, soirées queer Lyon, application LGBTQIA",
-  openGraph: {
-    title: "QUTE — Qui • Où • Ce soir",
-    description: "Le réseau communautaire queer de Lyon.",
-    url: "https://qute.fr",
-    siteName: "QUTE",
-    locale: "fr_FR",
-    type: "website",
+    "Réseau social communautaire LGBTQIA+ de Lyon : rencontres, salons, lieux queer-friendly, événements et statut de sortie en temps réel.",
+  applicationCategory: "SocialNetworkingApplication",
+  operatingSystem: "Web",
+  inLanguage: "fr-FR",
+  isAccessibleForFree: true,
+  audience: {
+    "@type": "Audience",
+    audienceType: "LGBTQIA+",
+    suggestedMinAge: 18,
   },
-  robots: {
-    index: true,
-    follow: true,
+  areaServed: {
+    "@type": "City",
+    name: "Lyon",
+    addressRegion: "Auvergne-Rhône-Alpes",
+    addressCountry: "FR",
   },
+  offers: [
+    {
+      "@type": "Offer",
+      name: "Gratuit",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+    {
+      "@type": "Offer",
+      name: "QUTE+",
+      price: "9.99",
+      priceCurrency: "EUR",
+      description: "Abonnement mensuel QUTE+",
+    },
+    {
+      "@type": "Offer",
+      name: "QUTE Club",
+      price: "19.99",
+      priceCurrency: "EUR",
+      description: "Abonnement mensuel QUTE Club",
+    },
+  ],
 };
 
 export default async function Home() {
@@ -33,5 +59,13 @@ export default async function Home() {
     redirect("/accueil");
   }
 
-  return <LandingPage />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <LandingPage />
+    </>
+  );
 }

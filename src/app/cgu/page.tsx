@@ -3,7 +3,10 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 
 export const metadata: Metadata = {
-  title: "CGU — QUTE",
+  title: "Conditions Générales d'Utilisation",
+  description:
+    "Les conditions générales d'utilisation de QUTE, réseau social communautaire LGBTQIA+.",
+  robots: { index: true, follow: false },
 };
 
 export default function CguPage() {

@@ -219,7 +219,7 @@ export function LandingPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo-icon.png"
-              alt=""
+              alt="Logo QUTE"
               height={28}
               className="logo-icon-bar"
             />
@@ -234,15 +234,17 @@ export function LandingPage() {
         </div>
       </header>
 
+      <main>
       <section
         data-fade
         className="landing-section landing-hero px-4 pt-28"
         style={sectionStyle}
+        aria-label="Présentation QUTE"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo-icon.png"
-          alt="QUTE"
+          alt="Logo QUTE, lettre Q rose"
           className="logo-icon-hero"
           style={{ height: 180, margin: "0 auto 32px" }}
         />
@@ -299,6 +301,7 @@ export function LandingPage() {
         data-fade
         className="landing-section bg-[#000000] px-4"
         style={sectionStyle}
+        aria-label="Tout ce dont tu as besoin"
       >
         <div className="landing-inner mx-auto w-full max-w-5xl">
           <h2 className="landing-title text-center text-[32px] text-white">
@@ -327,6 +330,7 @@ export function LandingPage() {
         data-fade
         className="landing-section bg-[#111111] px-4"
         style={sectionStyle}
+        aria-label="Ce soir à Lyon"
       >
         <div className="landing-inner mx-auto w-full max-w-[620px]">
           <h2 className="landing-title text-center text-[32px] text-white">
@@ -351,6 +355,7 @@ export function LandingPage() {
         data-fade
         className="landing-section landing-shop px-4"
         style={sectionStyle}
+        aria-label="QUTE Shop"
       >
         <div className="landing-inner relative z-10 mx-auto flex w-full max-w-[560px] flex-col items-center">
           <span className="rounded-[20px] bg-[#1E1E1E] px-4 py-1.5 text-[11px] font-bold tracking-[0.12em] text-[#FF2D87]">
@@ -381,6 +386,7 @@ export function LandingPage() {
         data-fade
         className="landing-section bg-[#000000] px-4"
         style={sectionStyle}
+        aria-label="Pensé pour nous, par nous"
       >
         <div className="landing-inner mx-auto w-full max-w-5xl">
           <h2 className="landing-title text-center text-[32px] text-white">
@@ -399,7 +405,7 @@ export function LandingPage() {
                 className="flex flex-col items-center text-center"
               >
                 <StrengthIcon name={item.icon} />
-                <p className="landing-title mt-3 text-white">{item.title}</p>
+                <h3 className="landing-title mt-3 text-white">{item.title}</h3>
                 <p className="landing-copy mx-auto mt-1 text-sm text-[#888888]">
                   {item.text}
                 </p>
@@ -413,6 +419,7 @@ export function LandingPage() {
         data-fade
         className="landing-section bg-[#000000] px-4"
         style={sectionStyle}
+        aria-label="Choisis ton QUTE"
       >
         <div className="landing-inner mx-auto w-full max-w-5xl">
           <h2 className="landing-title text-center text-[32px] text-white">
@@ -495,6 +502,7 @@ export function LandingPage() {
         id="landing-cta"
         data-fade
         className="landing-section px-4"
+        aria-label="Rejoindre QUTE"
         style={{
           ...sectionStyle,
           background: "linear-gradient(135deg, #FF2D87, #7B2FFF)",
@@ -504,7 +512,7 @@ export function LandingPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo-icon.png"
-            alt=""
+            alt="Logo QUTE"
             height={80}
             className="logo-icon-cta"
             style={{ margin: "0 auto" }}
@@ -526,6 +534,7 @@ export function LandingPage() {
           </p>
         </div>
       </section>
+      </main>
 
       <footer
         className="landing-section border-t border-[#1E1E1E] bg-[#000000] px-4 !py-8"
@@ -536,7 +545,7 @@ export function LandingPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo-icon.png"
-              alt=""
+              alt="Logo QUTE"
               height={24}
               className="logo-icon-footer"
             />
