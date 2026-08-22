@@ -170,7 +170,7 @@ export function ExplorerTabs({
               <select
                 value={identite}
                 onChange={(event) => setIdentite(event.target.value)}
-                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white"
+                className="h-[52px] w-full rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-base text-white"
               >
                 <option value="">Identité</option>
                 {IDENTITES.map((item) => (
@@ -182,7 +182,7 @@ export function ExplorerTabs({
               <select
                 value={zone}
                 onChange={(event) => setZone(event.target.value)}
-                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white"
+                className="h-[52px] w-full rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-base text-white"
               >
                 <option value="">Zone</option>
                 {ZONES_LYON.map((item) => (
@@ -198,7 +198,7 @@ export function ExplorerTabs({
                 placeholder="Âge min"
                 value={ageMin}
                 onChange={(event) => setAgeMin(event.target.value)}
-                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white outline-none"
+                className="h-[52px] w-full rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-base text-white outline-none"
               />
               <input
                 type="number"
@@ -207,7 +207,7 @@ export function ExplorerTabs({
                 placeholder="Âge max"
                 value={ageMax}
                 onChange={(event) => setAgeMax(event.target.value)}
-                className="h-11 rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-sm text-white outline-none"
+                className="h-[52px] w-full rounded-[12px] border border-[#1E1E1E] bg-[#111111] px-3 text-base text-white outline-none"
               />
             </div>
           ) : (

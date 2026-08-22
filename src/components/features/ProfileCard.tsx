@@ -13,7 +13,7 @@ export function ProfileCard({ profile, jeSors }: ProfileCardProps) {
   return (
     <Link
       href={`/explorer/${profile.id}`}
-      className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
+      className="block min-w-0 overflow-hidden rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
     >
       <div className="flex flex-col items-center gap-3 text-center">
         <Avatar

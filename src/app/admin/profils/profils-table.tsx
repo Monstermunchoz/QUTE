@@ -150,7 +150,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
               <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <Link
                   href={`/explorer/${profile.id}`}
-                  className="flex h-11 w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] px-4 text-[15px] font-bold text-white sm:w-auto"
+                  className="flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] px-5 text-base font-bold text-white"
                 >
                   Voir profil
                 </Link>
@@ -160,7 +160,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                       type="button"
                       disabled={loading !== null}
                       onClick={() => void makeModerator(profile.id)}
-                      className="h-11 w-full rounded-[12px] bg-[#22C55E] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
+                      className="h-[52px] w-full rounded-[12px] bg-[#22C55E] px-5 text-base font-bold text-white disabled:opacity-50"
                     >
                       Passer moderateur
                     </button>
@@ -174,7 +174,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                           pseudo: profile.pseudo,
                         })
                       }
-                      className="h-11 w-full rounded-[12px] bg-[#333333] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
+                      className="h-[52px] w-full rounded-[12px] bg-[#333333] px-5 text-base font-bold text-white disabled:opacity-50"
                     >
                       Supprimer
                     </button>
@@ -188,7 +188,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                           pseudo: profile.pseudo,
                         })
                       }
-                      className="h-11 w-full rounded-[12px] bg-[#FF4444] px-4 text-[15px] font-bold text-white disabled:opacity-50 sm:w-auto"
+                      className="h-[52px] w-full rounded-[12px] bg-[#FF4444] px-5 text-base font-bold text-white disabled:opacity-50"
                     >
                       Bannir + Supprimer
                     </button>
@@ -233,7 +233,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                 type="button"
                 disabled={confirmBusy}
                 onClick={() => void confirmAction()}
-                className="flex h-11 w-full items-center justify-center rounded-[12px] bg-[#FF4444] text-[15px] font-bold text-white disabled:opacity-50"
+                className="flex h-[52px] w-full items-center justify-center rounded-[12px] bg-[#FF4444] text-base font-bold text-white disabled:opacity-50"
               >
                 {confirmBusy ? "En cours…" : "Confirmer"}
               </button>
@@ -241,7 +241,7 @@ export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
                 type="button"
                 disabled={confirmBusy}
                 onClick={() => setPending(null)}
-                className="flex h-11 w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-[15px] font-bold text-white disabled:opacity-50"
+                className="flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-base font-bold text-white disabled:opacity-50"
               >
                 Annuler
               </button>

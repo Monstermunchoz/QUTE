@@ -54,27 +54,35 @@ export function CeSoirHub({
     <main className="flex flex-col gap-6 pb-4">
       <header>
         <p className="text-sm text-[#888888]">Bienvenue {pseudo}</p>
-        <h1 className="text-[28px] font-bold text-white">Ce soir à Lyon 🌙</h1>
+        <h1 className="text-[26px] font-bold leading-tight text-white sm:text-[28px]">
+          Ce soir à Lyon 🌙
+        </h1>
       </header>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-3 text-center">
-          <p className="text-[32px] font-bold leading-none text-white">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="min-w-0 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-2 text-center sm:p-3">
+          <p className="text-[28px] font-bold leading-none text-white">
             {peopleCount}
           </p>
-          <p className="mt-2 text-xs text-[#888888]">personnes sortent</p>
+          <p className="mt-2 text-[12px] leading-tight text-[#888888]">
+            personnes sortent
+          </p>
         </div>
-        <div className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-3 text-center">
-          <p className="text-[32px] font-bold leading-none text-white">
+        <div className="min-w-0 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-2 text-center sm:p-3">
+          <p className="text-[28px] font-bold leading-none text-white">
             {eventsCount}
           </p>
-          <p className="mt-2 text-xs text-[#888888]">événements ce soir</p>
+          <p className="mt-2 text-[12px] leading-tight text-[#888888]">
+            événements ce soir
+          </p>
         </div>
-        <div className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-3 text-center">
-          <p className="text-[32px] font-bold leading-none text-white">
+        <div className="min-w-0 rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-2 text-center sm:p-3">
+          <p className="text-[28px] font-bold leading-none text-white">
             {lieuxCount}
           </p>
-          <p className="mt-2 text-xs text-[#888888]">lieux actifs</p>
+          <p className="mt-2 text-[12px] leading-tight text-[#888888]">
+            lieux actifs
+          </p>
         </div>
       </div>
 
@@ -95,7 +103,7 @@ export function CeSoirHub({
 
       {showSorties ? (
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-bold text-white">Ils sortent ce soir</h2>
+          <h2 className="text-[20px] font-bold text-white sm:text-lg">Ils sortent ce soir</h2>
           {outings.length === 0 ? (
             <p className="text-sm text-[#888888]">
               Personne n&apos;a encore allumé JE SORS.
@@ -138,7 +146,7 @@ export function CeSoirHub({
       {showEvents ? (
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">Événements ce soir</h2>
+            <h2 className="text-[20px] font-bold text-white sm:text-lg">Événements ce soir</h2>
             <Link
               href="/explorer?tab=evenements"
               className="text-sm font-bold text-[#FF2D87]"
@@ -149,12 +157,12 @@ export function CeSoirHub({
           {eventsTonight.length === 0 ? (
             <p className="text-sm text-[#888888]">Rien de prévu ce soir.</p>
           ) : (
-            <ul className="flex flex-col gap-3">
+            <ul className="flex w-full flex-col gap-3">
               {eventsTonight.map((event) => (
-                <li key={event.id}>
+                <li key={event.id} className="min-w-0">
                   <Link
                     href={`/evenements/${event.id}`}
-                    className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
+                    className="block w-full min-w-0 overflow-hidden rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
                   >
                     <p className="font-bold text-white">{event.titre}</p>
                     <p className="mt-1 font-bold text-white">
@@ -178,7 +186,7 @@ export function CeSoirHub({
 
       {showSalons ? (
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-bold text-white">Salons actifs</h2>
+          <h2 className="text-[20px] font-bold text-white sm:text-lg">Salons actifs</h2>
           {salons.length === 0 ? (
             <p className="text-sm text-[#888888]">Les salons sont calmes.</p>
           ) : (

@@ -41,7 +41,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled || loading}
       aria-busy={loading}
-      className={`flex h-[52px] w-full items-center justify-center rounded-[12px] px-4 text-base font-bold tracking-wide transition-opacity disabled:cursor-not-allowed disabled:opacity-50 ${variantClassName[variant]}`}
+      className={`flex h-[52px] w-full items-center justify-center rounded-[12px] px-5 text-base font-bold tracking-wide transition-opacity disabled:cursor-not-allowed disabled:opacity-50 ${variantClassName[variant]}`}
       style={
         variant === "primary"
           ? { background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }

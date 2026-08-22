@@ -23,7 +23,7 @@ export function Input({
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <label htmlFor={inputId} className="text-[14px] text-[var(--text-muted)]">
+      <label htmlFor={inputId} className="text-[13px] text-[var(--text-muted)]">
         {label}
       </label>
       <input

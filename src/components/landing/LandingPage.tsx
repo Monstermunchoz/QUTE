@@ -237,7 +237,7 @@ export function LandingPage() {
       <main>
       <section
         data-fade
-        className="landing-section landing-hero px-4 pt-28"
+        className="landing-section landing-hero px-5 pt-[100px]"
         style={sectionStyle}
         aria-label="Présentation QUTE"
       >
@@ -255,17 +255,17 @@ export function LandingPage() {
           Le réseau social queer de Lyon. Rencontres, lieux, sorties — un seul
           endroit, fait pour nous.
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="landing-hero-actions mt-8 flex w-full max-w-sm flex-col items-stretch justify-center gap-3 md:max-w-none md:flex-row md:flex-wrap md:items-center">
           <Link
             href="/register"
-            className="landing-btn flex h-[52px] min-w-[160px] items-center justify-center rounded-[12px] px-6 text-sm font-bold"
+            className="landing-btn flex h-[52px] w-full items-center justify-center rounded-[12px] px-6 text-base font-bold md:w-auto md:min-w-[160px]"
             style={gradient}
           >
             Rejoindre QUTE
           </Link>
           <Link
             href="/login"
-            className="landing-btn flex h-[52px] min-w-[160px] items-center justify-center rounded-[12px] border border-[#FF2D87] px-6 text-sm font-bold text-white"
+            className="landing-btn flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#FF2D87] px-6 text-base font-bold text-white md:w-auto md:min-w-[160px]"
           >
             Se connecter
           </Link>
@@ -353,7 +353,7 @@ export function LandingPage() {
 
       <section
         data-fade
-        className="landing-section landing-shop px-4"
+        className="landing-section landing-shop px-5"
         style={sectionStyle}
         aria-label="QUTE Shop"
       >

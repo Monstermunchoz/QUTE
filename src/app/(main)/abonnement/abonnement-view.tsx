@@ -67,11 +67,11 @@ function PeriodToggle({
   onChange: (value: BillingInterval) => void;
 }) {
   return (
-    <div className="mt-4 flex rounded-[12px] bg-[#1E1E1E] p-1">
+    <div className="mt-4 flex min-h-[52px] rounded-[12px] bg-[#1E1E1E] p-1">
       <button
         type="button"
         onClick={() => onChange("mensuel")}
-        className={`flex-1 rounded-[10px] py-2 text-sm font-bold ${
+        className={`flex-1 rounded-[10px] py-3 text-base font-bold ${
           value === "mensuel" ? "text-white" : "text-[#888888]"
         }`}
         style={value === "mensuel" ? gradient : undefined}
@@ -81,7 +81,7 @@ function PeriodToggle({
       <button
         type="button"
         onClick={() => onChange("annuel")}
-        className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-[10px] py-2 text-sm font-bold ${
+        className={`relative flex flex-1 items-center justify-center gap-1.5 rounded-[10px] py-3 text-base font-bold ${
           value === "annuel" ? "text-white" : "text-[#888888]"
         }`}
         style={value === "annuel" ? gradient : undefined}

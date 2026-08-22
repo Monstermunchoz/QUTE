@@ -145,7 +145,7 @@ export function SalonRoom({
 
   return (
     <div className="chat-shell">
-      <header className="flex shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
+      <header className="flex min-w-0 shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
         <BackButton />
         <div className="min-w-0">
           <h1 className="truncate font-bold text-[var(--text)]">{salon.nom}</h1>
@@ -173,7 +173,9 @@ export function SalonRoom({
             return (
               <div
                 key={message.id}
-                className={`mb-3 flex items-start gap-2 ${mine ? "flex-row-reverse" : ""}`}
+                className={`mb-3 flex items-start gap-2 ${
+                  mine ? "chat-row-out flex-row-reverse" : "chat-row-in"
+                }`}
               >
                 <button
                   type="button"
@@ -189,7 +191,9 @@ export function SalonRoom({
                     role={author?.role}
                   />
                 </button>
-                <div className={`min-w-0 ${mine ? "items-end text-right" : ""}`}>
+                <div
+                  className={`min-w-0 max-w-[75%] ${mine ? "items-end text-right" : ""}`}
+                >
                   <p
                     className={`flex items-center gap-1.5 text-sm font-bold text-white ${
                       mine ? "justify-end" : ""
@@ -202,11 +206,11 @@ export function SalonRoom({
                     />
                   </p>
                   <p
-                    className={`chat-bubble inline-block ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
+                    className={`chat-bubble inline-block !mx-0 !max-w-full ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
                   >
                     {message.contenu}
                   </p>
-                  <p className="chat-time">{formatTime(message.created_at)}</p>
+                  <p className="chat-time !mx-0">{formatTime(message.created_at)}</p>
                 </div>
               </div>
             );

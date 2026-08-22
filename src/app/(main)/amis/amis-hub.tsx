@@ -121,7 +121,7 @@ export function AmisHub({
               type="button"
               disabled={loadingId === relation.id}
               onClick={() => void updateRelation(relation.id, "accepte")}
-              className="rounded-[12px] px-3 py-2 text-xs font-bold text-white"
+              className="flex h-[52px] min-w-[96px] shrink-0 items-center justify-center rounded-[12px] px-3 text-sm font-bold text-white disabled:opacity-50"
               style={{ background: "linear-gradient(135deg, #FF2D87, #7B2FFF)" }}
             >
               Accepter
@@ -129,7 +129,7 @@ export function AmisHub({
             <button
               type="button"
               onClick={() => void updateRelation(relation.id, "refuse")}
-              className="rounded-[12px] border border-[#1E1E1E] px-3 py-2 text-xs font-bold text-white"
+              className="flex h-[52px] min-w-[96px] shrink-0 items-center justify-center rounded-[12px] border border-[#1E1E1E] px-3 text-sm font-bold text-white"
             >
               Refuser
             </button>

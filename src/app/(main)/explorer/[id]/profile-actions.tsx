@@ -343,7 +343,7 @@ export function ProfileActions({
               maxLength={1000}
               rows={3}
               placeholder="Écris un premier message…"
-              className="w-full rounded-[12px] border border-[#333333] bg-[#1E1E1E] px-4 py-3 text-sm text-white outline-none placeholder:text-[#555555]"
+              className="w-full rounded-[12px] border border-[#333333] bg-[#1E1E1E] px-4 py-3 text-base text-white outline-none placeholder:text-[#555555]"
             />
             <Button
               type="button"

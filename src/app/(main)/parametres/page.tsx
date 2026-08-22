@@ -26,8 +26,8 @@ export default function ParametresPage() {
     <main className="flex flex-col gap-6">
       <PageTitle title="Paramètres" />
 
-      <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)]">
-        <h2 className="px-4 pt-4 text-sm font-bold text-[var(--text)]">
+      <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-5">
+        <h2 className="text-sm font-bold text-[var(--text)]">
           Notifications
         </h2>
         <Switch
@@ -47,7 +47,7 @@ export default function ParametresPage() {
         />
       </section>
 
-      <section className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-4">
+      <section className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-5">
         <h2 className="text-sm font-bold text-[var(--text)]">Langue</h2>
         <select
           value={language}
@@ -59,8 +59,8 @@ export default function ParametresPage() {
         </select>
       </section>
 
-      <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)]">
-        <h2 className="px-4 pt-4 text-sm font-bold text-[var(--text)]">Thème</h2>
+      <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-5">
+        <h2 className="text-sm font-bold text-[var(--text)]">Thème</h2>
         <Switch
           label="Thème sombre"
           checked={dark}
@@ -116,17 +116,17 @@ function ModeDiscretSection() {
   }
 
   return (
-    <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)]">
-      <h2 className="px-4 pt-4 text-sm font-bold text-[var(--text)]">
+    <section className="overflow-hidden rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-5">
+      <h2 className="text-sm font-bold text-[var(--text)]">
         Mode discret
       </h2>
-      <p className="px-4 pb-2 text-sm text-[var(--text-muted)]">
+      <p className="pb-2 text-sm text-[var(--text-muted)]">
         Navigue sans apparaître en ligne. Réservé à QUTE+.
       </p>
       {premium ? (
         <Switch label="Mode discret" checked={checked} onToggle={() => void toggle()} />
       ) : (
-        <div className="px-4 pb-4">
+        <div className="pt-2">
           <Link
             href="/abonnement"
             className="flex h-[52px] items-center justify-center rounded-[12px] text-sm font-bold text-white"

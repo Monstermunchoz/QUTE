@@ -146,14 +146,14 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
       </header>
 
       {album.length > 0 ? (
-        <div className="tabs-scroll flex gap-2 pr-5">
+        <div className="tabs-scroll flex w-full gap-2">
           {album.map((photo, index) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={photo.id}
               src={photo.url}
               alt={`Photo ${index + 1} de ${profile.pseudo}`}
-              className="h-40 w-40 shrink-0 rounded-[16px] object-cover"
+              className="h-[240px] w-full max-w-full shrink-0 rounded-[16px] object-cover"
             />
           ))}
         </div>

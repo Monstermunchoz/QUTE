@@ -115,7 +115,7 @@ export function ChatRoom({
 
   return (
     <div className="chat-shell">
-      <header className="flex shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
+      <header className="flex min-w-0 shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
         <BackButton />
         <Avatar
           pseudo={other.pseudo}
@@ -139,7 +139,7 @@ export function ChatRoom({
             return (
               <div
                 key={message.id}
-                className={`flex flex-col ${mine ? "items-end" : "items-start"}`}
+                className={`mb-3 flex flex-col ${mine ? "chat-row-out items-end" : "chat-row-in items-start"}`}
               >
                 <p
                   className={`chat-bubble ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
@@ -155,7 +155,7 @@ export function ChatRoom({
       </div>
 
       {pending ? (
-        <p className="border-t border-[#1E1E1E] px-4 py-3 text-center text-sm text-[#FF2D87]">
+        <p className="chat-composer justify-center border-t border-[#1E1E1E] text-center text-sm text-[#FF2D87]">
           Message envoyé ! En attente de réponse.
         </p>
       ) : (
