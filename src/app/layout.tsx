@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://qute-olive.vercel.app"),
+  metadataBase: new URL("https://qute.fr"),
 
   title: {
     default:
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://qute-olive.vercel.app",
+    url: "https://qute.fr",
     siteName: "QUTE",
     title: "QUTE — Qui · Où · Ce soir",
     description:
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: "https://qute-olive.vercel.app",
+    canonical: "https://qute.fr",
   },
 
   icons: {

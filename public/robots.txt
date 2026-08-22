@@ -19,4 +19,4 @@ Disallow: /abonnement
 Disallow: /parametres
 Disallow: /securite
 
-Sitemap: https://qute-olive.vercel.app/sitemap.xml
+Sitemap: https://qute.fr/sitemap.xml

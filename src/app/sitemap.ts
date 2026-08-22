@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://qute-olive.vercel.app";
+  const base = "https://qute.fr";
   return [
     { url: base, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
     {

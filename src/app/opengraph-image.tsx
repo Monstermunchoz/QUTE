@@ -32,7 +32,7 @@ export default async function Image() {
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="https://qute-olive.vercel.app/logo-icon.png"
+          src="https://qute.fr/logo-icon.png"
           alt="QUTE"
           width={300}
           height={300}
