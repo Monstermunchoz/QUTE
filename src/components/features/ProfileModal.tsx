@@ -374,6 +374,8 @@ export function ProfileModal({
               pseudo={profile.pseudo}
               photoUrl={profile.photo_url}
               size="lg"
+              abonnement={profile.abonnement}
+              role={profile.role}
             />
             <h2 className="mt-4 text-[22px] font-bold text-[var(--text)]">
               {profile.pseudo}

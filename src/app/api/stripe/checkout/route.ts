@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     }
 
     const reusedExisting =
-      Boolean(existingId) && customerId === existingId.trim();
+      Boolean(existingId) && customerId === existingId?.trim();
 
     if (estPremium(profil) && reusedExisting) {
       const portal = await getStripe().billingPortal.sessions.create({

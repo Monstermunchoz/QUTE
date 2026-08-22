@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { saveParticipation } from "@/app/(main)/evenements/actions";
 import type { ParticipationStatut } from "@/types";
 
 type ParticipationActionsProps = {
@@ -19,7 +19,6 @@ const ACTIONS: { id: ParticipationStatut; label: string }[] = [
 
 export function ParticipationActions({
   evenementId,
-  currentUserId,
   initialStatut,
 }: ParticipationActionsProps) {
   const router = useRouter();
@@ -31,20 +30,12 @@ export function ParticipationActions({
     setLoading(next);
     setError(null);
 
-    const supabase = createClient();
-    const { error: upsertError } = await supabase.from("participations").upsert(
-      {
-        evenement_id: evenementId,
-        user_id: currentUserId,
-        statut: next,
-      },
-      { onConflict: "evenement_id,user_id" },
-    );
+    const result = await saveParticipation(evenementId, next);
 
     setLoading(null);
 
-    if (upsertError) {
-      setError(upsertError.message);
+    if (result.error) {
+      setError(result.error);
       return;
     }
 
@@ -79,7 +70,7 @@ export function ParticipationActions({
           >
             {loading === action.id
               ? "…"
-              : active && !isParticipate
+              : active
                 ? `${action.label} ✓`
                 : action.label}
           </button>

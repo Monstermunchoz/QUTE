@@ -109,6 +109,8 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
   const pathname = usePathname();
   const plus = estPremium(profile);
   const club = estClub(profile);
+  const isStaff =
+    profile?.role === "admin" || profile?.role === "moderateur";
   const [shopOpen, setShopOpen] = useState(false);
 
   useEffect(() => {
@@ -160,6 +162,8 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
               pseudo={profile?.pseudo ?? "QUTE"}
               photoUrl={profile?.photo_url}
               size="drawer"
+              abonnement={profile?.abonnement}
+              role={profile?.role}
             />
             <p className="text-lg font-bold text-white">
               {profile?.pseudo ?? "QUTE"}
@@ -205,6 +209,15 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
               active={isMenuActive(item.href, pathname)}
             />
           ))}
+          {isStaff ? (
+            <MenuLink
+              href="/admin"
+              label="Administration"
+              icon={<ShieldIcon />}
+              onClose={onClose}
+              active={pathname.startsWith("/admin")}
+            />
+          ) : null}
         </nav>
 
         <p className="menu-section">Autres</p>
@@ -249,6 +262,14 @@ export function SideMenu({ open, onClose, profile }: SideMenuProps) {
       ) : null}
       <ShopModal open={shopOpen} onClose={() => setShopOpen(false)} club={club} />
     </>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg className="icon" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M12 3 5 6v6c0 4.2 2.8 7.2 7 8.5 4.2-1.3 7-4.3 7-8.5V6l-7-3z" />
+    </svg>
   );
 }
 

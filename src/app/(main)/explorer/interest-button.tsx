@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { saveParticipation } from "@/app/(main)/evenements/actions";
 import type { ParticipationStatut } from "@/types";
 
 type InterestButtonProps = {
@@ -13,7 +13,6 @@ type InterestButtonProps = {
 
 export function InterestButton({
   evenementId,
-  currentUserId,
   initialStatut,
 }: InterestButtonProps) {
   const router = useRouter();
@@ -23,19 +22,11 @@ export function InterestButton({
   async function markInterested() {
     setLoading(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.from("participations").upsert(
-      {
-        evenement_id: evenementId,
-        user_id: currentUserId,
-        statut: "interesse",
-      },
-      { onConflict: "evenement_id,user_id" },
-    );
+    const result = await saveParticipation(evenementId, "interesse");
 
     setLoading(false);
 
-    if (!error) {
+    if (!result.error) {
       setStatut("interesse");
       router.refresh();
     }

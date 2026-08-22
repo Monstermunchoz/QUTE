@@ -184,6 +184,8 @@ export function ProfilePanel({
           pseudo={profile.pseudo}
           photoUrl={profile.photo_url}
           photoStatus={profile.photo_status}
+          abonnement={profile.abonnement}
+          role={profile.role}
         />
         <h1 className="text-2xl font-bold text-[var(--text)]">{profile.pseudo}</h1>
         <p className="text-[var(--text-muted)]">

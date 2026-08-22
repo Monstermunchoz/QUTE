@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
+import { revalidateCeSoir } from "./revalidate-ce-soir";
 import {
   JE_SORS_STATUTS,
   endOfNightParis,
@@ -152,6 +153,7 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
     }
 
     setOpen(false);
+    await revalidateCeSoir();
     router.refresh();
   }
 
@@ -172,6 +174,7 @@ export function JeSorsBlock({ current }: JeSorsBlockProps) {
       return;
     }
 
+    await revalidateCeSoir();
     router.refresh();
   }
 

@@ -44,6 +44,18 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
     notFound();
   }
 
+  const { data: blockRows } = await supabase
+    .from("blocages")
+    .select("id")
+    .or(
+      `and(bloqueur_id.eq.${user.id},bloque_id.eq.${profile.id}),and(bloqueur_id.eq.${profile.id},bloque_id.eq.${user.id})`,
+    )
+    .limit(1);
+
+  if ((blockRows ?? []).length > 0) {
+    notFound();
+  }
+
   const { data: existingQrush } = await supabase
     .from("qrushs")
     .select("id")
@@ -152,6 +164,8 @@ export default async function ExplorerProfilePage({ params }: ProfilePageProps) 
           pseudo={profile.pseudo}
           photoUrl={profile.photo_url}
           size="xl"
+          abonnement={profile.abonnement}
+          role={profile.role}
         />
         <div>
           <p className="text-2xl font-bold text-[var(--text)]">

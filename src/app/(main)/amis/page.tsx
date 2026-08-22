@@ -25,20 +25,20 @@ export default async function AmisPage() {
 
   let profilesById: Record<
     string,
-    Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">
+    Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role">
   > = {};
 
   if (otherIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, ville, photo_url")
+      .select("id, pseudo, ville, photo_url, abonnement, role")
       .in("id", Array.from(new Set(otherIds)));
 
     profilesById = Object.fromEntries(
       (
         (profiles ?? []) as Pick<
           Profile,
-          "id" | "pseudo" | "ville" | "photo_url"
+          "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role"
         >[]
       ).map((profile) => [profile.id, profile]),
     );

@@ -9,7 +9,7 @@ import type { ChatMessage, Profile } from "@/types";
 type ChatRoomProps = {
   conversationId: string;
   currentUserId: string;
-  other: Pick<Profile, "id" | "pseudo" | "photo_url">;
+  other: Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement" | "role">;
   initialMessages: ChatMessage[];
   pending?: boolean;
 };
@@ -117,7 +117,13 @@ export function ChatRoom({
     <div className="chat-shell">
       <header className="flex shrink-0 items-center gap-2 border-b border-[#1E1E1E] bg-[var(--bg)] px-2 py-2">
         <BackButton />
-        <Avatar pseudo={other.pseudo} photoUrl={other.photo_url} size="sm" />
+        <Avatar
+          pseudo={other.pseudo}
+          photoUrl={other.photo_url}
+          size="sm"
+          abonnement={other.abonnement}
+          role={other.role}
+        />
         <p className="truncate font-bold text-[var(--text)]">{other.pseudo}</p>
       </header>
 

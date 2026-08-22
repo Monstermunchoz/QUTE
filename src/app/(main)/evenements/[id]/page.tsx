@@ -88,19 +88,24 @@ export default async function EventPage({ params }: EventPageProps) {
       ?.statut as ParticipationStatut | undefined) ?? null;
 
   const attendeeIds = attendees.map((item) => item.user_id);
-  let profilesById: Record<string, Pick<Profile, "id" | "pseudo" | "photo_url">> =
-    {};
+  let profilesById: Record<
+    string,
+    Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement" | "role">
+  > = {};
 
   if (attendeeIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, photo_url")
+      .select("id, pseudo, photo_url, abonnement, role")
       .in("id", attendeeIds);
 
     profilesById = Object.fromEntries(
-      ((profiles ?? []) as Pick<Profile, "id" | "pseudo" | "photo_url">[]).map(
-        (profile) => [profile.id, profile],
-      ),
+      (
+        (profiles ?? []) as Pick<
+          Profile,
+          "id" | "pseudo" | "photo_url" | "abonnement" | "role"
+        >[]
+      ).map((profile) => [profile.id, profile]),
     );
   }
 
@@ -149,7 +154,9 @@ export default async function EventPage({ params }: EventPageProps) {
       ) : null}
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-bold text-white">Participants</h2>
+        <h2 className="text-lg font-bold text-white">
+          Participants ({attendees.length})
+        </h2>
         {attendees.length === 0 ? (
           <p className="text-sm text-[#888888]">Personne pour l&apos;instant.</p>
         ) : (
@@ -164,6 +171,8 @@ export default async function EventPage({ params }: EventPageProps) {
                     pseudo={pseudo}
                     photoUrl={profile?.photo_url}
                     size="sm"
+                    abonnement={profile?.abonnement}
+                    role={profile?.role}
                   />
                   <span className="max-w-[64px] truncate text-xs text-[#888888]">
                     {pseudo}

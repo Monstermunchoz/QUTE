@@ -16,7 +16,13 @@ export function ProfileCard({ profile, jeSors }: ProfileCardProps) {
       className="block rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
     >
       <div className="flex flex-col items-center gap-3 text-center">
-        <Avatar pseudo={profile.pseudo} photoUrl={profile.photo_url} size="md" />
+        <Avatar
+          pseudo={profile.pseudo}
+          photoUrl={profile.photo_url}
+          size="md"
+          abonnement={profile.abonnement}
+          role={profile.role}
+        />
         <div className="min-w-0">
           <p className="truncate font-bold text-white">{profile.pseudo}</p>
           <div className="mt-1 flex justify-center">

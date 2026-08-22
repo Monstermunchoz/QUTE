@@ -125,6 +125,8 @@ export function QuteHub({
                       pseudo={pseudo}
                       photoUrl={profile?.photo_url}
                       size="md"
+                      abonnement={profile?.abonnement}
+                      role={profile?.role}
                     />
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-bold text-white">{pseudo}</p>
@@ -163,6 +165,8 @@ export function QuteHub({
                       pseudo={pseudo}
                       photoUrl={profile?.photo_url}
                       size="md"
+                      abonnement={profile?.abonnement}
+                      role={profile?.role}
                     />
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-bold text-white">{pseudo}</p>
@@ -201,6 +205,8 @@ export function QuteHub({
                       pseudo={pseudo}
                       photoUrl={profile?.photo_url}
                       size="md"
+                      abonnement={profile?.abonnement}
+                      role={profile?.role}
                     />
                     <div className="min-w-0 flex-1">
                       <p className="truncate font-bold text-white">{pseudo}</p>

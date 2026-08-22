@@ -42,18 +42,23 @@ export default async function GroupePage({ params }: GroupePageProps) {
   const memberIds = members.map((member) => member.user_id);
   const isMember = members.some((member) => member.user_id === user.id);
 
-  let profilesById: Record<string, Pick<Profile, "id" | "pseudo" | "photo_url">> =
-    {};
+  let profilesById: Record<
+    string,
+    Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement" | "role">
+  > = {};
 
   if (memberIds.length > 0) {
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("id, pseudo, photo_url")
+      .select("id, pseudo, photo_url, abonnement, role")
       .in("id", memberIds);
 
     profilesById = Object.fromEntries(
       (
-        (profiles ?? []) as Pick<Profile, "id" | "pseudo" | "photo_url">[]
+        (profiles ?? []) as Pick<
+          Profile,
+          "id" | "pseudo" | "photo_url" | "abonnement" | "role"
+        >[]
       ).map((profile) => [profile.id, profile]),
     );
   }
@@ -102,6 +107,8 @@ export default async function GroupePage({ params }: GroupePageProps) {
                     pseudo={pseudo}
                     photoUrl={profile?.photo_url}
                     size="sm"
+                    abonnement={profile?.abonnement}
+                    role={profile?.role}
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-bold text-white">{pseudo}</p>

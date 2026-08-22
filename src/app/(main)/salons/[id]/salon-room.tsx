@@ -185,6 +185,8 @@ export function SalonRoom({
                     pseudo={pseudo}
                     photoUrl={author?.photo_url}
                     size="sm"
+                    abonnement={author?.abonnement}
+                    role={author?.role}
                   />
                 </button>
                 <div className={`min-w-0 ${mine ? "items-end text-right" : ""}`}>

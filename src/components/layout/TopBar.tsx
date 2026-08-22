@@ -105,6 +105,8 @@ export function TopBar() {
                 pseudo={profile?.pseudo ?? "QUTE"}
                 photoUrl={profile?.photo_url}
                 size="xs"
+                abonnement={profile?.abonnement}
+                role={profile?.role}
               />
             </Link>
           </div>

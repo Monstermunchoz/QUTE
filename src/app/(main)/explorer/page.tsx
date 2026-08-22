@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { ExplorerTabs } from "./explorer-tabs";
 import { createClient } from "@/lib/supabase/server";
 import { estPremium } from "@/lib/subscription";
-import { isJeSorsActive } from "@/lib/utils/je-sors";
+import { eventOverlapsParisDay } from "@/lib/utils/event-date";
+import { isJeSorsActive, parisDayBounds } from "@/lib/utils/je-sors";
 import type {
   Evenement,
   Groupe,
@@ -29,10 +30,24 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
 
   const { data: blocks } = await supabase
     .from("blocages")
-    .select("bloque_id")
-    .eq("bloqueur_id", user.id);
+    .select("bloqueur_id, bloque_id")
+    .or(`bloqueur_id.eq.${user.id},bloque_id.eq.${user.id}`);
 
-  const blockedIds = (blocks ?? []).map((row) => row.bloque_id as string);
+  const blockedIds = Array.from(
+    new Set(
+      (blocks ?? []).flatMap((row) => {
+        const blocker = row.bloqueur_id as string;
+        const blocked = row.bloque_id as string;
+        if (blocker === user.id) {
+          return [blocked];
+        }
+        if (blocked === user.id) {
+          return [blocker];
+        }
+        return [];
+      }),
+    ),
+  );
 
   let query = supabase
     .from("profiles")
@@ -49,6 +64,8 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
   }
 
   const nowIso = new Date().toISOString();
+  const { start, end } = parisDayBounds();
+  const weekAgo = new Date(start.getTime() - 7 * 86_400_000).toISOString();
 
   const [
     { data: profileRows },
@@ -67,7 +84,8 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       .from("evenements")
       .select("*")
       .eq("statut", "publie")
-      .gte("date_debut", nowIso)
+      .gte("date_debut", weekAgo)
+      .lt("date_debut", end.toISOString())
       .order("date_debut", { ascending: true }),
     supabase.from("je_sors").select("user_id, statut, zone, expires_at").gt("expires_at", nowIso),
     supabase
@@ -77,7 +95,11 @@ export default async function ExplorerPage({ searchParams }: ExplorerPageProps) 
       .maybeSingle(),
   ]);
 
-  const evenements = (eventRows ?? []) as Evenement[];
+  const evenements = ((eventRows ?? []) as Evenement[]).filter(
+    (event) =>
+      eventOverlapsParisDay(event, start, end) ||
+      new Date(event.date_debut).getTime() >= Date.now(),
+  );
   const eventIds = evenements.map((event) => event.id);
 
   let participations: Participation[] = [];

@@ -73,7 +73,7 @@ export default async function ConversationPage({ params }: ChatPageProps) {
 
   const { data: otherRow } = await supabase
     .from("profiles")
-    .select("id, pseudo, photo_url")
+    .select("id, pseudo, photo_url, abonnement, role")
     .eq("id", otherId)
     .maybeSingle();
 
@@ -91,7 +91,12 @@ export default async function ConversationPage({ params }: ChatPageProps) {
     <ChatRoom
       conversationId={conversation.id}
       currentUserId={user.id}
-      other={otherRow as Pick<Profile, "id" | "pseudo" | "photo_url">}
+      other={
+        otherRow as Pick<
+          Profile,
+          "id" | "pseudo" | "photo_url" | "abonnement" | "role"
+        >
+      }
       initialMessages={(messageRows ?? []) as ChatMessage[]}
       pending={conversation.statut === "en_attente"}
     />

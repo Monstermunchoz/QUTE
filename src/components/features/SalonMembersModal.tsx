@@ -179,6 +179,8 @@ export function SalonMembersModal({
                     pseudo={member.pseudo}
                     photoUrl={member.photo_url}
                     size="member"
+                    abonnement={member.abonnement}
+                    role={member.role}
                   />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-bold text-white">

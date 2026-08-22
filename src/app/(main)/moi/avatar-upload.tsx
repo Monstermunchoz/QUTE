@@ -13,6 +13,8 @@ type AvatarUploadProps = {
   pseudo: string;
   photoUrl: string | null;
   photoStatus: string;
+  abonnement?: string | null;
+  role?: string | null;
 };
 
 export function AvatarUpload({
@@ -20,6 +22,8 @@ export function AvatarUpload({
   pseudo,
   photoUrl,
   photoStatus,
+  abonnement,
+  role,
 }: AvatarUploadProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -97,7 +101,13 @@ export function AvatarUpload({
         className="group relative"
         aria-label="Modifier la photo de profil"
       >
-        <Avatar pseudo={pseudo} photoUrl={photoUrl} size="xl" />
+        <Avatar
+          pseudo={pseudo}
+          photoUrl={photoUrl}
+          size="xl"
+          abonnement={abonnement}
+          role={role}
+        />
         <span className="absolute inset-0 flex flex-col items-center justify-center rounded-full bg-black/55 opacity-0 transition-opacity group-hover:opacity-100">
           <svg
             width={22}

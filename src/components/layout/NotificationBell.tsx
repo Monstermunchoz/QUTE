@@ -43,6 +43,7 @@ export function NotificationBell() {
   const [items, setItems] = useState<AppNotification[]>([]);
   const [leaving, setLeaving] = useState<Set<string>>(new Set());
   const [confirmClear, setConfirmClear] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const unreadCount = items.filter((item) => !item.lu).length;
 
@@ -101,6 +102,37 @@ export function NotificationBell() {
         },
         (payload) => {
           setItems((current) => [payload.new as AppNotification, ...current]);
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const updated = payload.new as AppNotification;
+          setItems((current) =>
+            current.map((item) => (item.id === updated.id ? updated : item)),
+          );
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const removed = payload.old as { id?: string };
+          if (!removed.id) {
+            return;
+          }
+          setItems((current) => current.filter((item) => item.id !== removed.id));
         },
       )
       .subscribe();

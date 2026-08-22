@@ -4,16 +4,35 @@ import { useRouter } from "next/navigation";
 
 type BackButtonProps = {
   className?: string;
+  fallbackHref?: string;
 };
 
-export function BackButton({ className = "" }: BackButtonProps) {
+export function BackButton({
+  className = "",
+  fallbackHref = "/accueil",
+}: BackButtonProps) {
   const router = useRouter();
+
+  function goBack() {
+    if (typeof window !== "undefined") {
+      const fromApp =
+        document.referrer.startsWith(window.location.origin) ||
+        window.history.length > 1;
+
+      if (fromApp) {
+        router.back();
+        return;
+      }
+    }
+
+    router.push(fallbackHref);
+  }
 
   return (
     <button
       type="button"
       aria-label="Retour"
-      onClick={() => router.back()}
+      onClick={goBack}
       className={`flex h-11 w-11 shrink-0 items-center justify-center text-[var(--text)] ${className}`}
     >
       <svg

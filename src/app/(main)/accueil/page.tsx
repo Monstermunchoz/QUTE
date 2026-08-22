@@ -2,9 +2,12 @@ import { redirect } from "next/navigation";
 import { CeSoirHub } from "./ce-soir-hub";
 import { Button } from "@/components/ui/Button";
 import { createClient } from "@/lib/supabase/server";
+import { eventOverlapsParisDay } from "@/lib/utils/event-date";
 import { parisDayBounds } from "@/lib/utils/je-sors";
 import { isJeSorsActive } from "@/lib/utils/je-sors";
 import type { Evenement, JeSors, Lieu, Profile, Salon, SalonMessage } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 async function signOut() {
   "use server";
@@ -35,6 +38,8 @@ export default async function AccueilPage() {
 
   const pseudo = profile?.pseudo ?? user.user_metadata?.pseudo ?? "";
 
+  const weekAgo = new Date(start.getTime() - 7 * 86_400_000).toISOString();
+
   const [{ data: jeSorsRows }, { data: eventRows }, { data: messageRows }] =
     await Promise.all([
       supabase
@@ -46,7 +51,7 @@ export default async function AccueilPage() {
         .from("evenements")
         .select("*")
         .eq("statut", "publie")
-        .gte("date_debut", start.toISOString())
+        .gte("date_debut", weekAgo)
         .lt("date_debut", end.toISOString())
         .order("date_debut", { ascending: true }),
       supabase
@@ -57,7 +62,28 @@ export default async function AccueilPage() {
     ]);
 
   const jeSors = ((jeSorsRows ?? []) as JeSors[]).filter(isJeSorsActive);
-  const eventsTonight = (eventRows ?? []) as Evenement[];
+  const eventsTonight = ((eventRows ?? []) as Evenement[]).filter((event) =>
+    eventOverlapsParisDay(event, start, end),
+  );
+
+  const goingOutIds = new Set(jeSors.map((row) => row.user_id));
+
+  if (eventsTonight.length > 0) {
+    const { data: participationRows } = await supabase
+      .from("participations")
+      .select("user_id, statut")
+      .in(
+        "evenement_id",
+        eventsTonight.map((event) => event.id),
+      )
+      .in("statut", ["participe", "interesse"]);
+
+    for (const row of participationRows ?? []) {
+      goingOutIds.add(row.user_id as string);
+    }
+  }
+
+  const peopleCount = goingOutIds.size;
 
   const outingIds = jeSors.slice(0, 10).map((row) => row.user_id);
   let profilesById: Record<
@@ -186,7 +212,7 @@ export default async function AccueilPage() {
     <>
       <CeSoirHub
         pseudo={pseudo}
-        peopleCount={jeSors.length}
+        peopleCount={peopleCount}
         eventsCount={eventsTonight.length}
         lieuxCount={lieuKeys.size}
         outings={outingsWithPlaces}

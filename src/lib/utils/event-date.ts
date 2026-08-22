@@ -47,6 +47,20 @@ export function isEventTonight(iso: string) {
   return parisYmd(new Date(iso)) === parisYmd(new Date());
 }
 
+/** True if the event starts today (Paris) or is still ongoing during today. */
+export function eventOverlapsParisDay(
+  event: { date_debut: string; date_fin?: string | null },
+  dayStart: Date,
+  dayEnd: Date,
+) {
+  const debut = new Date(event.date_debut).getTime();
+  const fin = event.date_fin
+    ? new Date(event.date_fin).getTime()
+    : debut;
+
+  return debut < dayEnd.getTime() && fin >= dayStart.getTime();
+}
+
 export function isEventThisWeek(iso: string) {
   const event = new Date(iso);
 

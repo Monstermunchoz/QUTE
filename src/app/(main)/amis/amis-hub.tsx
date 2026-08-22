@@ -12,7 +12,10 @@ import type { Ami, Profile } from "@/types";
 type AmisHubProps = {
   currentUserId: string;
   relations: Ami[];
-  profilesById: Record<string, Pick<Profile, "id" | "pseudo" | "ville" | "photo_url">>;
+  profilesById: Record<
+    string,
+    Pick<Profile, "id" | "pseudo" | "ville" | "photo_url" | "abonnement" | "role">
+  >;
 };
 
 export function AmisHub({
@@ -98,7 +101,13 @@ export function AmisHub({
           onClick={() => setProfileId(otherId)}
           className="flex min-w-0 flex-1 items-center gap-3 text-left"
         >
-          <Avatar pseudo={pseudo} photoUrl={profile?.photo_url} size="md" />
+          <Avatar
+            pseudo={pseudo}
+            photoUrl={profile?.photo_url}
+            size="md"
+            abonnement={profile?.abonnement}
+            role={profile?.role}
+          />
           <div className="min-w-0">
             <p className="truncate font-bold text-white">{pseudo}</p>
             <p className="truncate text-sm text-[#888888]">
