@@ -22,6 +22,12 @@ const ACTION_FILTERS: { id: string; label: string }[] = [
   { id: "publier_evenement", label: "Publier événement" },
   { id: "refuser_evenement", label: "Refuser événement" },
   { id: "traiter_signalement", label: "Signalement" },
+  { id: "innocenter_message", label: "Innocenter msg" },
+  { id: "masquer_message", label: "Masquer msg" },
+  { id: "supprimer_message", label: "Supprimer msg" },
+  { id: "quarantaine_innocenter", label: "Quarantaine OK" },
+  { id: "quarantaine_supprimer", label: "Quarantaine del" },
+  { id: "trust_regle", label: "Règle T&S" },
 ];
 
 const ACTION_LABELS: Record<string, string> = {
@@ -32,6 +38,12 @@ const ACTION_LABELS: Record<string, string> = {
   publier_evenement: "Publier événement",
   refuser_evenement: "Refuser événement",
   traiter_signalement: "Traiter signalement",
+  innocenter_message: "Innocenter message",
+  masquer_message: "Masquer message",
+  supprimer_message: "Supprimer message",
+  quarantaine_innocenter: "Quarantaine — envoyer",
+  quarantaine_supprimer: "Quarantaine — supprimer",
+  trust_regle: "Règle Trust & Safety",
 };
 
 function formatDetails(details: Record<string, unknown> | null) {

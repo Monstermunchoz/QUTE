@@ -9,6 +9,9 @@ export default async function AdminDashboardPage() {
     { count: eventsCount },
     { count: avatarCount },
     { count: albumCount },
+    { count: verifyCount },
+    { count: salonVerifyCount },
+    { count: quarantineCount },
   ] = await Promise.all([
     supabase
       .from("signalements")
@@ -26,9 +29,24 @@ export default async function AdminDashboardPage() {
       .from("photos")
       .select("*", { count: "exact", head: true })
       .eq("statut", "pending"),
+    supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .eq("a_verifier", true)
+      .eq("masque", false),
+    supabase
+      .from("salon_messages")
+      .select("*", { count: "exact", head: true })
+      .eq("a_verifier", true)
+      .eq("masque", false),
+    supabase
+      .from("messages_quarantaine")
+      .select("*", { count: "exact", head: true })
+      .eq("statut", "en_attente"),
   ]);
 
   const photosCount = (avatarCount ?? 0) + (albumCount ?? 0);
+  const toVerify = (verifyCount ?? 0) + (salonVerifyCount ?? 0);
 
   const cards = [
     {
@@ -46,6 +64,18 @@ export default async function AdminDashboardPage() {
       label: "Photos pending",
       value: photosCount ?? 0,
     },
+    {
+      href: "/admin/moderation",
+      label: "messages à vérifier",
+      value: toVerify,
+      tone: "orange" as const,
+    },
+    {
+      href: "/admin/moderation",
+      label: "messages en quarantaine",
+      value: quarantineCount ?? 0,
+      tone: "red" as const,
+    },
   ];
 
   return (
@@ -56,11 +86,21 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {cards.map((card) => (
           <Link
-            key={card.href}
+            key={`${card.href}-${card.label}`}
             href={card.href}
             className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
           >
-            <p className="text-[32px] font-bold leading-none text-white">
+            <p
+              className="text-[32px] font-bold leading-none"
+              style={{
+                color:
+                  "tone" in card && card.tone === "orange"
+                    ? "#FF8A00"
+                    : "tone" in card && card.tone === "red"
+                      ? "#FF4444"
+                      : "#FFFFFF",
+              }}
+            >
               {card.value}
             </p>
             <p className="mt-2 text-[15px] text-[#CCCCCC]">{card.label}</p>

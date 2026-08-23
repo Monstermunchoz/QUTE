@@ -30,6 +30,14 @@ export default async function SalonPage({ params }: SalonPageProps) {
 
   const salon = salonRow as Salon;
 
+  const { data: meRow } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+  const isStaff =
+    meRow?.role === "admin" || meRow?.role === "moderateur";
+
   const { data: messageRows } = await supabase
     .from("salon_messages")
     .select("*")
@@ -73,6 +81,7 @@ export default async function SalonPage({ params }: SalonPageProps) {
     <SalonRoom
       salon={salon}
       currentUserId={user.id}
+      isStaff={isStaff}
       initialMessages={messages}
       authors={authors}
     />

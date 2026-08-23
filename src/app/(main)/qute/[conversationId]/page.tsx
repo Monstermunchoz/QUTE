@@ -81,6 +81,15 @@ export default async function ConversationPage({ params }: ChatPageProps) {
     notFound();
   }
 
+  const { data: meRow } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const isStaff =
+    meRow?.role === "admin" || meRow?.role === "moderateur";
+
   const { data: messageRows } = await supabase
     .from("messages")
     .select("*")
@@ -91,6 +100,7 @@ export default async function ConversationPage({ params }: ChatPageProps) {
     <ChatRoom
       conversationId={conversation.id}
       currentUserId={user.id}
+      isStaff={isStaff}
       other={
         otherRow as Pick<
           Profile,

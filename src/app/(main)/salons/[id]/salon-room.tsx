@@ -6,6 +6,7 @@ import { ProfileModal } from "@/components/features/ProfileModal";
 import { SalonMembersModal } from "@/components/features/SalonMembersModal";
 import { BackButton } from "@/components/ui/BackButton";
 import { BadgeAbonnement } from "@/components/ui/BadgeAbonnement";
+import { detecterArnaque } from "@/lib/trust/detecter-arnaque";
 import { createClient } from "@/lib/supabase/client";
 import type { Profile, Salon, SalonMessage } from "@/types";
 
@@ -14,6 +15,7 @@ type Author = Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement" | "role
 type SalonRoomProps = {
   salon: Salon;
   currentUserId: string;
+  isStaff?: boolean;
   initialMessages: SalonMessage[];
   authors: Record<string, Author>;
 };
@@ -28,6 +30,7 @@ function formatTime(iso: string) {
 export function SalonRoom({
   salon,
   currentUserId,
+  isStaff = false,
   initialMessages,
   authors: initialAuthors,
 }: SalonRoomProps) {
@@ -118,29 +121,42 @@ export function SalonRoom({
     setSending(true);
     setError(null);
 
-    const supabase = createClient();
-    const { data, error: insertError } = await supabase
-      .from("salon_messages")
-      .insert({
-        salon_id: salon.id,
-        auteur_id: currentUserId,
-        contenu,
-      })
-      .select("*")
-      .single();
+    try {
+      const response = await fetch("/api/salons/messages/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ salonId: salon.id, contenu }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        success?: boolean;
+        message?: SalonMessage;
+        error?: string;
+      } | null;
 
-    setSending(false);
+      setSending(false);
 
-    if (insertError) {
-      setError(insertError.message);
-      return;
+      if (!response.ok || !payload?.success) {
+        setError(payload?.error ?? "Impossible d'envoyer.");
+        return;
+      }
+
+      if (payload.message) {
+        addMessage(payload.message);
+      } else {
+        addMessage({
+          id: `local-${Date.now()}`,
+          salon_id: salon.id,
+          auteur_id: currentUserId,
+          contenu,
+          created_at: new Date().toISOString(),
+        });
+      }
+
+      setDraft("");
+    } catch {
+      setSending(false);
+      setError("Impossible d'envoyer.");
     }
-
-    if (data) {
-      addMessage(data as SalonMessage);
-    }
-
-    setDraft("");
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -176,6 +192,20 @@ export function SalonRoom({
             const author = authors[message.auteur_id];
             const mine = message.auteur_id === currentUserId;
             const pseudo = author?.pseudo ?? "QUTE";
+
+            if (message.masque && !isStaff) {
+              return null;
+            }
+
+            if (message.masque && isStaff) {
+              return (
+                <div key={message.id} className="mb-3">
+                  <p className="text-xs italic text-[#888888] opacity-40">
+                    [Message masqué par la modération]
+                  </p>
+                </div>
+              );
+            }
 
             return (
               <div
@@ -217,6 +247,12 @@ export function SalonRoom({
                   >
                     {message.contenu}
                   </p>
+                  {!mine && detecterArnaque(message.trust_categorie) ? (
+                    <p className="mt-1 flex items-center gap-1 text-xs text-amber-400">
+                      ⚠️ Sois prudent·e — QUTE ne demande jamais d&apos;argent ni
+                      de codes.
+                    </p>
+                  ) : null}
                   <p className="chat-time">{formatTime(message.created_at)}</p>
                 </div>
               </div>

@@ -215,16 +215,20 @@ export function ProfileActions({
       return;
     }
 
-    const { error: messageError } = await supabase.from("messages").insert({
-      conversation_id: conversation.id,
-      auteur_id: user.id,
-      contenu,
+    const send = await fetch("/api/messages/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ conversationId: conversation.id, contenu }),
     });
+    const payload = (await send.json().catch(() => null)) as {
+      success?: boolean;
+      error?: string;
+    } | null;
 
     setMessageLoading(false);
 
-    if (messageError) {
-      setError(messageError.message);
+    if (!send.ok || !payload?.success) {
+      setError(payload?.error ?? "Impossible d'envoyer le message.");
       return;
     }
 

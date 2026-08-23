@@ -162,6 +162,12 @@ create table if not exists public.messages (
   created_at timestamptz default now()
 );
 
+alter table public.messages
+  add column if not exists a_verifier boolean default false,
+  add column if not exists trust_score integer default 0,
+  add column if not exists trust_categorie text,
+  add column if not exists masque boolean default false;
+
 -- 1.5 salons / salon_messages (005 + 019)
 create table if not exists public.salons (
   id uuid default gen_random_uuid() primary key,
@@ -183,6 +189,12 @@ create table if not exists public.salon_messages (
   contenu text not null check (char_length(contenu) <= 1000),
   created_at timestamptz default now()
 );
+
+alter table public.salon_messages
+  add column if not exists a_verifier boolean default false,
+  add column if not exists trust_score integer default 0,
+  add column if not exists trust_categorie text,
+  add column if not exists masque boolean default false;
 
 -- 1.6 groupes (005)
 create table if not exists public.groupes (
@@ -362,6 +374,33 @@ create table if not exists public.audit_log (
   created_at timestamptz default now()
 );
 
+-- 1.18 trust & safety (030)
+create table if not exists public.trust_rules (
+  id uuid default gen_random_uuid() primary key,
+  pattern text not null,
+  categorie text check (categorie in (
+    'drogue','arme','arnaque','menace','harcelement','mineur','spam','lien_suspect'
+  )),
+  poids integer default 1 check (poids between 1 and 5),
+  actif boolean default true,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.messages_quarantaine (
+  id uuid default gen_random_uuid() primary key,
+  conversation_id uuid references public.conversations(id) on delete cascade,
+  salon_id uuid references public.salons(id) on delete cascade,
+  auteur_id uuid references public.profiles(id) on delete cascade,
+  contenu text not null,
+  trust_score integer,
+  trust_categorie text,
+  statut text default 'en_attente'
+    check (statut in ('en_attente','supprime','innocente')),
+  traite_par uuid references public.profiles(id),
+  traite_at timestamptz,
+  created_at timestamptz default now()
+);
+
 -- Données 023 : aligner le statut d’abonnement des profils déjà premium
 update public.profiles
 set abonnement_statut = 'actif'
@@ -394,6 +433,8 @@ alter table public.paiements enable row level security;
 alter table public.emails_bannis enable row level security;
 alter table public.likes_lieux enable row level security;
 alter table public.audit_log enable row level security;
+alter table public.trust_rules enable row level security;
+alter table public.messages_quarantaine enable row level security;
 
 -- ---------------------------------------------------------------------------
 -- 3. Droits (013 lockdown + exceptions 024 / 027)
@@ -411,6 +452,11 @@ grant select, insert on public.emails_bannis to authenticated;
 
 grant select, insert, update, delete on public.likes_lieux to authenticated;
 revoke all on public.likes_lieux from anon;
+
+grant select, insert, update, delete on public.trust_rules to authenticated;
+revoke all on public.trust_rules from anon;
+grant select, insert, update, delete on public.messages_quarantaine to authenticated;
+revoke all on public.messages_quarantaine from anon;
 
 -- ---------------------------------------------------------------------------
 -- 4. Fonctions
@@ -782,7 +828,8 @@ drop policy if exists "envoie un message" on public.messages;
 
 create policy "voit les messages de ses conversations" on public.messages
   for select using (
-    exists (
+    (masque is not true or public.is_staff())
+    and exists (
       select 1 from public.conversations c
       where c.id = conversation_id
       and (
@@ -815,6 +862,19 @@ create policy "envoie un message" on public.messages
     )
   );
 
+drop policy if exists "staff voit tous les messages" on public.messages;
+create policy "staff voit tous les messages" on public.messages
+  for select using (public.is_staff());
+
+drop policy if exists "staff modere messages" on public.messages;
+create policy "staff modere messages" on public.messages
+  for update using (public.is_staff())
+  with check (public.is_staff());
+
+drop policy if exists "staff supprime messages" on public.messages;
+create policy "staff supprime messages" on public.messages
+  for delete using (public.is_staff());
+
 -- 6.7 salons
 drop policy if exists "lecture salons publics" on public.salons;
 drop policy if exists "voit ses salons" on public.salons;
@@ -842,10 +902,26 @@ drop policy if exists "lecture messages salon" on public.salon_messages;
 drop policy if exists "envoie message salon" on public.salon_messages;
 
 create policy "lecture messages salon" on public.salon_messages
-  for select using (auth.uid() is not null);
+  for select using (
+    auth.uid() is not null
+    and (masque is not true or public.is_staff())
+  );
 
 create policy "envoie message salon" on public.salon_messages
   for insert with check (auth.uid() = auteur_id);
+
+drop policy if exists "staff voit tous salon_messages" on public.salon_messages;
+create policy "staff voit tous salon_messages" on public.salon_messages
+  for select using (public.is_staff());
+
+drop policy if exists "staff modere salon_messages" on public.salon_messages;
+create policy "staff modere salon_messages" on public.salon_messages
+  for update using (public.is_staff())
+  with check (public.is_staff());
+
+drop policy if exists "staff supprime salon_messages" on public.salon_messages;
+create policy "staff supprime salon_messages" on public.salon_messages
+  for delete using (public.is_staff());
 
 -- 6.9 groupes
 drop policy if exists "lecture groupes publics" on public.groupes;
@@ -1065,6 +1141,37 @@ create policy "admin insere audit log" on public.audit_log
       select 1 from public.profiles
       where id = auth.uid()
       and role in ('admin','moderateur')
+    )
+  );
+
+-- 6.23 trust & safety
+drop policy if exists "admin gere les regles" on public.trust_rules;
+create policy "admin gere les regles" on public.trust_rules
+  for all using (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role in ('admin','moderateur')
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role in ('admin','moderateur')
+    )
+  );
+
+drop policy if exists "admin voit quarantaine" on public.messages_quarantaine;
+create policy "admin voit quarantaine" on public.messages_quarantaine
+  for all using (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role in ('admin','moderateur')
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role in ('admin','moderateur')
     )
   );
 

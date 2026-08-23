@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { Avatar } from "@/components/features/Avatar";
+import { MessageBubble } from "@/components/chat/MessageBubble";
 import { BackButton } from "@/components/ui/BackButton";
 import { createClient } from "@/lib/supabase/client";
 import type { ChatMessage, Profile } from "@/types";
@@ -9,6 +10,7 @@ import type { ChatMessage, Profile } from "@/types";
 type ChatRoomProps = {
   conversationId: string;
   currentUserId: string;
+  isStaff?: boolean;
   other: Pick<Profile, "id" | "pseudo" | "photo_url" | "abonnement" | "role">;
   initialMessages: ChatMessage[];
   pending?: boolean;
@@ -24,6 +26,7 @@ function formatTime(iso: string) {
 export function ChatRoom({
   conversationId,
   currentUserId,
+  isStaff = false,
   other,
   initialMessages,
   pending = false,
@@ -64,6 +67,37 @@ export function ChatRoom({
           addMessage(payload.new as ChatMessage);
         },
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          const next = payload.new as ChatMessage;
+          setMessages((current) =>
+            current.map((item) => (item.id === next.id ? next : item)),
+          );
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          const removed = payload.old as { id?: string };
+          if (!removed.id) {
+            return;
+          }
+          setMessages((current) => current.filter((item) => item.id !== removed.id));
+        },
+      )
       .subscribe();
 
     return () => {
@@ -81,29 +115,42 @@ export function ChatRoom({
     setSending(true);
     setError(null);
 
-    const supabase = createClient();
-    const { data, error: insertError } = await supabase
-      .from("messages")
-      .insert({
-        conversation_id: conversationId,
-        auteur_id: currentUserId,
-        contenu,
-      })
-      .select("*")
-      .single();
+    try {
+      const response = await fetch("/api/messages/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversationId, contenu }),
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        success?: boolean;
+        message?: ChatMessage;
+        error?: string;
+      } | null;
 
-    setSending(false);
+      setSending(false);
 
-    if (insertError) {
-      setError(insertError.message);
-      return;
+      if (!response.ok || !payload?.success) {
+        setError(payload?.error ?? "Impossible d'envoyer.");
+        return;
+      }
+
+      if (payload.message) {
+        addMessage(payload.message);
+      } else {
+        addMessage({
+          id: `local-${Date.now()}`,
+          conversation_id: conversationId,
+          auteur_id: currentUserId,
+          contenu,
+          created_at: new Date().toISOString(),
+        });
+      }
+
+      setDraft("");
+    } catch {
+      setSending(false);
+      setError("Impossible d'envoyer.");
     }
-
-    if (data) {
-      addMessage(data as ChatMessage);
-    }
-
-    setDraft("");
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -135,19 +182,16 @@ export function ChatRoom({
         ) : (
           messages.map((message) => {
             const mine = message.auteur_id === currentUserId;
-
             return (
-              <div
+              <MessageBubble
                 key={message.id}
-                className={`mb-3 flex flex-col ${mine ? "chat-row-out items-end" : "chat-row-in items-start"}`}
-              >
-                <p
-                  className={`chat-bubble ${mine ? "chat-bubble-out" : "chat-bubble-in"}`}
-                >
-                  {message.contenu}
-                </p>
-                <span className="chat-time">{formatTime(message.created_at)}</span>
-              </div>
+                contenu={message.contenu}
+                mine={mine}
+                masque={Boolean(message.masque)}
+                isStaff={isStaff}
+                categorie={message.trust_categorie}
+                timeLabel={formatTime(message.created_at)}
+              />
             );
           })
         )}

@@ -7,7 +7,13 @@ export type AuditAction =
   | "rejeter_photo"
   | "publier_evenement"
   | "refuser_evenement"
-  | "traiter_signalement";
+  | "traiter_signalement"
+  | "innocenter_message"
+  | "masquer_message"
+  | "supprimer_message"
+  | "quarantaine_innocenter"
+  | "quarantaine_supprimer"
+  | "trust_regle";
 
 export type AuditCible =
   | "profil"

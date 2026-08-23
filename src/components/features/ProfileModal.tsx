@@ -279,15 +279,24 @@ export function ProfileModal({
       return;
     }
 
-    const { error: messageError } = await supabase.from("messages").insert({
-      conversation_id: created.id,
-      auteur_id: currentUserId,
-      contenu,
+    const { error: messageError } = await fetch("/api/messages/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ conversationId: created.id, contenu }),
+    }).then(async (response) => {
+      const payload = (await response.json().catch(() => null)) as {
+        success?: boolean;
+        error?: string;
+      } | null;
+      if (!response.ok || !payload?.success) {
+        return { error: payload?.error ?? "Impossible d'envoyer le message." };
+      }
+      return { error: null };
     });
     setLoading(null);
 
     if (messageError) {
-      setError(messageError.message);
+      setError(messageError);
       return;
     }
 

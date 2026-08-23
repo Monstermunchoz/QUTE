@@ -113,6 +113,10 @@ export type ChatMessage = {
   auteur_id: string;
   contenu: string;
   created_at: string;
+  a_verifier?: boolean;
+  trust_score?: number;
+  trust_categorie?: string | null;
+  masque?: boolean;
 };
 
 export type Salon = {
@@ -132,6 +136,10 @@ export type SalonMessage = {
   auteur_id: string;
   contenu: string;
   created_at: string;
+  a_verifier?: boolean;
+  trust_score?: number;
+  trust_categorie?: string | null;
+  masque?: boolean;
 };
 
 export type Groupe = {
