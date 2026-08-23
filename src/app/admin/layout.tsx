@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { createClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminLayout({
   children,
 }: Readonly<{

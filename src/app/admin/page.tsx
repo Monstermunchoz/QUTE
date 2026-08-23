@@ -1,52 +1,41 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { TrustCounters } from "./trust-counters";
+import { fetchModerationCounts } from "@/lib/admin/moderation-data";
+import { createServiceClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function AdminDashboardPage() {
-  const supabase = createClient();
+  const admin = createServiceClient();
 
   const [
     { count: reportsCount },
     { count: eventsCount },
     { count: avatarCount },
     { count: albumCount },
-    { count: verifyCount },
-    { count: salonVerifyCount },
-    { count: quarantineCount },
+    trust,
   ] = await Promise.all([
-    supabase
+    admin
       .from("signalements")
       .select("*", { count: "exact", head: true })
       .eq("statut", "en_attente"),
-    supabase
+    admin
       .from("evenements")
       .select("*", { count: "exact", head: true })
       .eq("statut", "pending"),
-    supabase
+    admin
       .from("profiles")
       .select("*", { count: "exact", head: true })
       .eq("photo_status", "pending"),
-    supabase
+    admin
       .from("photos")
       .select("*", { count: "exact", head: true })
       .eq("statut", "pending"),
-    supabase
-      .from("messages")
-      .select("*", { count: "exact", head: true })
-      .eq("a_verifier", true)
-      .eq("masque", false),
-    supabase
-      .from("salon_messages")
-      .select("*", { count: "exact", head: true })
-      .eq("a_verifier", true)
-      .eq("masque", false),
-    supabase
-      .from("messages_quarantaine")
-      .select("*", { count: "exact", head: true })
-      .eq("statut", "en_attente"),
+    fetchModerationCounts(),
   ]);
 
   const photosCount = (avatarCount ?? 0) + (albumCount ?? 0);
-  const toVerify = (verifyCount ?? 0) + (salonVerifyCount ?? 0);
 
   const cards = [
     {
@@ -62,19 +51,7 @@ export default async function AdminDashboardPage() {
     {
       href: "/admin/photos",
       label: "Photos pending",
-      value: photosCount ?? 0,
-    },
-    {
-      href: "/admin/moderation",
-      label: "messages à vérifier",
-      value: toVerify,
-      tone: "orange" as const,
-    },
-    {
-      href: "/admin/moderation",
-      label: "messages en quarantaine",
-      value: quarantineCount ?? 0,
-      tone: "red" as const,
+      value: photosCount,
     },
   ];
 
@@ -86,26 +63,20 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {cards.map((card) => (
           <Link
-            key={`${card.href}-${card.label}`}
+            key={card.href}
             href={card.href}
             className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-5"
           >
-            <p
-              className="text-[32px] font-bold leading-none"
-              style={{
-                color:
-                  "tone" in card && card.tone === "orange"
-                    ? "#FF8A00"
-                    : "tone" in card && card.tone === "red"
-                      ? "#FF4444"
-                      : "#FFFFFF",
-              }}
-            >
+            <p className="text-[32px] font-bold leading-none text-white">
               {card.value}
             </p>
             <p className="mt-2 text-[15px] text-[#CCCCCC]">{card.label}</p>
           </Link>
         ))}
+        <TrustCounters
+          initialVerify={trust.aVerifier}
+          initialQuarantine={trust.quarantaine}
+        />
       </div>
     </main>
   );

@@ -12,6 +12,7 @@ type ProfilsTableProps = {
     "id" | "pseudo" | "ville" | "role" | "compte_verifie" | "photo_status"
   >[];
   currentUserId: string;
+  initialQuery?: string;
 };
 
 type PendingAction = {
@@ -20,9 +21,13 @@ type PendingAction = {
   pseudo: string;
 };
 
-export function ProfilsTable({ profiles, currentUserId }: ProfilsTableProps) {
+export function ProfilsTable({
+  profiles,
+  currentUserId,
+  initialQuery = "",
+}: ProfilsTableProps) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<PendingAction | null>(null);

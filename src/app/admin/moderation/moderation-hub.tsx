@@ -3,34 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-
-type Flagged = {
-  id: string;
-  source: "prive" | "salon";
-  auteurId: string;
-  pseudo: string;
-  extrait: string;
-  contenu: string;
-  categorie: string | null;
-  score: number;
-  createdAt: string;
-  conversationId: string | null;
-  salonId: string | null;
-};
-
-type QuarantineItem = {
-  id: string;
-  auteurId: string;
-  pseudo: string;
-  extrait: string;
-  contenu: string;
-  categorie: string | null;
-  score: number;
-  createdAt: string;
-  conversationId: string | null;
-  salonId: string | null;
-};
+import { Avatar } from "@/components/features/Avatar";
+import type { FlaggedMessage, QuarantineItem } from "@/lib/admin/moderation-data";
 
 type RuleItem = {
   id: string;
@@ -54,10 +28,24 @@ const CATEGORIES = [
 type TabId = "verifier" | "quarantaine" | "regles";
 
 type ModerationHubProps = {
-  flagged: Flagged[];
+  flagged: FlaggedMessage[];
   quarantaine: QuarantineItem[];
   rules: RuleItem[];
 };
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function banHref(pseudo: string) {
+  return `/admin/profils?q=${encodeURIComponent(pseudo)}`;
+}
 
 type ContexteLine = { id: string; auteur: string; contenu: string; mine: boolean };
 
@@ -90,7 +78,10 @@ export function ModerationHub({
     }
   }
 
-  async function onFlagged(item: Flagged, action: "innocenter" | "masquer" | "supprimer") {
+  async function onFlagged(
+    item: FlaggedMessage,
+    action: "innocenter" | "masquer" | "supprimer",
+  ) {
     setLoading(`${item.id}-${action}`);
     setError(null);
     try {
@@ -118,7 +109,7 @@ export function ModerationHub({
     setLoading(null);
   }
 
-  async function loadContext(item: Flagged) {
+  async function loadContext(item: FlaggedMessage) {
     if (openId === item.id) {
       setOpenId(null);
       setContext(null);
@@ -127,46 +118,25 @@ export function ModerationHub({
 
     setOpenId(item.id);
     setContext(null);
-    const supabase = createClient();
 
-    if (item.source === "prive" && item.conversationId) {
-      const { data } = await supabase
-        .from("messages")
-        .select("id, auteur_id, contenu, created_at")
-        .eq("conversation_id", item.conversationId)
-        .order("created_at", { ascending: true })
-        .limit(40);
-      setContext(
-        ((data ?? []) as { id: string; auteur_id: string; contenu: string }[]).map(
-          (row) => ({
-            id: row.id,
-            auteur: row.auteur_id,
-            contenu: row.contenu,
-            mine: row.id === item.id,
-          }),
-        ),
-      );
-      return;
+    const params = new URLSearchParams({
+      source: item.source,
+      messageId: item.id,
+    });
+    if (item.conversationId) {
+      params.set("conversationId", item.conversationId);
     }
-
     if (item.salonId) {
-      const { data } = await supabase
-        .from("salon_messages")
-        .select("id, auteur_id, contenu, created_at")
-        .eq("salon_id", item.salonId)
-        .order("created_at", { ascending: true })
-        .limit(40);
-      setContext(
-        ((data ?? []) as { id: string; auteur_id: string; contenu: string }[]).map(
-          (row) => ({
-            id: row.id,
-            auteur: row.auteur_id,
-            contenu: row.contenu,
-            mine: row.id === item.id,
-          }),
-        ),
-      );
+      params.set("salonId", item.salonId);
     }
+
+    const response = await fetch(`/api/admin/moderation/contexte?${params.toString()}`, {
+      cache: "no-store",
+    });
+    const payload = (await response.json().catch(() => null)) as {
+      lignes?: ContexteLine[];
+    } | null;
+    setContext(payload?.lignes ?? []);
   }
 
   async function toggleRule(rule: RuleItem) {
@@ -244,12 +214,16 @@ export function ModerationHub({
                   onClick={() => void loadContext(item)}
                   className="w-full text-left"
                 >
-                  <p className="font-bold text-white">{item.pseudo}</p>
-                  <p className="mt-1 text-sm text-[#CCCCCC]">{item.extrait}</p>
+                  <div className="flex items-center gap-3">
+                    <Avatar pseudo={item.pseudo} photoUrl={item.photoUrl} size="sm" />
+                    <div className="min-w-0">
+                      <p className="font-bold text-white">{item.pseudo}</p>
+                      <p className="mt-1 text-sm text-[#CCCCCC]">{item.extrait}</p>
+                    </div>
+                  </div>
                   <p className="mt-2 text-xs text-[#888888]">
                     {item.categorie ?? "—"} · score {item.score} ·{" "}
-                    {new Date(item.createdAt).toLocaleString("fr-FR")} ·{" "}
-                    {item.source === "salon" ? "salon" : "privé"}
+                    {formatDate(item.createdAt)} · {item.lieu}
                   </p>
                 </button>
                 {openId === item.id ? (
@@ -296,7 +270,7 @@ export function ModerationHub({
                     Supprimer
                   </button>
                   <Link
-                    href="/admin/profils"
+                    href={banHref(item.pseudo)}
                     className="flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-base font-bold text-white"
                   >
                     Bannir l&apos;auteur
@@ -318,15 +292,19 @@ export function ModerationHub({
                 key={item.id}
                 className="rounded-[16px] border border-[#1E1E1E] bg-[#111111] p-4"
               >
-                <p className="font-bold text-white">{item.pseudo}</p>
-                <p className="mt-1 text-sm text-[#CCCCCC]">{item.extrait}</p>
-                <p className="mt-2 whitespace-pre-wrap break-words text-sm text-white">
-                  {item.contenu}
-                </p>
+                <div className="flex items-center gap-3">
+                  <Avatar pseudo={item.pseudo} photoUrl={item.photoUrl} size="sm" />
+                  <p className="font-bold text-white">{item.pseudo}</p>
+                </div>
+                <p className="mt-2 text-sm text-[#CCCCCC]">{item.extrait}</p>
                 <p className="mt-2 text-xs text-[#888888]">
-                  {item.categorie ?? "—"} · score {item.score} ·{" "}
-                  {new Date(item.createdAt).toLocaleString("fr-FR")}
+                  Catégorie : {item.categorie ?? "—"}
                 </p>
+                <p className="text-xs text-[#888888]">Score : {item.score}</p>
+                <p className="text-xs text-[#888888]">
+                  {formatDate(item.createdAt)}
+                </p>
+                <p className="text-xs text-[#888888]">{item.lieu}</p>
                 <div className="mt-3 flex flex-col gap-2">
                   <button
                     type="button"
@@ -334,7 +312,7 @@ export function ModerationHub({
                     onClick={() => void onQuarantine(item, "innocenter")}
                     className="h-[52px] w-full rounded-[12px] bg-[#22C55E] text-base font-bold text-white disabled:opacity-50"
                   >
-                    Innocenter + Envoyer
+                    Innocenter
                   </button>
                   <button
                     type="button"
@@ -342,10 +320,10 @@ export function ModerationHub({
                     onClick={() => void onQuarantine(item, "supprimer")}
                     className="h-[52px] w-full rounded-[12px] bg-[#FF4444] text-base font-bold text-white disabled:opacity-50"
                   >
-                    Confirmer suppression
+                    Supprimer
                   </button>
                   <Link
-                    href="/admin/profils"
+                    href={banHref(item.pseudo)}
                     className="flex h-[52px] w-full items-center justify-center rounded-[12px] border border-[#1E1E1E] text-base font-bold text-white"
                   >
                     Bannir l&apos;auteur
