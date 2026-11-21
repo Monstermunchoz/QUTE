@@ -43,7 +43,7 @@ src/
 ## À brancher avant la mise en ligne
 
 - **Backend** : comptes, profils, messages, photos, modération (l'ancienne version du dépôt
-  utilisait Supabase : voir l'étiquette git `ancienne-version`).
+  utilisait Supabase : voir la branche `ancienne-version`).
 - **Vérification d'âge** par un prestataire conforme.
 - **Paiement** par un prestataire qui accepte les services adultes (prix laissés en `[PRIX]`).
 - **Annuaire** : les fiches de `src/data/venues.ts` sont à vérifier une par une ; les coordonnées
