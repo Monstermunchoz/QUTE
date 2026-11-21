@@ -4,6 +4,11 @@ Application web installable (PWA) de rencontres libertines : couples, céliberti
 personnes trans, gays et lesbiennes. Swipe, profils couple, validation à deux, carte des clubs
 et saunas par région et par ville, agenda des soirées, lexique communautaire.
 
+## Pages
+
+- `/` : la page d'accueil (présentation, installation de l'appli, QR code)
+- `/app/` : l'appli elle-même (installable sur l'écran d'accueil)
+
 ## Lancer
 
 ```bash
@@ -25,6 +30,8 @@ npm run build:single # un seul fichier HTML (dossier dist-single/), pratique pou
 
 ```
 src/
+  landing/             page d'accueil (HTML léger, sans React)
+  brand.ts             le symbole du logo, partagé par l'accueil et l'appli
   App.tsx              coque, onglets, fenêtres, thème clair/sombre/auto
   components/          Logo, CityPicker, Sheet, TabBar, Portrait, icônes
   screens/             Onboarding, Découvrir, Profil, Lieux, Soirées, Messages, Chat, Moi, pages

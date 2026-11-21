@@ -4,15 +4,232 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0b0709" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="robots" content="noindex" />
+    <meta name="description" content="QUTE, le réseau libertin chic : rencontres pour couples, célibertins, licornes, trans, gays et lesbiennes, carte des clubs et saunas libertins de France, soirées. Réservé aux adultes." />
     <meta name="rating" content="adult" />
+    <meta property="og:title" content="QUTE — le réseau libertin" />
+    <meta property="og:description" content="Rencontrez, sortez, osez. En toute confiance." />
+    <meta property="og:type" content="website" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <title>QUTE — le réseau libertin</title>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <a class="skip" href="#contenu">Aller au contenu</a>
+
+    <header class="nav" id="nav">
+      <a href="/" class="brand" aria-label="QUTE, accueil"><span data-logo></span></a>
+      <nav aria-label="Sections">
+        <a href="#pour-qui">Pour qui</a>
+        <a href="#fonctions">L'appli</a>
+        <a href="#lieux">Les lieux</a>
+        <a href="#confiance">Confiance</a>
+        <a href="#prive">Privé</a>
+      </nav>
+      <a class="btn btn-primary btn-sm" href="/app/">Ouvrir l'appli</a>
+    </header>
+
+    <main id="contenu">
+      <!-- HÉROS -->
+      <section class="hero">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="wrap hero-grid">
+          <div class="hero-text reveal">
+            <p class="eyebrow">Le réseau libertin · Réservé aux adultes</p>
+            <h1 class="display">Osez.<br /><span class="red">En toute</span><br />confiance.</h1>
+            <p class="lead">Couples, célibertins, licornes, trans, gays et lesbiennes : rencontrez des libertins près de chez vous, découvrez les clubs et saunas de France, sortez ce soir. Avec des règles claires et une discrétion absolue.</p>
+            <div class="cta-row">
+              <button class="btn btn-primary" data-install>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Installer l'appli
+              </button>
+              <a class="btn btn-ghost" href="/app/">Essayer la démo</a>
+            </div>
+            <ul class="hero-proof" aria-label="En bref">
+              <li><strong data-count="lieux">16</strong> clubs, saunas et bars</li>
+              <li><strong>13</strong> régions</li>
+              <li><strong data-count="mots">36</strong> mots du lexique</li>
+            </ul>
+          </div>
+          <div class="hero-phone reveal" aria-label="Aperçu de l'appli">
+            <div class="phone">
+              <iframe src="/app/" title="Démo de l'appli QUTE" loading="lazy" tabindex="-1"></iframe>
+            </div>
+            <div class="float-card fc-1" aria-hidden="true"><span class="dot ok"></span>Léa &amp; Marc sortent ce soir</div>
+            <div class="float-card fc-2" aria-hidden="true"><span data-fraise></span>Tarte aux fraises reçue</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- POUR QUI -->
+      <section class="section" id="pour-qui">
+        <div class="wrap">
+          <p class="eyebrow reveal">Pour toutes les envies</p>
+          <h2 class="h2 reveal">Un seul réseau pour<br />tout le libertinage.</h2>
+          <div class="profils">
+            <article class="profil reveal"><span class="tag">Couples</span><h3>F/H, F/F, H/H</h3><p>Un compte partagé et une boîte de messages à deux. Chaque match se valide par les deux partenaires.</p></article>
+            <article class="profil reveal"><span class="tag">Licornes &amp; célibertines</span><h3>Femmes</h3><p>Vous choisissez qui peut vous écrire. Filtres stricts, profils certifiés, zéro insistance.</p></article>
+            <article class="profil reveal"><span class="tag">Célibertins &amp; rhinos</span><h3>Hommes</h3><p>Faites-vous certifier par les couples rencontrés : la confiance s'ouvre, les portes aussi.</p></article>
+            <article class="profil reveal"><span class="tag">Trans &amp; non-binaires</span><h3>Toutes les identités</h3><p>Un espace bienveillant, sans fétichisation. Votre identité, vos mots, vos règles.</p></article>
+            <article class="profil reveal"><span class="tag">Gays &amp; lesbiennes</span><h3>Toutes les orientations</h3><p>Saunas, soirées, couples ouverts : filtrez selon ce qui vous ressemble.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <!-- FONCTIONS -->
+      <section class="section" id="fonctions">
+        <div class="wrap">
+          <p class="eyebrow reveal">L'appli</p>
+          <h2 class="h2 reveal">Pensée par et pour<br />des libertins.</h2>
+
+          <div class="feature reveal">
+            <div class="feature-visual">
+              <div class="mini-card">
+                <div class="mini-photo"></div>
+                <div class="mini-body">
+                  <span class="eyebrow">Couple F/H</span>
+                  <strong>Léa &amp; Marc</strong>
+                  <span class="muted">Elle 34 · Lui 37 · Lyon</span>
+                  <span class="chips"><span class="chip oui">Soft</span><span class="chip oui">Côte-à-côtisme</span><span class="chip non">Non : hommes seuls</span></span>
+                </div>
+                <span class="stamp">ENVIE</span>
+              </div>
+            </div>
+            <div class="feature-text">
+              <h3 class="h3">Glissez, matchez, rencontrez.</h3>
+              <p>Le geste que vous connaissez, enrichi des codes du milieu : envies et limites affichées en clair (oui, peut-être, non), profils certifiés par les membres rencontrés en vrai, disponibilité du soir.</p>
+              <ul class="ticks"><li>Filtres couples, femmes, hommes, trans</li><li>Mélangisme, échangisme, candaulisme, côte-à-côtisme…</li><li>Mode « dispo ce soir »</li></ul>
+            </div>
+          </div>
+
+          <div class="feature reverse reveal">
+            <div class="feature-visual">
+              <div class="valid">
+                <span class="eyebrow">À valider à deux</span>
+                <div class="valid-row"><span class="av"></span><span><strong>Sofia, 31</strong><span class="muted">Marc : oui · Léa : ?</span></span></div>
+                <div class="valid-btns"><span class="b ghost">Pas pour nous</span><span class="b red">On valide</span></div>
+              </div>
+            </div>
+            <div class="feature-text">
+              <h3 class="h3">À deux, c'est à deux.</h3>
+              <p>Pour un couple, un like ne devient un match que si les deux partenaires disent oui. Boîte de messages partagée, décisions prises ensemble : la complicité d'abord.</p>
+            </div>
+          </div>
+
+          <div class="feature reveal">
+            <div class="feature-visual">
+              <div class="fraise-card"><span data-fraise class="big"></span><strong>Tarte aux fraises</strong><span class="muted">Notre super like</span></div>
+            </div>
+            <div class="feature-text">
+              <h3 class="h3">La tarte aux fraises.</h3>
+              <p>La légende veut qu'apporter une tarte aux fraises à un dîner chez un couple soit une invitation coquine. Sur QUTE, c'est notre super like : glissez vers le haut pour en offrir une.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LIEUX -->
+      <section class="section section-dark" id="lieux">
+        <div class="wrap lieux-grid">
+          <div class="reveal">
+            <p class="eyebrow">Les lieux</p>
+            <h2 class="h2">Tous les clubs et saunas<br />libertins, ville par ville.</h2>
+            <p class="lead">Une carte de France par région, une recherche par ville, et surtout : combien de membres y vont ce soir. Repérez votre soirée, retrouvez-vous au bar, laissez la magie opérer.</p>
+            <div class="villes" data-villes></div>
+            <a class="btn btn-ghost" href="/app/" style="margin-top: 26px">Explorer la carte</a>
+          </div>
+          <div class="carte reveal" data-carte aria-label="Carte des lieux en France"></div>
+        </div>
+      </section>
+
+      <!-- CONFIANCE -->
+      <section class="section section-ivoire" id="confiance">
+        <div class="wrap">
+          <p class="eyebrow reveal">Confiance &amp; consentement</p>
+          <h2 class="h2 reveal">Le libertinage a ses règles.<br />Nous les appliquons.</h2>
+          <div class="regles">
+            <article class="regle reveal"><span class="n">01</span><h3>Non, c'est non</h3><p>Un refus n'a pas à se justifier. Dans l'appli comme en club, on n'insiste jamais.</p></article>
+            <article class="regle reveal"><span class="n">02</span><h3>Pas de photo sans accord</h3><p>Les photos privées restent floutées tant que vous ne choisissez pas de les voir. Elles peuvent s'effacer après lecture.</p></article>
+            <article class="regle reveal"><span class="n">03</span><h3>Discrétion absolue</h3><p>Mode discret, écran « quitter vite », aperçu masqué dans le multitâche, libellé neutre sur le relevé bancaire.</p></article>
+            <article class="regle reveal"><span class="n">04</span><h3>Vos données, vos règles</h3><p>Accord explicite pour les données intimes (RGPD), rien n'est vendu, export et suppression en un geste.</p></article>
+            <article class="regle reveal"><span class="n">05</span><h3>Profils certifiés</h3><p>Les membres rencontrés en vrai certifient les autres. Fini les faux couples.</p></article>
+            <article class="regle reveal"><span class="n">06</span><h3>Majeurs uniquement</h3><p>QUTE est strictement réservé aux 18 ans et plus. Signalement et blocage en deux gestes.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRIVÉ -->
+      <section class="section" id="prive">
+        <div class="wrap prive reveal">
+          <div>
+            <p class="eyebrow">QUTE Privé</p>
+            <h2 class="h2">Voyez tout.<br />Osez tout.</h2>
+            <p class="lead">La carte des lieux et le lexique sont gratuits. L'abonnement Privé ouvre tout le reste.</p>
+          </div>
+          <ul class="ticks big">
+            <li>Profils et photos en clair</li>
+            <li>Messages illimités et albums privés</li>
+            <li>Qui sera au club ce soir</li>
+            <li>Tartes aux fraises illimitées</li>
+            <li>Mode fantôme</li>
+          </ul>
+          <div class="prix"><span class="muted">Dès</span><strong>[PRIX]</strong><span class="muted">/ mois · sans engagement</span><a class="btn btn-primary" href="/app/">Commencer</a></div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section" id="faq">
+        <div class="wrap faq">
+          <h2 class="h2 reveal">Questions fréquentes</h2>
+          <div class="faq-list">
+            <details class="reveal"><summary>Est-ce que QUTE est gratuit ?<span class="plus" aria-hidden="true"></span></summary><p>L'inscription, la carte des clubs et saunas et le lexique sont gratuits. Voir les profils en clair et discuter demande l'abonnement Privé.</p></details>
+            <details class="reveal"><summary>Comment installer l'appli ?<span class="plus" aria-hidden="true"></span></summary><p>Pas besoin de store : touchez « Installer l'appli ». Sur iPhone, ouvrez le site dans Safari, touchez Partager puis « Sur l'écran d'accueil ». QUTE s'installe comme une vraie appli, en toute discrétion.</p></details>
+            <details class="reveal"><summary>Mon entourage peut-il me trouver ?<span class="plus" aria-hidden="true"></span></summary><p>Non. QUTE ne lit pas vos contacts, ne publie rien sur vos réseaux, et le mode fantôme vous rend invisible sauf pour vos matchs.</p></details>
+            <details class="reveal"><summary>Je débute, est-ce pour moi ?<span class="plus" aria-hidden="true"></span></summary><p>Oui. Indiquez « débutants » sur votre profil : vous rencontrerez des membres patients, souvent autour d'un premier verre. Le lexique vous explique tous les codes.</p></details>
+            <details class="reveal"><summary>Vous gérez un club ou un sauna ?<span class="plus" aria-hidden="true"></span></summary><p>Proposez votre établissement depuis l'onglet Lieux : nous vérifions chaque fiche, et vous pourrez publier vos soirées dans l'agenda.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA FINAL -->
+      <section class="section final">
+        <div class="wrap final-grid reveal">
+          <div>
+            <h2 class="display final-title">Ce soir,<br /><span class="red">on ose ?</span></h2>
+            <div class="cta-row">
+              <button class="btn btn-primary" data-install>Installer l'appli</button>
+              <a class="btn btn-ghost" href="/app/">Essayer la démo</a>
+            </div>
+          </div>
+          <div class="qr-box" data-qr-box>
+            <div class="qr" data-qr aria-label="QR code vers l'appli" role="img"></div>
+            <p class="muted">Scannez avec votre téléphone</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-grid">
+        <span data-logo></span>
+        <p class="muted">Réservé aux personnes majeures (18+). Tous les profils et soirées de la démo sont fictifs.</p>
+        <nav aria-label="Liens légaux"><a href="/app/">Confidentialité</a><a href="/app/">Charte du consentement</a><a href="/app/">Mentions légales</a></nav>
+      </div>
+    </footer>
+
+    <!-- Fenêtre d'installation iPhone -->
+    <div class="ios-sheet" data-ios hidden>
+      <div class="ios-backdrop" data-close></div>
+      <div class="ios-panel" role="dialog" aria-modal="true" aria-labelledby="ios-t">
+        <h2 id="ios-t" class="h3">Installer QUTE sur iPhone</h2>
+        <ol>
+          <li><span class="step">1</span>Touchez <strong>Partager</strong>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M6 11v9h12v-9"/></svg> en bas de Safari</li>
+          <li><span class="step">2</span>Choisissez <strong>Sur l'écran d'accueil</strong></li>
+          <li><span class="step">3</span>Ouvrez QUTE depuis votre écran d'accueil</li>
+        </ol>
+        <button class="btn btn-primary" data-close style="width: 100%">J'ai compris</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/landing/landing.ts"></script>
   </body>
 </html>

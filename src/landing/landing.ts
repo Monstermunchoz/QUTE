@@ -1,0 +1,110 @@
+import './landing.css'
+import qrcode from 'qrcode-generator'
+import { logoSvg } from '../brand'
+import { LIEUX } from '../data/venues'
+import { LEXIQUE } from '../data/lexique'
+import { MAP_H, MAP_W, REGIONS } from '../data/regions'
+import { project } from '../lib/geo'
+
+const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)
+const $$ = <T extends Element = HTMLElement>(s: string) => Array.from(document.querySelectorAll<T>(s))
+
+const APP_URL = '/app/'
+
+/* Logo et fraise */
+$$('[data-logo]').forEach((el) => (el.innerHTML = logoSvg(15)))
+const FRAISE = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 7.2c4.6 0 7.6 1.9 7.6 5.2 0 4.2-4.6 8.6-7.6 8.6s-7.6-4.4-7.6-8.6c0-3.3 3-5.2 7.6-5.2z" fill="#ff4d5e"/><path d="M12 7.4c-1.6-2-3.6-2.6-5.4-2.1 1 .9 2.2 1.6 3.4 1.9-1.2.3-2.2 1-2.9 2 1.9.3 3.6-.2 4.9-1.3 1.3 1.1 3 1.6 4.9 1.3-.7-1-1.7-1.7-2.9-2 1.2-.3 2.4-1 3.4-1.9-1.8-.5-3.8.1-5.4 2.1z" fill="#3f7d4e"/><g fill="#ffd9a8"><circle cx="9" cy="12" r=".7"/><circle cx="12" cy="11" r=".7"/><circle cx="15" cy="12" r=".7"/><circle cx="10.5" cy="15" r=".7"/><circle cx="13.5" cy="15" r=".7"/><circle cx="12" cy="18" r=".7"/></g></svg>`
+$$('[data-fraise]').forEach((el) => (el.innerHTML = FRAISE))
+
+/* Chiffres réels tirés des données */
+const lieux = $('[data-count="lieux"]')
+if (lieux) lieux.textContent = String(LIEUX.length)
+const mots = $('[data-count="mots"]')
+if (mots) mots.textContent = String(LEXIQUE.length)
+
+/* Villes */
+const alias = (v: string) => (v === 'Caluire-et-Cuire' ? 'Lyon' : v)
+const parVille = LIEUX.reduce<Record<string, number>>((m, l) => ((m[alias(l.ville)] = (m[alias(l.ville)] ?? 0) + 1), m), {})
+const villes = $('[data-villes]')
+if (villes) {
+  villes.innerHTML = Object.entries(parVille)
+    .sort((a, b) => b[1] - a[1])
+    .map(([v, n]) => `<a class="ville" href="${APP_URL}">${v} <span>${n}</span></a>`)
+    .join('')
+}
+
+/* Carte */
+const carte = $('[data-carte]')
+if (carte) {
+  const couleur = { club: '#d9294a', sauna: '#f1e6dc', bar: '#eba3ae' } as const
+  const pins = LIEUX.map((l, i) => {
+    const { x, y } = project(l.lng, l.lat)
+    return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle class="pin" r="16" fill="${couleur[l.type]}" style="animation-delay:${(i % 6) * 0.4}s"/><circle r="8" fill="${couleur[l.type]}" stroke="#120c0e" stroke-width="3"/></g>`
+  }).join('')
+  const regions = REGIONS.map((r) => `<path d="${r.d}" fill="rgba(246,233,226,.05)" stroke="rgba(246,233,226,.2)" stroke-width="1.4"><title>${r.nom}</title></path>`).join('')
+  carte.innerHTML = `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Carte des clubs et saunas libertins en France">${regions}${pins}</svg>`
+}
+
+/* QR code vers l'appli */
+const qr = $('[data-qr]')
+if (qr) {
+  const q = qrcode(0, 'M')
+  q.addData(new URL(APP_URL, location.href).href)
+  q.make()
+  const n = q.getModuleCount()
+  let d = ''
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`
+  qr.innerHTML = `<svg viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><path d="${d}" fill="#1a0e11"/></svg>`
+}
+
+/* Installation : invite native (Android/Chrome), guide (iPhone), sinon QR ou ouverture */
+type InstallPrompt = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> }
+let invite: InstallPrompt | null = null
+addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault()
+  invite = e as InstallPrompt
+})
+const estIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+const estMobile = matchMedia('(max-width: 860px)').matches || estIOS
+const sheet = $('[data-ios]')
+
+$$('[data-install]').forEach((b) =>
+  b.addEventListener('click', async () => {
+    if (invite) {
+      await invite.prompt()
+      const { outcome } = await invite.userChoice
+      invite = null
+      if (outcome === 'accepted') location.href = APP_URL
+    } else if (estIOS && sheet) {
+      sheet.hidden = false
+    } else if (!estMobile) {
+      $('[data-qr-box]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    } else {
+      location.href = APP_URL
+    }
+  }),
+)
+$$('[data-close]').forEach((b) => b.addEventListener('click', () => sheet && (sheet.hidden = true)))
+addEventListener('keydown', (e) => e.key === 'Escape' && sheet && (sheet.hidden = true))
+
+/* Barre de navigation qui se densifie au défilement */
+const nav = $('#nav')
+const surDefilement = () => nav?.classList.toggle('scrolled', scrollY > 30)
+addEventListener('scroll', surDefilement, { passive: true })
+surDefilement()
+
+/* Apparitions progressives */
+const io = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return
+      const el = e.target as HTMLElement
+      const freres = Array.from(el.parentElement?.children ?? []).filter((x) => x.classList.contains('reveal'))
+      el.style.transitionDelay = `${Math.min(freres.indexOf(el), 5) * 70}ms`
+      el.classList.add('vu')
+      io.unobserve(el)
+    })
+  },
+  { rootMargin: '0px 0px -8% 0px' },
+)
+$$('.reveal').forEach((el) => io.observe(el))

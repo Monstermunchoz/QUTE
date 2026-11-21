@@ -51,7 +51,7 @@ export function Onboarding() {
               <div style={{ position: 'relative', flex: 1, margin: '0 14px', borderRadius: 'var(--r-xl)', overflow: 'hidden' }}>
                 <Portrait teinte={348} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(11,7,9,0) 35%, rgba(11,7,9,.95) 100%)' }} />
-                <div style={{ position: 'absolute', top: 22, left: 22 }}><Logo size={30} /></div>
+                <div style={{ position: "absolute", top: 24, left: 22 }}><Logo size={14} /></div>
                 <div style={{ position: 'absolute', left: 24, right: 24, bottom: 26 }}>
                   <p className="eyebrow">Le réseau libertin</p>
                   <h1 className="display" style={{ fontSize: 44, marginTop: 10 }}>Osez.<br />En toute<br />confiance.</h1>
