@@ -4,7 +4,8 @@ import { BookOpen, EyeOff, Heart, LogOut, RotateCcw, X } from 'lucide-react'
 import { Logo } from '../components/Logo'
 import { Portrait } from '../components/Portrait'
 import { Certif, Fraise } from '../components/icons'
-import { FILTRES, PROFILS, TYPE_PROFIL_LABEL, type Filtre, type Profil } from '../data/profiles'
+import { FILTRES, PROFILS, presence, TYPE_PROFIL_LABEL, type Filtre, type Profil } from '../data/profiles'
+import { compatibilite, RECHERCHE_TYPES } from '../lib/compat'
 import { termeById } from '../data/lexique'
 import { lieuById } from '../data/venues'
 import { distanceKm } from '../lib/geo'
@@ -18,6 +19,9 @@ const ages = (p: Profil) => p.partenaires.map((x) => `${x.role} ${x.age}`).join(
 
 const SwipeCard = memo(function SwipeCard({ p, top, onDecide, flou }: { p: Profil; top: boolean; onDecide: (d: Dir) => void; flou: boolean }) {
   const open = useApp((s) => s.open)
+  const monProfil = useApp((s) => s.profil)
+  const pr = presence(p.vu)
+  const compat = compatibilite(monProfil, p)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotate = useTransform(x, [-240, 240], [-14, 14])
@@ -66,7 +70,8 @@ const SwipeCard = memo(function SwipeCard({ p, top, onDecide, flou }: { p: Profi
         {Array.from({ length: Math.min(p.photos, 5) }).map((_, i) => <span key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: i === 0 ? 'var(--text)' : 'rgba(246,237,232,.28)' }} />)}
       </div>
       <div style={{ position: 'absolute', top: 30, left: 14, display: 'flex', gap: 6 }}>
-        {p.enLigne && <span className="tag" style={{ background: 'rgba(11,7,9,.6)', backdropFilter: 'blur(10px)' }}><span style={{ width: 7, height: 7, borderRadius: 4, background: 'var(--ok)' }} />En ligne</span>}
+        <span className="tag" style={{ background: 'rgba(11,7,9,.6)', backdropFilter: 'blur(10px)' }}><span style={{ width: 7, height: 7, borderRadius: 4, background: pr.enLigne ? 'var(--ok)' : 'var(--faint)' }} />{pr.texte}</span>
+        {compat !== null && <span className="tag" style={{ background: 'rgba(196,30,58,.75)', color: '#fff' }}>{compat} %</span>}
         {flou && <span className="tag" style={{ background: 'rgba(11,7,9,.6)', backdropFilter: 'blur(10px)' }}><EyeOff size={13} />Photos floutées</span>}
       </div>
 
@@ -94,14 +99,15 @@ const SwipeCard = memo(function SwipeCard({ p, top, onDecide, flou }: { p: Profi
 
 export function Decouvrir() {
   const { likes, passes, bloques, premium, floutage, discret, like, pass, tarte, undo, notify, setDiscret, setPanique, open } = useApp()
-  const [filtre, setFiltre] = useState<Filtre>('tous')
+  const recherche = useApp((s) => s.profil.recherche)
+  const [filtre, setFiltre] = useState<Filtre | 'pourvous'>(recherche.length ? 'pourvous' : 'tous')
   const [ceSoir, setCeSoir] = useState(false)
   const [dir, setDir] = useState<Dir>('droite')
 
   const pile = useMemo(() => {
-    const types = FILTRES.find((f) => f.id === filtre)!.match
+    const types = filtre === 'pourvous' ? recherche.flatMap((r) => RECHERCHE_TYPES[r] ?? []) : FILTRES.find((f) => f.id === filtre)!.match
     return PROFILS.filter((p) => types.includes(p.type) && !likes.includes(p.id) && !passes.includes(p.id) && !bloques.includes(p.id) && (!ceSoir || p.ceSoir))
-  }, [filtre, ceSoir, likes, passes, bloques])
+  }, [filtre, ceSoir, likes, passes, bloques, recherche])
 
   const decide = (d: Dir) => {
     const p = pile[0]
@@ -127,6 +133,7 @@ export function Decouvrir() {
       </header>
 
       <div className="chips" role="group" aria-label="Je cherche" style={{ marginTop: 6 }}>
+        {recherche.length > 0 && <button className="chip" aria-pressed={filtre === 'pourvous'} onClick={() => setFiltre('pourvous')}>Pour vous</button>}
         {FILTRES.map((f) => <button key={f.id} className="chip" aria-pressed={filtre === f.id} onClick={() => setFiltre(f.id)}>{f.label}</button>)}
         <button className="chip" aria-pressed={ceSoir} onClick={() => setCeSoir(!ceSoir)}>Dispo ce soir</button>
       </div>
@@ -140,8 +147,8 @@ export function Decouvrir() {
         {pile.length === 0 && (
           <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', textAlign: 'center', padding: 30 }}>
             <div>
-              <p className="h2">Vous avez tout vu par ici</p>
-              <p className="muted" style={{ marginTop: 8 }}>Élargissez vos filtres ou passez voir qui sort ce soir.</p>
+              <p className="h2">Plus personne dans les parages… pour l'instant</p>
+              <p className="muted" style={{ marginTop: 8 }}>Élargissez vos critères, ou jetez un œil aux soirées de ce week-end.</p>
               <button className="btn btn-ghost" style={{ marginTop: 18 }} onClick={() => { setFiltre('tous'); setCeSoir(false); undo() }}>Revoir le dernier profil</button>
             </div>
           </div>

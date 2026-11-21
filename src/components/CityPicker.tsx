@@ -2,18 +2,20 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { Check, LocateFixed, MapPin, Search, X } from 'lucide-react'
 import { LIEUX } from '../data/venues'
+import { SOIREES } from '../data/events'
 import { useApp } from '../store/useApp'
 import { Sheet } from './Sheet'
 import { alias } from '../data/villes'
 
 /** Villes connues de l'annuaire, avec leur nombre de lieux. Caluire est rattachée à Lyon. */
-export const VILLES = Object.entries(
-  LIEUX.reduce<Record<string, number>>((m, l) => ((m[alias(l.ville)] = (m[alias(l.ville)] ?? 0) + 1), m), {}),
-)
-  .map(([nom, n]) => ({ nom, n }))
-  .sort((a, b) => b.n - a.n || a.nom.localeCompare(b.nom))
+const comptes: Record<string, { n: number; s: number }> = {}
+LIEUX.forEach((l) => { const v = alias(l.ville); comptes[v] = comptes[v] ?? { n: 0, s: 0 }; comptes[v].n++ })
+SOIREES.forEach((e) => { const v = alias(e.agglo); comptes[v] = comptes[v] ?? { n: 0, s: 0 }; comptes[v].s++ })
+export const VILLES = Object.entries(comptes)
+  .map(([nom, c]) => ({ nom, ...c }))
+  .sort((a, b) => b.n + b.s - (a.n + a.s) || a.nom.localeCompare(b.nom))
 
-export const dansVille = (lieuVille: string, ville: string | null) => !ville || alias(lieuVille) === ville
+export const dansVille = (lieuVille: string, ville: string | null) => !ville || alias(lieuVille) === ville || lieuVille === ville
 
 /** Pastille de sélection de ville + panneau de recherche. */
 export function CityPicker() {
@@ -66,7 +68,7 @@ export function CityPicker() {
                 <li key={v.nom}>
                   <button className="row" onClick={() => choisir(v.nom)} style={{ width: '100%', padding: '14px 20px', textAlign: 'left' }}>
                     <span style={{ flex: 1, fontWeight: 650, fontSize: 16 }}>{v.nom}</span>
-                    <span className="faint" style={{ fontSize: 13 }}>{v.n} lieu{v.n > 1 ? 'x' : ''}</span>
+                    <span className="faint" style={{ fontSize: 13 }}>{[v.n && `${v.n} lieu${v.n > 1 ? 'x' : ''}`, v.s && `${v.s} soirée${v.s > 1 ? 's' : ''}`].filter(Boolean).join(' · ')}</span>
                     <span style={{ width: 24, display: 'grid', placeItems: 'center' }}>{ville === v.nom && <Check size={18} color="var(--velours-hi)" />}</span>
                   </button>
                 </li>

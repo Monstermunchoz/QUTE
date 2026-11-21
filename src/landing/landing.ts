@@ -1,7 +1,8 @@
 import './landing.css'
 import qrcode from 'qrcode-generator'
 import { logoSvg } from '../brand'
-import { LIEUX } from '../data/venues'
+import { LIEUX, SORTIES } from '../data/venues'
+import { SOIREES } from '../data/events'
 import { alias } from '../data/villes'
 import { LEXIQUE } from '../data/lexique'
 import { MAP_H, MAP_W, REGIONS } from '../data/regions'
@@ -19,10 +20,12 @@ $$('[data-fraise]').forEach((el) => (el.innerHTML = FRAISE))
 
 /* Chiffres réels tirés des données */
 const compte: Record<string, number> = {
-  lieux: LIEUX.length,
-  clubs: LIEUX.filter((l) => l.type === 'club').length,
-  saunas: LIEUX.filter((l) => l.type === 'sauna').length,
-  cap: LIEUX.filter((l) => l.ville === "Cap d'Agde").length,
+  lieux: SORTIES.length,
+  clubs: SORTIES.filter((l) => l.type === 'club').length,
+  saunas: SORTIES.filter((l) => l.type === 'sauna').length,
+  cap: SORTIES.filter((l) => l.ville === "Cap d'Agde").length,
+  shops: LIEUX.filter((l) => l.type === 'shop').length,
+  soirees: SOIREES.length,
 }
 $$('[data-count]').forEach((el) => {
   const n = compte[el.dataset.count ?? '']
@@ -32,7 +35,7 @@ const mots = $('[data-count="mots"]')
 if (mots) mots.textContent = String(LEXIQUE.length)
 
 /* Villes */
-const parVille = LIEUX.reduce<Record<string, number>>((m, l) => ((m[alias(l.ville)] = (m[alias(l.ville)] ?? 0) + 1), m), {})
+const parVille = SORTIES.reduce<Record<string, number>>((m, l) => ((m[alias(l.ville)] = (m[alias(l.ville)] ?? 0) + 1), m), {})
 const villes = $('[data-villes]')
 if (villes) {
   villes.innerHTML = Object.entries(parVille)
@@ -45,8 +48,8 @@ if (villes) {
 /* Carte */
 const carte = $('[data-carte]')
 if (carte) {
-  const couleur = { club: '#d9294a', sauna: '#f1e6dc', bar: '#eba3ae' } as const
-  const pins = LIEUX.map((l, i) => {
+  const couleur = { club: '#d9294a', sauna: '#f1e6dc', bar: '#eba3ae', shop: '#a98bff' } as const
+  const pins = SORTIES.map((l, i) => {
     const { x, y } = project(l.lng, l.lat)
     return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">${i % 7 === 0 ? `<circle class="pin" r="12" fill="${couleur[l.type]}" style="animation-delay:${(i % 5) * 0.5}s"/>` : ''}<circle r="6" fill="${couleur[l.type]}" stroke="#120c0e" stroke-width="2"/></g>`
   }).join('')

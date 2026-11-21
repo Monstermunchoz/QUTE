@@ -4,14 +4,17 @@ import { ArrowLeft, Ban, Flag, Lock, MessageCircle, MoreHorizontal, ShieldCheck 
 import { Page } from '../components/Sheet'
 import { Portrait } from '../components/Portrait'
 import { Certif, Fraise } from '../components/icons'
-import { profilById, TYPE_PROFIL_LABEL } from '../data/profiles'
+import { presence, profilById, TYPE_PROFIL_LABEL } from '../data/profiles'
+import { compatibilite } from '../lib/compat'
 import { termeById } from '../data/lexique'
 import { lieuById } from '../data/venues'
 import { useApp } from '../store/useApp'
 
 export function ProfilPage({ id }: { id: string }) {
   const p = profilById(id)!
-  const { premium, discret, open, bloquer, notify, tarte, tartes } = useApp()
+  const { premium, discret, open, bloquer, notify, tarte, tartes, profil } = useApp()
+  const pr = presence(p.vu)
+  const compat = compatibilite(profil, p)
   const [menu, setMenu] = useState(false)
   const lieu = p.ceSoir ? lieuById(p.ceSoir) : undefined
   const verrou = !premium
@@ -45,6 +48,11 @@ export function ProfilPage({ id }: { id: string }) {
             <p className="eyebrow">{p.etiquette ?? TYPE_PROFIL_LABEL[p.type]}</p>
             <h1 className="display row" style={{ fontSize: 38, marginTop: 8, gap: 10 }}>{p.nom}{p.certifications > 0 && <Certif width={24} height={24} />}</h1>
             <p className="muted" style={{ marginTop: 8 }}>{p.ville}{p.depuis ? ` · ensemble depuis ${p.depuis}` : ''}</p>
+            <div className="row" style={{ gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+              <span className="tag"><span style={{ width: 8, height: 8, borderRadius: 4, background: pr.enLigne ? 'var(--ok)' : 'var(--faint)' }} />{pr.texte}</span>
+              <span className="tag">{p.experience}</span>
+              {compat !== null && <span className="tag" style={{ background: 'rgba(196,30,58,.18)', color: 'var(--text)' }}>{compat} % compatibles</span>}
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: `repeat(${p.partenaires.length}, 1fr)`, gap: 10 }}>
@@ -66,6 +74,15 @@ export function ProfilPage({ id }: { id: string }) {
               {p.peutEtre.map((e) => <button key={e} className="tag tag-peut" onClick={() => open({ kind: 'lexique' })}>Peut-être · {termeById(e)?.mot}</button>)}
               {p.limites.map((l) => <span key={l} className="tag tag-non">Non · {l}</span>)}
             </div>
+          </section>
+
+          <section style={{ display: 'grid', gap: 14 }}>
+            {([['Recherchent', p.recherche], ['Disponibles', p.dispo], ['Aiment se retrouver', p.ouRencontrer]] as const).map(([t, xs]) => (
+              <div key={t}>
+                <h2 className="eyebrow" style={{ color: 'var(--muted)' }}>{t}</h2>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>{xs.map((x) => <span key={x} className="tag">{x}</span>)}</div>
+              </div>
+            ))}
           </section>
 
           {p.certifications > 0 && (

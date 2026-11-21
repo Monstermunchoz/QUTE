@@ -6,11 +6,49 @@ export type Tab = 'decouvrir' | 'lieux' | 'soirees' | 'messages' | 'moi'
 export type Overlay =
   | { kind: 'profil'; id: string }
   | { kind: 'lieu'; id: string }
+  | { kind: 'soiree'; id: string }
   | { kind: 'chat'; id: string }
   | { kind: 'premium' }
   | { kind: 'lexique' }
   | { kind: 'charte' }
+  | { kind: 'monprofil' }
   | { kind: 'confidentialite' }
+
+export type Avis = 'oui' | 'peut' | 'non'
+export type Partenaire = { role: 'Elle' | 'Lui' | 'Iel'; age: number | ''; orientation: string; silhouette: string; taille: string }
+export type MonProfil = {
+  partenaires: Partenaire[]
+  bio: string
+  recherche: string[]
+  envies: Record<string, Avis>
+  limites: string[]
+  dispo: string[]
+  ou: string[]
+  experience: string
+  ageMin: number
+  ageMax: number
+  distance: number
+  afficherEnLigne: boolean
+  fantome: boolean
+}
+
+const profilVide = (compte: Compte | null): MonProfil => ({
+  partenaires: compte === 'couple'
+    ? [{ role: 'Elle', age: '', orientation: '', silhouette: '', taille: '' }, { role: 'Lui', age: '', orientation: '', silhouette: '', taille: '' }]
+    : [{ role: compte === 'homme' ? 'Lui' : compte === 'trans' ? 'Iel' : 'Elle', age: '', orientation: '', silhouette: '', taille: '' }],
+  bio: '',
+  recherche: [],
+  envies: {},
+  limites: [],
+  dispo: [],
+  ou: [],
+  experience: '',
+  ageMin: 25,
+  ageMax: 60,
+  distance: 50,
+  afficherEnLigne: true,
+  fantome: false,
+})
 
 type Consentements = { majeur: boolean; donneesSensibles: boolean; charte: boolean; cgu: boolean }
 
@@ -19,6 +57,8 @@ type State = {
   compte: Compte | null
   pseudo: string
   envies: string[]
+  profil: MonProfil
+  setProfil: (p: Partial<MonProfil>) => void
   consentements: Consentements
   premium: boolean
   discret: boolean
@@ -30,6 +70,7 @@ type State = {
   tartes: string[]
   historique: { id: string; action: 'like' | 'pass' | 'tarte' }[]
   ceSoir: string[] // lieux où je vais
+  participe: string[] // soirées où je vais
   bloques: string[]
   validations: Record<string, 'oui' | 'non'> // validation à deux
   panique: boolean
@@ -46,6 +87,7 @@ type State = {
   tarte: (id: string) => void
   undo: () => void
   toggleCeSoir: (id: string) => void
+  toggleParticipe: (id: string) => void
   bloquer: (id: string) => void
   valider: (id: string, v: 'oui' | 'non') => void
   setPremium: (v: boolean) => void
@@ -63,6 +105,7 @@ const initial = {
   compte: null,
   pseudo: '',
   envies: [],
+  profil: profilVide(null),
   consentements: { majeur: false, donneesSensibles: false, charte: false, cgu: false },
   premium: false,
   discret: false,
@@ -74,6 +117,7 @@ const initial = {
   tartes: [],
   historique: [] as { id: string; action: 'like' | 'pass' | 'tarte' }[],
   ceSoir: [],
+  participe: [] as string[],
   bloques: [],
   validations: {},
   panique: false,
@@ -88,7 +132,12 @@ export const useApp = create<State>()(
   persist(
     (set, get) => ({
       ...initial,
-      finishOnboarding: (d) => set({ ...d, onboarded: true }),
+      finishOnboarding: (d) => {
+        const p = profilVide(d.compte)
+        p.envies = Object.fromEntries(d.envies.map((e) => [e, 'oui' as Avis]))
+        set({ ...d, profil: p, onboarded: true })
+      },
+      setProfil: (p) => set({ profil: { ...get().profil, ...p } }),
       setTab: (tab) => set({ tab, overlays: [] }),
       open: (o) => {
         history.pushState({ overlay: true }, '')
@@ -110,6 +159,10 @@ export const useApp = create<State>()(
         const s = get().ceSoir
         set({ ceSoir: s.includes(id) ? s.filter((x) => x !== id) : [...s, id] })
       },
+      toggleParticipe: (id) => {
+        const s = get().participe
+        set({ participe: s.includes(id) ? s.filter((x) => x !== id) : [...s, id] })
+      },
       bloquer: (id) => set({ bloques: [...get().bloques, id], overlays: [] }),
       valider: (id, v) => set({ validations: { ...get().validations, [id]: v } }),
       setPremium: (premium) => set({ premium }),
@@ -130,6 +183,10 @@ export const useApp = create<State>()(
     }),
     {
       name: 'qute',
+      merge: (persisted, current) => {
+        const p = persisted as Partial<State>
+        return { ...current, ...p, profil: { ...profilVide(p.compte ?? null), ...(p.profil ?? {}) } }
+      },
       partialize: (s) => {
         const { overlays: _o, toast: _t, panique: _p, ...rest } = s
         return rest

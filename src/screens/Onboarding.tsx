@@ -58,7 +58,7 @@ export function Onboarding() {
                 </div>
               </div>
               <div className="pad" style={{ padding: '22px 20px calc(var(--safe-b) + 24px)', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <p className="muted" style={{ fontSize: 14 }}>Couples, célibertins, licornes, trans, gays et lesbiennes : rencontres, clubs et saunas partout en France. Réservé aux adultes.</p>
+                <p className="muted" style={{ fontSize: 14 }}>Le réseau des libertins qui ont du goût. Rencontres, clubs, saunas et soirées partout en France, entre adultes qui savent ce qu'ils veulent.</p>
                 <button className="btn btn-primary btn-block" onClick={() => go(1)}>J'ai 18 ans ou plus, entrer</button>
                 <a href="https://www.google.fr" className="btn btn-ghost btn-block" style={{ textDecoration: 'none' }}>J'ai moins de 18 ans</a>
               </div>
@@ -67,8 +67,8 @@ export function Onboarding() {
 
           {step === 1 && (
             <div className="scroll pad" style={{ paddingTop: 18, paddingBottom: 30 }}>
-              <h1 className="h1">Qui êtes-vous ?</h1>
-              <p className="muted" style={{ marginTop: 8 }}>Vous pourrez changer plus tard.</p>
+              <h1 className="h1">Faisons connaissance</h1>
+              <p className="muted" style={{ marginTop: 8 }}>En couple, en solo, trans, gay ou lesbienne : chacun a sa place ici.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 24 }} role="radiogroup" aria-label="Type de compte">
                 {COMPTES.map((o) => {
                   const on = compte === o.id
@@ -89,8 +89,8 @@ export function Onboarding() {
 
           {step === 2 && (
             <div className="scroll pad" style={{ paddingTop: 18, paddingBottom: 30 }}>
-              <h1 className="h1">Vos envies</h1>
-              <p className="muted" style={{ marginTop: 8 }}>Elles s'affichent sur votre profil. Rien n'est jamais un engagement : on peut toujours dire non.</p>
+              <h1 className="h1">Qu'est-ce qui vous attire ?</h1>
+              <p className="muted" style={{ marginTop: 8 }}>Vos envies s'affichent sur votre profil. Ce n'est jamais un engagement : ici, on peut toujours dire non.</p>
               <div className="field" style={{ marginTop: 22 }}>
                 <label htmlFor="pseudo">{compte === 'couple' ? 'Votre nom de couple' : 'Votre pseudo'}</label>
                 <input id="pseudo" className="input" placeholder={compte === 'couple' ? 'Ex. : Léa & Marc' : 'Ex. : Sofia'} value={pseudo} onChange={(e) => setPseudo(e.target.value)} autoComplete="off" maxLength={30} />
@@ -114,7 +114,7 @@ export function Onboarding() {
                 <label className="check"><input type="checkbox" checked={c.charte} onChange={(e) => setC({ ...c, charte: e.target.checked })} /><span><strong>Je m'engage à respecter la charte du consentement</strong> : non, c'est non ; pas de photo intime sans accord ; pas de capture ni de partage hors de l'appli.</span></label>
                 <label className="check"><input type="checkbox" checked={c.cgu} onChange={(e) => setC({ ...c, cgu: e.target.checked })} /><span><strong>J'accepte les conditions d'utilisation</strong> et la politique de confidentialité.</span></label>
               </div>
-              <button className="btn btn-primary btn-block" style={{ marginTop: 26 }} disabled={!tousConsentis} onClick={() => compte && finish({ compte, pseudo: pseudo.trim(), envies, consentements: c })}>Créer mon profil</button>
+              <button className="btn btn-primary btn-block" style={{ marginTop: 26 }} disabled={!tousConsentis} onClick={() => compte && finish({ compte, pseudo: pseudo.trim(), envies, consentements: c })}>Entrer dans QUTE</button>
             </div>
           )}
         </motion.div>

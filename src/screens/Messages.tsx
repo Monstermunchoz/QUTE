@@ -47,7 +47,7 @@ export function Messages() {
           <section aria-label="À valider à deux" style={{ margin: '18px 14px 0' }} className="card">
             <div style={{ padding: '16px 16px 4px' }}>
               <p className="eyebrow">À valider à deux</p>
-              <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>Votre partenaire a dit oui. Un match n'existe que si vous êtes d'accord tous les deux.</p>
+              <p className="muted" style={{ fontSize: 13, marginTop: 4 }}>Votre partenaire a craqué. À vous de dire : un match n'existe que si vous êtes d'accord tous les deux.</p>
             </div>
             {aValider.map((p) => (
               <motion.div layout key={p.id} className="row" style={{ padding: '12px 16px', gap: 12 }}>
@@ -65,7 +65,7 @@ export function Messages() {
 
         {nouveaux.length > 0 && (
           <section style={{ marginTop: 22 }}>
-            <p className="eyebrow pad" style={{ color: 'var(--muted)' }}>Vos envies récentes</p>
+            <p className="eyebrow pad" style={{ color: 'var(--muted)' }}>Vos coups de cœur</p>
             <div className="row" style={{ gap: 14, padding: '12px 20px 0', overflowX: 'auto' }}>
               {nouveaux.map((p) => (
                 <button key={p.id} onClick={() => open({ kind: 'profil', id: p.id })} style={{ flex: 'none', width: 70, textAlign: 'center', position: 'relative' }}>

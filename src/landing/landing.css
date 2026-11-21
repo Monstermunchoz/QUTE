@@ -224,3 +224,21 @@ details p { color: var(--muted); padding: 0 60px 26px 4px; animation: deplie 0.4
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* Sur téléphone : tout est centré */
+@media (max-width: 860px) {
+  .hero-text, .section .wrap > .eyebrow, .section .wrap > .h2, .lieux-grid > div:first-child, .prive > div:first-child, .final-grid, .faq > .h2 { text-align: center; }
+  .lead { margin-left: auto; margin-right: auto; }
+  .cta-row, .villes { justify-content: center; }
+  .hero-total { display: flex; flex-direction: column; text-align: center; gap: 6px; padding: 18px 20px; }
+  .hero-total > span { justify-items: center; }
+  .profil, .regle { text-align: center; }
+  .feature-text { text-align: center; }
+  .feature-text p { margin-left: auto; margin-right: auto; }
+  .ticks { justify-content: center; width: fit-content; margin-left: auto; margin-right: auto; text-align: left; }
+  .prive .ticks { margin-top: 0; }
+  .prix { justify-content: center; text-align: center; }
+  .footer-grid { flex-direction: column; text-align: center; }
+  .footer nav { justify-content: center; flex-wrap: wrap; }
+  .nav .btn-sm { padding: 0 16px; }
+}

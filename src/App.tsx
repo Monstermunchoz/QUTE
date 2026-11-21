@@ -11,7 +11,9 @@ import { Moi } from './screens/Moi'
 import { Onboarding } from './screens/Onboarding'
 import { Charte, Confidentialite, Lexique, Panique, Premium } from './screens/Pages'
 import { ProfilPage } from './screens/ProfilPage'
+import { MonProfilPage } from './screens/MonProfil'
 import { Soirees } from './screens/Soirees'
+import { SoireeSheet } from './screens/SoireeSheet'
 import { useApp, type Overlay, type Tab } from './store/useApp'
 
 const ECRANS: Record<Tab, () => React.JSX.Element> = { decouvrir: Decouvrir, lieux: Lieux, soirees: Soirees, messages: Messages, moi: Moi }
@@ -36,10 +38,12 @@ function OverlayView({ o }: { o: Overlay }) {
   switch (o.kind) {
     case 'profil': return <ProfilPage id={o.id} />
     case 'lieu': return <LieuSheet id={o.id} />
+    case 'soiree': return <SoireeSheet id={o.id} />
     case 'chat': return <Chat id={o.id} />
     case 'premium': return <Premium />
     case 'lexique': return <Lexique />
     case 'charte': return <Charte />
+    case 'monprofil': return <MonProfilPage />
     case 'confidentialite': return <Confidentialite />
   }
 }

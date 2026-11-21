@@ -73,7 +73,7 @@ export function Chat({ id }: { id: string }) {
           <form className="row" style={{ gap: 8 }} onSubmit={(e) => { e.preventDefault(); envoyer() }}>
             <button type="button" className="icon-btn" aria-label="Proposer une photo éphémère" onClick={() => notify(`${p.nom} doit accepter avant de recevoir une photo`)}><Camera size={19} /></button>
             <label className="sr" htmlFor="msg">Votre message</label>
-            <input id="msg" className="input" style={{ flex: 1, height: 46, borderRadius: 23 }} placeholder="Votre message…" value={texte} onChange={(e) => setTexte(e.target.value)} autoComplete="off" />
+            <input id="msg" className="input" style={{ flex: 1, height: 46, borderRadius: 23 }} placeholder="Un mot sincère, ça marche toujours…" value={texte} onChange={(e) => setTexte(e.target.value)} autoComplete="off" />
             <button type="submit" className="icon-btn" aria-label="Envoyer" style={{ background: 'var(--velours)', borderColor: 'transparent' }} disabled={!texte.trim()}><SendHorizontal size={19} /></button>
           </form>
         ) : (

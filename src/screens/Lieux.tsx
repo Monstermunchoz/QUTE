@@ -18,7 +18,8 @@ const BBOX = Object.fromEntries(
   }),
 )
 
-const COULEUR: Record<TypeLieu, string> = { club: '#d9294a', sauna: '#f1e6dc', bar: '#eba3ae' }
+const COULEUR: Record<TypeLieu, string> = { club: '#d9294a', sauna: '#f1e6dc', bar: '#eba3ae', shop: '#a98bff' }
+const FILTRE_LABEL: Record<TypeLieu | 'tout', string> = { tout: 'Tout', club: 'Clubs', sauna: 'Saunas', bar: 'Bars', shop: 'Sex-shops' }
 
 /** Fréquentation de démonstration, stable par lieu. */
 export const frequentation = (l: Lieu, moi: boolean) => ([...l.id].reduce((a, c) => a + c.charCodeAt(0), 0) % 30) + 4 + (moi ? 1 : 0)
@@ -63,7 +64,7 @@ export function Lieux() {
   return (
     <div className="screen" style={{ paddingTop: 'calc(var(--safe-t) + 10px)' }}>
       <header className="pad" style={{ paddingTop: 6 }}>
-        <p className="eyebrow">Clubs · saunas · bars</p>
+        <p className="eyebrow">Clubs · saunas · bars · sex-shops</p>
         <div className="row" style={{ justifyContent: 'space-between', marginTop: 6 }}>
           <h1 className="h1">{nomRegion}</h1>
           {(region || ville) && <button className="icon-btn" aria-label="Revenir à la France entière" onClick={() => { setRegion(null); useApp.getState().setVille(null) }}><RotateCcw size={18} /></button>}
@@ -77,8 +78,8 @@ export function Lieux() {
       </header>
 
       <div className="chips" role="group" aria-label="Type de lieu" style={{ marginTop: 12 }}>
-        {(['tout', 'club', 'sauna', 'bar'] as const).map((t) => (
-          <button key={t} className="chip" aria-pressed={type === t} onClick={() => setType(t)}>{t === 'tout' ? 'Tout' : TYPE_LABEL[t].replace(' libertin', 's')}</button>
+        {(['tout', 'club', 'sauna', 'bar', 'shop'] as const).map((t) => (
+          <button key={t} className="chip" aria-pressed={type === t} onClick={() => setType(t)}>{FILTRE_LABEL[t]}</button>
         ))}
       </div>
 
@@ -113,8 +114,8 @@ export function Lieux() {
           </motion.svg>
         </div>
         <div className="pad row" style={{ gap: 14, marginTop: 10, fontSize: 12, color: 'var(--muted)' }}>
-          {(Object.keys(COULEUR) as TypeLieu[]).map((t) => <span key={t} className="row" style={{ gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: 4, background: COULEUR[t] }} />{TYPE_LABEL[t].split(' ')[0]}s</span>)}
-          <span style={{ marginLeft: 'auto' }}>Touchez une région</span>
+          {(Object.keys(COULEUR) as TypeLieu[]).map((t) => <span key={t} className="row" style={{ gap: 5 }}><span style={{ width: 8, height: 8, borderRadius: 4, background: COULEUR[t] }} />{FILTRE_LABEL[t]}</span>)}
+          
         </div>
 
         <div className="pad" style={{ marginTop: 22, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
@@ -122,7 +123,7 @@ export function Lieux() {
         </div>
         <ul style={{ listStyle: 'none', margin: '8px 0 0', padding: 0 }}>
           {liste.map((l) => (
-            <li key={l.id}>
+            <li key={l.id} style={{ contentVisibility: 'auto', containIntrinsicSize: '78px' }}>
               <button className="row pad" onClick={() => open({ kind: 'lieu', id: l.id })} style={{ width: '100%', padding: '14px 20px', textAlign: 'left' }}>
                 <span style={{ width: 50, height: 50, borderRadius: 16, flex: 'none', background: 'var(--surface-2)', display: 'grid', placeItems: 'center' }}>
                   <span style={{ width: 12, height: 12, borderRadius: 6, background: COULEUR[l.type], boxShadow: `0 0 18px ${COULEUR[l.type]}` }} />
@@ -131,10 +132,12 @@ export function Lieux() {
                   <span style={{ display: 'block', fontWeight: 700, fontSize: 16 }}>{l.nom}</span>
                   <span className="muted" style={{ display: 'block', fontSize: 13, marginTop: 2 }}>{TYPE_LABEL[l.type]} · {l.ville}</span>
                 </span>
-                <span style={{ textAlign: 'right' }}>
-                  <span style={{ display: 'block', fontWeight: 800, color: 'var(--rose)' }}>{frequentation(l, ceSoir.includes(l.id))}</span>
-                  <span className="faint" style={{ fontSize: 11 }}>y vont</span>
-                </span>
+                {l.type !== 'shop' && (
+                  <span style={{ textAlign: 'right' }}>
+                    <span style={{ display: 'block', fontWeight: 800, color: 'var(--rose)' }}>{frequentation(l, ceSoir.includes(l.id))}</span>
+                    <span className="faint" style={{ fontSize: 11 }}>y vont</span>
+                  </span>
+                )}
                 <ChevronRight size={18} color="var(--faint)" />
               </button>
             </li>

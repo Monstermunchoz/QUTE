@@ -4,6 +4,7 @@ import { BookOpen, ChevronRight, Crown, Download, EyeOff, FileText, HeartHandsha
 import { Logo } from '../components/Logo'
 import { Portrait } from '../components/Portrait'
 import { termeById } from '../data/lexique'
+import { completion } from './MonProfil'
 import { useApp } from '../store/useApp'
 
 const LIBELLE = { couple: 'Couple', femme: 'Femme', homme: 'Homme', trans: 'Trans' } as const
@@ -42,11 +43,20 @@ export function Moi() {
           </div>
         </div>
 
-        {s.envies.length > 0 && (
+        {Object.keys(s.profil.envies).length > 0 && (
           <div className="pad" style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 16 }}>
-            {s.envies.map((e) => <span key={e} className="tag tag-oui">{termeById(e)?.mot}</span>)}
+            {Object.entries(s.profil.envies).map(([e, a]) => <span key={e} className={`tag ${a === 'oui' ? 'tag-oui' : a === 'peut' ? 'tag-peut' : 'tag-non'}`}>{a === 'non' ? 'Non · ' : a === 'peut' ? 'Peut-être · ' : ''}{termeById(e)?.mot}</span>)}
           </div>
         )}
+
+        <button className="card" onClick={() => s.open({ kind: 'monprofil' })} style={{ display: 'block', width: 'calc(100% - 28px)', margin: '18px 14px 0', padding: 18, textAlign: 'left' }}>
+          <span className="row" style={{ justifyContent: 'space-between' }}>
+            <span style={{ fontWeight: 700, fontSize: 16 }}>{completion(s.profil) < 100 ? 'Complétez votre profil' : 'Modifier mon profil'}</span>
+            <span className="display" style={{ fontSize: 20, color: 'var(--velours-hi)' }}>{completion(s.profil)} %</span>
+          </span>
+          <span style={{ display: 'block', height: 6, borderRadius: 3, background: 'var(--line)', marginTop: 12, overflow: 'hidden' }}><span style={{ display: 'block', height: '100%', width: `${completion(s.profil)}%`, background: 'var(--velours-hi)', borderRadius: 3 }} /></span>
+          <span className="muted" style={{ display: 'block', fontSize: 13, marginTop: 10 }}>{completion(s.profil) < 100 ? 'Envies, règles, disponibilités, ce que vous cherchez : un profil complet inspire confiance et reçoit plus de réponses.' : 'Votre profil est complet. Gardez-le à jour, vos envies évoluent aussi.'}</span>
+        </button>
 
         {!s.premium && (
           <button onClick={() => s.open({ kind: 'premium' })} className="card" style={{ display: 'block', width: 'calc(100% - 28px)', margin: '22px 14px 0', padding: 20, textAlign: 'left', background: 'linear-gradient(150deg, #5a0b1a 0%, #2a0b12 60%, #160a0d 100%)', borderColor: 'rgba(217,41,74,.4)', color: '#f6ede8' }}>
