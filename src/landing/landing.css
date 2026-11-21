@@ -242,3 +242,27 @@ details p { color: var(--muted); padding: 0 60px 26px 4px; animation: deplie 0.4
   .footer nav { justify-content: center; flex-wrap: wrap; }
   .nav .btn-sm { padding: 0 16px; }
 }
+
+/* Offres */
+.offres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 44px; align-items: stretch; }
+.offre { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 30px 26px; border-radius: 28px; background: var(--surface); border: 1px solid var(--line); }
+.offre h3 { font-size: 17px; font-weight: 650; color: var(--muted); }
+.offre-prix { display: flex; align-items: baseline; gap: 6px; }
+.offre-prix strong { font-family: var(--display); font-size: 46px; letter-spacing: -0.03em; line-height: 1; }
+.offre-prix span { color: var(--muted); }
+.offre .muted { font-size: 14.5px; flex: 1; }
+.offre .btn { width: 100%; margin-top: 6px; }
+.offre-star { background: radial-gradient(120% 120% at 100% 0%, #6d0d20 0%, #2a0b12 50%, #160a0d 100%); border-color: rgba(217, 41, 74, 0.5); box-shadow: 0 30px 80px rgba(196, 30, 58, 0.25); transform: translateY(-8px); }
+.offre-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); padding: 5px 14px; border-radius: 999px; background: var(--red); color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.offres-note { margin-top: 22px; color: var(--muted); font-size: 14px; }
+.hero-credit { margin-top: 18px; font-size: 13px; color: var(--muted); }
+.hero-credit a, .signature a { color: var(--text); font-weight: 650; border-bottom: 1px solid var(--line-2); }
+.signature { text-align: center; font-size: 13px; color: var(--muted); padding: 22px 20px 0; margin: 26px auto 0; max-width: 1180px; border-top: 1px solid var(--line); }
+@media (max-width: 860px) {
+  .offres { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .offre { text-align: center; align-items: center; }
+  .offre-star { transform: none; order: -1; }
+  .offres-note, .hero-credit { text-align: center; }
+  #prive .lead { text-align: center; }
+  details summary { text-align: left; }
+}

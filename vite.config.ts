@@ -27,9 +27,21 @@ export default defineConfig(({ mode }) => ({
             orientation: 'portrait',
             icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
           },
+          // Les pages HTML passent toujours par le réseau d'abord : une nouvelle version
+          // s'affiche dès qu'elle est en ligne. Le reste (JS, CSS, polices) est mis en cache.
           workbox: {
-            navigateFallback: '/app/index.html',
-            navigateFallbackAllowlist: [/^\/app/],
+            globPatterns: ['**/*.{js,css,svg,woff2,webmanifest}'],
+            navigateFallback: null,
+            skipWaiting: true,
+            clientsClaim: true,
+            cleanupOutdatedCaches: true,
+            runtimeCaching: [
+              {
+                urlPattern: ({ request }) => request.mode === 'navigate',
+                handler: 'NetworkFirst',
+                options: { cacheName: 'pages', networkTimeoutSeconds: 4 },
+              },
+            ],
           },
         }),
   ],
