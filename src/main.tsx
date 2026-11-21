@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { MotionConfig } from 'motion/react'
 import './styles/global.css'
 import { App } from './App'
+import { typographieFrancaise } from './lib/typo'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -11,3 +12,5 @@ createRoot(document.getElementById('root')!).render(
     </MotionConfig>
   </StrictMode>,
 )
+
+typographieFrancaise()

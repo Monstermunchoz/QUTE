@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { ArrowLeft, Check } from 'lucide-react'
 import { Logo } from '../components/Logo'
+import { estInstallee } from '../lib/pwa'
 import { Portrait } from '../components/Portrait'
 import { PRATIQUES } from '../data/lexique'
 import { useApp, type Compte } from '../store/useApp'
@@ -52,6 +53,7 @@ export function Onboarding() {
                 <Portrait teinte={348} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(11,7,9,0) 35%, rgba(11,7,9,.95) 100%)' }} />
                 <div style={{ position: "absolute", top: 24, left: 22 }}><Logo size={14} /></div>
+                {!estInstallee() && <a href="/" style={{ position: 'absolute', top: 14, right: 14, height: 40, padding: '0 14px', borderRadius: 20, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(11,7,9,.55)', border: '1px solid var(--line-2)', backdropFilter: 'blur(12px)', fontSize: 13, fontWeight: 650, textDecoration: 'none', color: '#f6ede8' }}>← Le site</a>}
                 <div style={{ position: 'absolute', left: 24, right: 24, bottom: 26 }}>
                   <p className="eyebrow">Le réseau libertin</p>
                   <h1 className="display" style={{ fontSize: 44, marginTop: 10 }}>Osez.<br />En toute<br />confiance.</h1>

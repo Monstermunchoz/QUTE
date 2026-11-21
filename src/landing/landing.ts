@@ -7,6 +7,7 @@ import { alias } from '../data/villes'
 import { LEXIQUE } from '../data/lexique'
 import { MAP_H, MAP_W, REGIONS } from '../data/regions'
 import { project } from '../lib/geo'
+import { typographieFrancaise } from '../lib/typo'
 
 const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)
 const $$ = <T extends Element = HTMLElement>(s: string) => Array.from(document.querySelectorAll<T>(s))
@@ -99,6 +100,20 @@ $$('[data-install]').forEach((b) =>
 $$('[data-close]').forEach((b) => b.addEventListener('click', () => sheet && (sheet.hidden = true)))
 addEventListener('keydown', (e) => e.key === 'Escape' && sheet && (sheet.hidden = true))
 
+/* Menu mobile */
+const burger = $('[data-burger]')
+const menu = $('[data-menu]')
+const basculerMenu = (ouvrir: boolean) => {
+  if (!menu || !burger) return
+  menu.hidden = !ouvrir
+  burger.setAttribute('aria-expanded', String(ouvrir))
+  burger.setAttribute('aria-label', ouvrir ? 'Fermer le menu' : 'Ouvrir le menu')
+  document.body.style.overflow = ouvrir ? 'hidden' : ''
+}
+burger?.addEventListener('click', () => basculerMenu(menu?.hidden === true))
+$$('[data-close-menu]').forEach((a) => a.addEventListener('click', () => basculerMenu(false)))
+addEventListener('keydown', (e) => e.key === 'Escape' && basculerMenu(false))
+
 /* Barre de navigation qui se densifie au défilement */
 const nav = $('#nav')
 const surDefilement = () => nav?.classList.toggle('scrolled', scrollY > 30)
@@ -120,3 +135,5 @@ const io = new IntersectionObserver(
   { rootMargin: '0px 0px -8% 0px' },
 )
 $$('.reveal').forEach((el) => io.observe(el))
+
+typographieFrancaise()

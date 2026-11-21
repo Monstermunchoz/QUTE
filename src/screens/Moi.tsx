@@ -1,10 +1,11 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { BookOpen, ChevronRight, Crown, Download, EyeOff, FileText, HeartHandshake, Moon, ShieldCheck, Sun, SunMoon, Trash2 } from 'lucide-react'
+import { BookOpen, ChevronRight, Crown, Download, Globe, EyeOff, FileText, HeartHandshake, Moon, ShieldCheck, Sun, SunMoon, Trash2 } from 'lucide-react'
 import { Logo } from '../components/Logo'
 import { Portrait } from '../components/Portrait'
 import { termeById } from '../data/lexique'
 import { completion } from './MonProfil'
+import { estInstallee } from '../lib/pwa'
 import { useApp } from '../store/useApp'
 
 const LIBELLE = { couple: 'Couple', femme: 'Femme', homme: 'Homme', trans: 'Trans' } as const
@@ -80,6 +81,12 @@ export function Moi() {
               </button>
             ))}
           </div>
+        </Section>
+
+        <Section titre="QUTE">
+          <Lien Icon={Globe} label="Le site QUTE" onClick={() => (location.href = '/')} />
+          <Lien Icon={Crown} label="Tarifs et abonnement" onClick={() => s.open({ kind: 'premium' })} />
+          {!estInstallee() && <Lien Icon={Download} label="Installer l'appli sur mon téléphone" onClick={() => (location.href = '/')} />}
         </Section>
 
         <Section titre="Communauté">

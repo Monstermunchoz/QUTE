@@ -22,10 +22,31 @@
         <a href="#fonctions">L'appli</a>
         <a href="#lieux">Les lieux</a>
         <a href="#confiance">Confiance</a>
-        <a href="#prive">Privé</a>
+        <a href="#prive">Tarifs</a>
       </nav>
-      <a class="btn btn-primary btn-sm" href="/app/">Ouvrir l'appli</a>
+      <div class="nav-actions">
+        <a class="btn btn-primary btn-sm" href="/app/">Ouvrir l'appli</a>
+        <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu" data-burger><span></span><span></span></button>
+      </div>
     </header>
+
+    <div class="menu" id="menu" hidden data-menu>
+      <nav aria-label="Menu">
+        <a href="#pour-qui" data-close-menu>Pour qui</a>
+        <a href="#fonctions" data-close-menu>L'appli</a>
+        <a href="#lieux" data-close-menu>Les lieux</a>
+        <a href="#confiance" data-close-menu>Confiance</a>
+        <a href="#prive" data-close-menu>Tarifs</a>
+        <a href="#faq" data-close-menu>Questions</a>
+      </nav>
+      <div class="menu-cta">
+        <button class="btn btn-primary btn-xl" data-install>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Télécharger l'appli
+        </button>
+        <p class="muted">Réservé aux adultes · Créé par <a href="https://404agency.fr" target="_blank" rel="noopener">404 Agency</a></p>
+      </div>
+    </div>
 
     <main id="contenu">
       <!-- HÉROS -->
