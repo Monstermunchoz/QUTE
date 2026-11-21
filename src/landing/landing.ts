@@ -2,6 +2,7 @@ import './landing.css'
 import qrcode from 'qrcode-generator'
 import { logoSvg } from '../brand'
 import { LIEUX } from '../data/venues'
+import { alias } from '../data/villes'
 import { LEXIQUE } from '../data/lexique'
 import { MAP_H, MAP_W, REGIONS } from '../data/regions'
 import { project } from '../lib/geo'
@@ -17,18 +18,26 @@ const FRAISE = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="tru
 $$('[data-fraise]').forEach((el) => (el.innerHTML = FRAISE))
 
 /* Chiffres réels tirés des données */
-const lieux = $('[data-count="lieux"]')
-if (lieux) lieux.textContent = String(LIEUX.length)
+const compte: Record<string, number> = {
+  lieux: LIEUX.length,
+  clubs: LIEUX.filter((l) => l.type === 'club').length,
+  saunas: LIEUX.filter((l) => l.type === 'sauna').length,
+  cap: LIEUX.filter((l) => l.ville === "Cap d'Agde").length,
+}
+$$('[data-count]').forEach((el) => {
+  const n = compte[el.dataset.count ?? '']
+  if (n !== undefined) el.textContent = String(n)
+})
 const mots = $('[data-count="mots"]')
 if (mots) mots.textContent = String(LEXIQUE.length)
 
 /* Villes */
-const alias = (v: string) => (v === 'Caluire-et-Cuire' ? 'Lyon' : v)
 const parVille = LIEUX.reduce<Record<string, number>>((m, l) => ((m[alias(l.ville)] = (m[alias(l.ville)] ?? 0) + 1), m), {})
 const villes = $('[data-villes]')
 if (villes) {
   villes.innerHTML = Object.entries(parVille)
     .sort((a, b) => b[1] - a[1])
+    .slice(0, 14)
     .map(([v, n]) => `<a class="ville" href="${APP_URL}">${v} <span>${n}</span></a>`)
     .join('')
 }
@@ -39,7 +48,7 @@ if (carte) {
   const couleur = { club: '#d9294a', sauna: '#f1e6dc', bar: '#eba3ae' } as const
   const pins = LIEUX.map((l, i) => {
     const { x, y } = project(l.lng, l.lat)
-    return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle class="pin" r="16" fill="${couleur[l.type]}" style="animation-delay:${(i % 6) * 0.4}s"/><circle r="8" fill="${couleur[l.type]}" stroke="#120c0e" stroke-width="3"/></g>`
+    return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})">${i % 7 === 0 ? `<circle class="pin" r="12" fill="${couleur[l.type]}" style="animation-delay:${(i % 5) * 0.5}s"/>` : ''}<circle r="6" fill="${couleur[l.type]}" stroke="#120c0e" stroke-width="2"/></g>`
   }).join('')
   const regions = REGIONS.map((r) => `<path d="${r.d}" fill="rgba(246,233,226,.05)" stroke="rgba(246,233,226,.2)" stroke-width="1.4"><title>${r.nom}</title></path>`).join('')
   carte.innerHTML = `<svg viewBox="0 0 ${MAP_W} ${MAP_H}" role="img" aria-label="Carte des clubs et saunas libertins en France">${regions}${pins}</svg>`

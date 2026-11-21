@@ -7,6 +7,12 @@ import { SOIREES } from '../data/events'
 import { useApp } from '../store/useApp'
 import { frequentation } from './Lieux'
 
+const AMBIANCE = {
+  club: 'Club libertin : bar, piste de danse et espaces câlins réservés aux adultes. Ambiance et règles d’entrée propres à chaque soirée.',
+  sauna: 'Sauna libertin : hammam, sauna et espaces détente, souvent ouvert l’après-midi. Certains jours peuvent être réservés à un public.',
+  bar: 'Bar libertin : l’endroit idéal pour un premier verre et faire connaissance, sans pression.',
+} as const
+
 export function LieuSheet({ id }: { id: string }) {
   const l = lieuById(id)!
   const { ceSoir, toggleCeSoir, notify, open, premium, discret } = useApp()
@@ -23,8 +29,23 @@ export function LieuSheet({ id }: { id: string }) {
         <h1 className="display" style={{ fontSize: 32, marginTop: 8 }}>{l.nom}</h1>
         <p className="muted row" style={{ gap: 6, marginTop: 8, fontSize: 14 }}><MapPin size={15} />{adresse}</p>
 
-        <p style={{ marginTop: 16, fontSize: 15, lineHeight: 1.55 }}>{l.ambiance}</p>
+        <p style={{ marginTop: 16, fontSize: 15, lineHeight: 1.55 }}>{l.ambiance ?? AMBIANCE[l.type]}</p>
         {l.accueil && <p className="tag tag-peut" style={{ marginTop: 12 }}>{l.accueil}</p>}
+
+        {l.prix && (
+          <section style={{ marginTop: 18 }}>
+            <h2 className="eyebrow" style={{ color: 'var(--muted)' }}>Entrée le week-end</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
+              {([['Couple', l.prix.couple], ['Femme seule', l.prix.femme], ['Homme seul', l.prix.homme]] as const).map(([q, v]) => (
+                <div key={q} className="card" style={{ padding: '12px 10px', textAlign: 'center' }}>
+                  <div className="display" style={{ fontSize: 20, color: /non/.test(v) ? 'var(--faint)' : 'var(--text)' }}>{v === 'gratuit' ? 'Offert' : /non/.test(v) ? '—' : v}</div>
+                  <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>{q}{/non/.test(v) ? ' : non admis' : ''}</div>
+                </div>
+              ))}
+            </div>
+            <p className="faint" style={{ fontSize: 11.5, marginTop: 8 }}>Tarifs indicatifs relevés par Libertination, à confirmer auprès du lieu.</p>
+          </section>
+        )}
 
         <div className="card row" style={{ marginTop: 18, padding: 16 }}>
           <div style={{ flex: 1 }}>
@@ -66,7 +87,7 @@ export function LieuSheet({ id }: { id: string }) {
           <a className="btn btn-ghost" style={{ flex: 1, textDecoration: 'none' }} href={maps} target="_blank" rel="noreferrer noopener"><Navigation size={17} />Itinéraire</a>
           <a className="btn btn-ghost" style={{ flex: 1, textDecoration: 'none' }} href={l.source} target="_blank" rel="noreferrer noopener"><ExternalLink size={17} />Source</a>
         </div>
-        {!l.verifie && <p className="faint" style={{ fontSize: 12, marginTop: 12 }}>Fiche en cours de vérification. Horaires et conditions d'entrée à confirmer auprès de l'établissement.</p>}
+        {l.verifie !== true && <p className="faint" style={{ fontSize: 12, marginTop: 12 }}>Fiche en cours de vérification. Horaires et conditions d'entrée à confirmer auprès de l'établissement.</p>}
         <button className="faint" style={{ fontSize: 12.5, marginTop: 8, textDecoration: 'underline' }} onClick={() => notify('Merci, nous corrigeons la fiche.')}>Signaler une erreur</button>
 
       </div>

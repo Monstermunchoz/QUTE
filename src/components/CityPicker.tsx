@@ -4,9 +4,9 @@ import { Check, LocateFixed, MapPin, Search, X } from 'lucide-react'
 import { LIEUX } from '../data/venues'
 import { useApp } from '../store/useApp'
 import { Sheet } from './Sheet'
+import { alias } from '../data/villes'
 
 /** Villes connues de l'annuaire, avec leur nombre de lieux. Caluire est rattachée à Lyon. */
-const alias = (v: string) => (v === 'Caluire-et-Cuire' ? 'Lyon' : v)
 export const VILLES = Object.entries(
   LIEUX.reduce<Record<string, number>>((m, l) => ((m[alias(l.ville)] = (m[alias(l.ville)] ?? 0) + 1), m), {}),
 )

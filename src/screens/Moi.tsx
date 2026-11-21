@@ -84,6 +84,7 @@ export function Moi() {
         </Section>
 
         <p className="faint pad" style={{ fontSize: 12, marginTop: 22, textAlign: 'center' }}>Version de démonstration. Profils et soirées fictifs, aucun paiement réel.</p>
+        <p className="faint pad" style={{ fontSize: 12, marginTop: 6, textAlign: 'center' }}>Appli créée par <a href="https://404agency.fr" target="_blank" rel="noopener" style={{ color: 'var(--text)', fontWeight: 650 }}>404 Agency</a></p>
       </div>
     </div>
   )

@@ -1,0 +1,3 @@
+/** Communes rattachées à leur grande ville, pour la recherche par ville. */
+export const AGGLO: Record<string, string> = { 'Caluire-et-Cuire': 'Lyon', 'Décines-Charpieu': 'Lyon', Brignais: 'Lyon', Ternay: 'Lyon', Eysines: 'Bordeaux', Bruges: 'Bordeaux', Cestas: 'Bordeaux', Carquefou: 'Nantes', 'Sainte-Luce-sur-Loire': 'Nantes', 'Le Cannet': 'Cannes', Mougins: 'Cannes', 'Saint-Jean-de-Védas': 'Montpellier', Mauguio: 'Montpellier', 'Hérouville-Saint-Clair': 'Caen', Ifs: 'Caen', Laxou: 'Nancy', 'Sotteville-lès-Rouen': 'Rouen', 'Amfreville-la-Mi-Voie': 'Rouen', 'Chambray-lès-Tours': 'Tours', 'La Riche': 'Tours', Ambilly: 'Annemasse', 'Boulogne-Billancourt': 'Paris', 'Saint-Maur-des-Fossés': 'Paris', Marly: 'Metz' }
+export const alias = (v: string) => AGGLO[v] ?? v

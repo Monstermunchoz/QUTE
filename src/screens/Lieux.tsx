@@ -102,8 +102,8 @@ export function Lieux() {
                 const { x, y } = project(l.lng, l.lat)
                 return (
                   <g key={l.id} transform={`translate(${x} ${y})`} onClick={() => open({ kind: 'lieu', id: l.id })} style={{ cursor: 'pointer' }}>
-                    <circle r={34 / vue.s} fill={COULEUR[l.type]} opacity={0.2} />
-                    <circle r={17 / vue.s} fill={COULEUR[l.type]} stroke="var(--bg)" strokeWidth={5 / vue.s} />
+                    <circle r={22 / vue.s} fill={COULEUR[l.type]} opacity={0.18} />
+                    <circle r={11 / vue.s} fill={COULEUR[l.type]} stroke="var(--bg)" strokeWidth={3 / vue.s} />
                     {vue.s > 4 && <text x={26 / vue.s} y={10 / vue.s} fontSize={32 / vue.s} fontWeight={650} fill="var(--text)" style={{ pointerEvents: 'none' }}>{l.nom}</text>}
                     <title>{l.nom}</title>
                   </g>

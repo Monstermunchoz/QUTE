@@ -19,9 +19,9 @@ function Entete({ titre, sur }: { titre: string; sur?: string }) {
 
 /* ——— Abonnement ——— */
 const FORMULES = [
-  { id: '1m', duree: '1 mois', prix: '[PRIX]', detail: 'Sans engagement' },
-  { id: '3m', duree: '3 mois', prix: '[PRIX]', detail: 'Facturé [TOTAL] tous les 3 mois', populaire: true },
-  { id: '12m', duree: '12 mois', prix: '[PRIX]', detail: 'Facturé [TOTAL] par an' },
+  { id: '1m', duree: '1 mois', prix: '19,99 €', detail: 'Sans engagement' },
+  { id: '3m', duree: '3 mois', prix: '15 €', detail: 'Facturé 44,99 € tous les 3 mois', populaire: true },
+  { id: '12m', duree: '12 mois', prix: '10 €', detail: 'Facturé 119,99 € par an' },
 ]
 
 export function Premium() {
@@ -37,7 +37,7 @@ export function Premium() {
           <p style={{ marginTop: 12, opacity: 0.8, fontSize: 15 }}>L'accès complet au réseau libertin, en toute discrétion.</p>
         </div>
         <ul className="pad" style={{ listStyle: 'none', margin: '8px 0 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {['Profils et photos en clair', 'Messages illimités et albums privés', 'Qui sera au club ce soir', 'Tartes aux fraises illimitées', 'Compte couple partagé, validation à deux', 'Mode fantôme : n’apparaissez qu’à vos matchs'].map((t) => (
+          {['Un seul abonnement pour les deux partenaires d\u2019un couple', 'Profils et photos en clair', 'Messages illimités et albums privés', 'Qui sera au club ce soir', 'Tartes aux fraises illimitées', 'Compte couple partagé, validation à deux', 'Mode fantôme : n’apparaissez qu’à vos matchs'].map((t) => (
             <li key={t} className="row" style={{ gap: 12, fontWeight: 550 }}><span style={{ width: 24, height: 24, borderRadius: 12, background: 'rgba(196,30,58,.18)', display: 'grid', placeItems: 'center', flex: 'none' }}><Check size={14} color="var(--velours-hi)" /></span>{t}</li>
           ))}
         </ul>
@@ -55,7 +55,7 @@ export function Premium() {
         </div>
         <div className="pad" style={{ marginTop: 22 }}>
           <button className="btn btn-primary btn-block" onClick={() => { setPremium(true); notify('Bienvenue chez les membres Privé'); history.back() }}>Continuer</button>
-          <p className="faint" style={{ fontSize: 12, textAlign: 'center', marginTop: 12 }}>Démo : aucun paiement n'est effectué. En production, libellé neutre sur le relevé, résiliable à tout moment.</p>
+          <p className="faint" style={{ fontSize: 12, textAlign: 'center', marginTop: 12 }}>7 jours offerts. Démo : aucun paiement n'est effectué. Libellé neutre sur le relevé, résiliable à tout moment.</p>
         </div>
       </div>
     </Page>
