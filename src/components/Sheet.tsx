@@ -1,5 +1,6 @@
 import { motion, useDragControls, type PanInfo } from 'motion/react'
 import type { ReactNode } from 'react'
+import { X } from 'lucide-react'
 
 const spring = { type: 'spring', stiffness: 420, damping: 40 } as const
 
@@ -20,6 +21,7 @@ export function Sheet({ onClose, children, label }: { onClose: () => void; child
         <div onPointerDown={(e) => controls.start(e)} style={{ touchAction: 'none', paddingBottom: 4 }}>
           <div className="grabber" />
         </div>
+        <button className="sheet-x" aria-label="Fermer" onClick={onClose}><X size={20} /></button>
         {children}
       </motion.section>
     </>

@@ -22,7 +22,11 @@ export function CityPicker() {
   const { ville, setVille, notify } = useApp()
   const [ouvert, setOuvert] = useState(false)
   const [q, setQ] = useState('')
-  const liste = useMemo(() => VILLES.filter((v) => v.nom.toLowerCase().includes(q.trim().toLowerCase())), [q])
+  const liste = useMemo(() => {
+    const n = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    const s = n(q.trim())
+    return VILLES.filter((v) => n(v.nom).includes(s)).sort((a, b) => Number(n(b.nom).startsWith(s)) - Number(n(a.nom).startsWith(s)))
+  }, [q])
 
   const choisir = (v: string | null) => {
     setVille(v)
@@ -53,17 +57,19 @@ export function CityPicker() {
           <Sheet label="Choisir une ville" onClose={() => setOuvert(false)}>
             <div className="pad" style={{ paddingBottom: 12 }}>
               <h2 className="h2">Où sortez-vous ?</h2>
-              <label className="row" style={{ marginTop: 14, height: 50, padding: '0 16px', borderRadius: 25, background: 'var(--surface)', border: '1px solid var(--line-2)', gap: 10 }}>
+              <form className="row" onSubmit={(e) => { e.preventDefault(); if (liste[0]) choisir(liste[0].nom) }}
+                style={{ marginTop: 14, height: 50, padding: '0 6px 0 16px', borderRadius: 25, background: 'var(--surface)', border: '1px solid var(--line-2)', gap: 10 }}>
                 <Search size={18} color="var(--muted)" />
-                <span className="sr">Rechercher une ville</span>
-                <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher une ville" style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none' }} />
-              </label>
+                <label className="sr" htmlFor="q-ville">Rechercher une ville</label>
+                <input id="q-ville" type="search" enterKeyHint="go" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Paris, Lyon, Cap d'Agde…" style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none' }} />
+                {q && liste[0] && <button type="submit" className="btn btn-primary" style={{ height: 38, padding: '0 16px', fontSize: 14 }}>OK</button>}
+              </form>
               <div className="row" style={{ gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
                 <button className="chip" aria-pressed={!ville} onClick={() => choisir(null)}>Toute la France</button>
                 <button className="chip row" style={{ gap: 6, display: 'inline-flex', alignItems: 'center' }} onClick={() => { choisir('Lyon'); notify('Position approximative : Lyon') }}><LocateFixed size={15} />Autour de moi</button>
               </div>
             </div>
-            <ul className="scroll" style={{ listStyle: 'none', margin: 0, padding: '0 0 calc(var(--safe-b) + 20px)', maxHeight: '52vh' }}>
+            <ul className="scroll" style={{ listStyle: 'none', margin: 0, padding: '0 0 calc(var(--safe-b) + 20px)', maxHeight: '46dvh' }}>
               {liste.map((v) => (
                 <li key={v.nom}>
                   <button className="row" onClick={() => choisir(v.nom)} style={{ width: '100%', padding: '14px 20px', textAlign: 'left' }}>

@@ -181,29 +181,27 @@
       <!-- PRIVÉ -->
       <section class="section" id="prive">
         <div class="wrap">
-          <p class="eyebrow reveal">QUTE Privé</p>
-          <h2 class="h2 reveal">Voyez tout.<br />Osez tout.</h2>
-          <p class="lead reveal">La carte des lieux, l'agenda et le lexique sont gratuits. L'abonnement Privé ouvre tout le reste : profils en clair, messages, albums privés, qui sort ce soir. Un seul abonnement pour les deux partenaires d'un couple.</p>
-          <div class="offres">
-            <article class="offre reveal">
-              <h3>1 mois</h3>
-              <p class="offre-prix"><strong>19,99 €</strong><span>/ mois</span></p>
-              <p class="muted">Sans engagement. Idéal pour découvrir.</p>
-              <a class="btn btn-ghost" href="/app/">Choisir</a>
-            </article>
-            <article class="offre offre-star reveal">
-              <span class="offre-badge">Le plus choisi</span>
-              <h3>3 mois</h3>
-              <p class="offre-prix"><strong>15 €</strong><span>/ mois</span></p>
-              <p class="muted">44,99 € tous les 3 mois. Une saison pour sortir.</p>
-              <a class="btn btn-primary" href="/app/">Choisir</a>
-            </article>
-            <article class="offre reveal">
-              <h3>12 mois</h3>
-              <p class="offre-prix"><strong>10 €</strong><span>/ mois</span></p>
-              <p class="muted">119,99 € par an. Le meilleur prix.</p>
-              <a class="btn btn-ghost" href="/app/">Choisir</a>
-            </article>
+          <div class="privee reveal">
+            <div class="privee-tete">
+              <span class="privee-logo" data-logo-clair></span>
+              <h2 class="privee-titre">Voyez tout.<br />Osez tout.</h2>
+              <p>L'accès complet au réseau libertin, en toute discrétion.</p>
+            </div>
+            <ul class="privee-liste">
+              <li>Un seul abonnement pour les deux partenaires d'un couple</li>
+              <li>Profils et photos en clair</li>
+              <li>Messages illimités et albums privés</li>
+              <li>Qui sera au club ce soir</li>
+              <li>Tartes aux fraises illimitées</li>
+              <li>Compte couple partagé, validation à deux</li>
+              <li>Mode fantôme : n'apparaissez qu'à vos matchs</li>
+            </ul>
+            <div class="formules" role="radiogroup" aria-label="Formule">
+              <button class="formule" role="radio" aria-checked="false" data-formule="1m"><span><b>1 mois</b><small>Sans engagement</small></span><em>19,99 €<small> /mois</small></em></button>
+              <button class="formule" role="radio" aria-checked="true" data-formule="3m"><span class="formule-badge">Le plus choisi</span><span><b>3 mois</b><small>Facturé 44,99 € tous les 3 mois</small></span><em>15 €<small> /mois</small></em></button>
+              <button class="formule" role="radio" aria-checked="false" data-formule="12m"><span><b>12 mois</b><small>Facturé 119,99 € par an</small></span><em>10 €<small> /mois</small></em></button>
+            </div>
+            <button class="btn btn-primary btn-xl privee-cta" data-offre="3m">Choisir cette formule</button>
           </div>
           <p class="offres-note reveal">7 jours offerts · Résiliable à tout moment · Libellé discret sur votre relevé</p>
         </div>
@@ -250,6 +248,33 @@
       </div>
       <p class="signature">Réservé aux adultes · Créé par <a href="https://404agency.fr" target="_blank" rel="noopener">404 Agency</a></p>
     </footer>
+
+    <!-- Détail d'une offre -->
+    <div class="modale" data-modale-offre hidden>
+      <div class="modale-fond" data-fermer-offre></div>
+      <div class="modale-panneau" role="dialog" aria-modal="true" aria-labelledby="offre-titre">
+        <button class="modale-x" aria-label="Fermer" data-fermer-offre>×</button>
+        <p class="eyebrow">QUTE Privé</p>
+        <h2 id="offre-titre" class="h3" data-offre-titre>3 mois</h2>
+        <p class="offre-prix"><strong data-offre-prix>15 €</strong><span>/ mois</span></p>
+        <p class="muted" data-offre-detail></p>
+        <p class="offre-eco" data-offre-eco></p>
+        <ul class="ticks offre-liste">
+          <li>Profils et photos en clair</li>
+          <li>Messagerie illimitée avec vos matchs</li>
+          <li>Albums privés, sur demande et avec accord</li>
+          <li>Tartes aux fraises illimitées</li>
+          <li>Voir qui vous a liké</li>
+          <li>Qui va au club ce soir</li>
+          <li>Agenda des soirées et « J'y vais »</li>
+          <li>Filtres avancés : âge, distance, envies</li>
+          <li>Compte couple partagé : un abonnement pour deux</li>
+          <li>Mode fantôme et mode discret</li>
+        </ul>
+        <button class="btn btn-primary btn-xl" data-install style="width: 100%">Télécharger l'appli</button>
+        <p class="faint-note">Le paiement arrive bientôt : vous serez prévenus dans l'appli. 7 jours offerts, résiliable à tout moment.</p>
+      </div>
+    </div>
 
     <!-- Fenêtre d'installation iPhone -->
     <div class="ios-sheet" data-ios hidden>

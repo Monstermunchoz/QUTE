@@ -13,6 +13,7 @@ import { Charte, Confidentialite, Lexique, Panique, Premium } from './screens/Pa
 import { ProfilPage } from './screens/ProfilPage'
 import { MonProfilPage } from './screens/MonProfil'
 import { Soirees } from './screens/Soirees'
+import { SignalerSheet } from './screens/SignalerSheet'
 import { SoireeSheet } from './screens/SoireeSheet'
 import { useApp, type Overlay, type Tab } from './store/useApp'
 
@@ -40,6 +41,7 @@ function OverlayView({ o }: { o: Overlay }) {
     case 'lieu': return <LieuSheet id={o.id} />
     case 'soiree': return <SoireeSheet id={o.id} />
     case 'chat': return <Chat id={o.id} />
+    case 'signaler': return <SignalerSheet id={o.id} />
     case 'premium': return <Premium />
     case 'lexique': return <Lexique />
     case 'charte': return <Charte />
@@ -81,7 +83,9 @@ export function App() {
           </AnimatePresence>
           <TabBar nonLus={nonLus()} />
           <AnimatePresence>
-            {overlays.map((o, i) => <OverlayView key={`${o.kind}-${'id' in o ? o.id : ''}-${i}`} o={o} />)}
+            {overlays.map((o, i) => (
+              <div key={`${o.kind}-${'id' in o ? o.id : ''}-${i}`} className="couche" style={{ zIndex: 40 + i }}><OverlayView o={o} /></div>
+            ))}
           </AnimatePresence>
         </>
       )}

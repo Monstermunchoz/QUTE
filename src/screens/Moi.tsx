@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { BookOpen, ChevronRight, Crown, Download, Globe, EyeOff, FileText, HeartHandshake, Moon, ShieldCheck, Sun, SunMoon, Trash2 } from 'lucide-react'
+import { BookOpen, ChevronRight, Crown, Download, Globe, EyeOff, FileText, HeartHandshake, LogOut, Moon, ShieldCheck, Sun, SunMoon, Trash2 } from 'lucide-react'
 import { Logo } from '../components/Logo'
 import { Portrait } from '../components/Portrait'
 import { termeById } from '../data/lexique'
@@ -94,9 +94,10 @@ export function Moi() {
           <Lien Icon={HeartHandshake} label="Charte du consentement" onClick={() => s.open({ kind: 'charte' })} />
         </Section>
 
-        <Section titre="Mes données">
+        <Section titre="Mon compte">
           <Lien Icon={FileText} label="Confidentialité et consentements" onClick={() => s.open({ kind: 'confidentialite' })} />
           <Lien Icon={Download} label="Exporter mes données" onClick={exporter} />
+          <Lien Icon={LogOut} label="Se déconnecter" onClick={() => { useApp.setState({ onboarded: false, overlays: [], tab: 'decouvrir' }); s.notify('Vous êtes déconnecté·e. À très vite.') }} />
           <Lien Icon={Trash2} label={confirmer ? 'Confirmer la suppression définitive' : 'Supprimer mon compte'} onClick={supprimer} danger />
         </Section>
 

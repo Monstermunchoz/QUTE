@@ -8,6 +8,7 @@ export type Overlay =
   | { kind: 'lieu'; id: string }
   | { kind: 'soiree'; id: string }
   | { kind: 'chat'; id: string }
+  | { kind: 'signaler'; id: string }
   | { kind: 'premium' }
   | { kind: 'lexique' }
   | { kind: 'charte' }

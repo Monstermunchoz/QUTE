@@ -83,6 +83,8 @@ const sheet = $('[data-ios]')
 
 $$('[data-install]').forEach((b) =>
   b.addEventListener('click', async () => {
+    if (!b.closest('[data-modale-offre]')) basculerMenu(false)
+    else fermerOffre()
     if (invite) {
       await invite.prompt()
       const { outcome } = await invite.userChoice
@@ -99,6 +101,40 @@ $$('[data-install]').forEach((b) =>
 )
 $$('[data-close]').forEach((b) => b.addEventListener('click', () => sheet && (sheet.hidden = true)))
 addEventListener('keydown', (e) => e.key === 'Escape' && sheet && (sheet.hidden = true))
+
+/* Détail des offres */
+const OFFRES: Record<string, { titre: string; prix: string; detail: string; eco: string }> = {
+  '1m': { titre: '1 mois', prix: '19,99 €', detail: '19,99 € par mois, sans engagement.', eco: '' },
+  '3m': { titre: '3 mois', prix: '15 €', detail: '44,99 € tous les 3 mois.', eco: 'Vous économisez 25 %' },
+  '12m': { titre: '12 mois', prix: '10 €', detail: '119,99 € par an.', eco: 'Vous économisez 50 %' },
+}
+const modale = $('[data-modale-offre]')
+const fermerOffre = () => { if (modale) { modale.hidden = true; document.body.style.overflow = '' } }
+$$('[data-offre]').forEach((b) =>
+  b.addEventListener('click', () => {
+    const o = OFFRES[b.dataset.offre ?? '3m']
+    if (!modale || !o) return
+    $('[data-offre-titre]')!.textContent = o.titre
+    $('[data-offre-prix]')!.textContent = o.prix
+    $('[data-offre-detail]')!.textContent = o.detail
+    $('[data-offre-eco]')!.textContent = o.eco
+    modale.hidden = false
+    document.body.style.overflow = 'hidden'
+  }),
+)
+$$('[data-fermer-offre]').forEach((b) => b.addEventListener('click', fermerOffre))
+addEventListener('keydown', (e) => e.key === 'Escape' && fermerOffre())
+
+/* Choix de la formule, comme dans l'appli */
+const ctaPrivee = $('.privee-cta')
+$$('[data-formule]').forEach((f) =>
+  f.addEventListener('click', () => {
+    $$('[data-formule]').forEach((x) => x.setAttribute('aria-checked', String(x === f)))
+    if (ctaPrivee) ctaPrivee.dataset.offre = f.dataset.formule
+  }),
+)
+const logoClair = $('[data-logo-clair]')
+if (logoClair) logoClair.innerHTML = logoSvg(13, '#f6ede8')
 
 /* Menu mobile */
 const burger = $('[data-burger]')

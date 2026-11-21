@@ -17,7 +17,7 @@ export type Soiree = {
   lien: string // agenda officiel
 }
 
-export const SOIREES: Soiree[] = [
+const BRUTES: Soiree[] = [
   { id: 'e1', date: '2026-11-21', titre: "Soirée Fluo", lieu: "Le Domaine", adresse: "23 La Prairie", ville: "Auchay-sur-Vendée", agglo: "Auchay", lieuId: 'pf1574997', lien: "http://clubledomaine.com/" },
   { id: 'e2', date: '2026-11-21', titre: "Soirée Code bracelets", lieu: "L'Ôlà", adresse: "16 rue de l'Hermite", ville: "Bruges", agglo: "Bordeaux", lieuId: 'pf2105722', lien: "https://lolaclub.fr/agenda-des-soirees-lola-club-libertin-bordeaux-bruges/" },
   { id: 'e3', date: '2026-11-21', titre: "Haut chic, bas choc", lieu: "Plaisir Club", adresse: "115 Les Ponciaux", ville: "Bréal-sous-Montfort", agglo: "Rennes", lien: "https://www.plaisirclub.fr/events" },
@@ -185,6 +185,23 @@ export const SOIREES: Soiree[] = [
 
 const JOURS = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.']
 const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
+const cle = (x: string) => x.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/^(l'|l’|le |la |les )/, '').replace(/[^a-z0-9]/g, '')
+
+/** Agenda sans doublons (une même soirée relevée sur deux sources n'apparaît qu'une fois), trié par date. */
+export const SOIREES: Soiree[] = (() => {
+  const vus = new Set<string>()
+  return BRUTES.filter((s) => {
+    const k = `${s.date}|${cle(s.titre)}|${cle(s.ville)}`
+    if (vus.has(k)) return false
+    vus.add(k)
+    return true
+  }).sort((a, b) => a.date.localeCompare(b.date) || (a.heure ?? '').localeCompare(b.heure ?? ''))
+})()
+
+/** Clé d'une série : même soirée, même lieu, à des dates différentes. */
+export const cleSerie = (s: Soiree) => `${cle(s.titre)}|${cle(s.lieu)}`
+export const serie = (s: Soiree) => SOIREES.filter((x) => cleSerie(x) === cleSerie(s))
+
 export const jourSoiree = (iso: string) => {
   const d = new Date(iso + 'T12:00:00')
   return { jour: JOURS[d.getDay()], num: d.getDate(), mois: MOIS[d.getMonth()], long: `${JOURS[d.getDay()]} ${d.getDate()} ${MOIS[d.getMonth()]}` }

@@ -31,7 +31,7 @@ export function ProfilPage({ id }: { id: string }) {
           </div>
           {menu && (
             <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="card" style={{ position: 'absolute', right: 16, top: 'calc(var(--safe-t) + 66px)', padding: 6, zIndex: 5, minWidth: 210, background: 'var(--surface-2)' }}>
-              <button className="row" style={{ width: '100%', padding: '12px 12px', gap: 10, fontWeight: 600 }} onClick={() => { setMenu(false); notify('Signalement envoyé à la modération') }}><Flag size={18} />Signaler ce profil</button>
+              <button className="row" style={{ width: '100%', padding: '12px 12px', gap: 10, fontWeight: 600 }} onClick={() => { setMenu(false); open({ kind: 'signaler', id: p.id }) }}><Flag size={18} />Signaler ce profil</button>
               <button className="row" style={{ width: '100%', padding: '12px 12px', gap: 10, fontWeight: 600, color: 'var(--rose)' }} onClick={() => { bloquer(p.id); notify(`${p.nom} est bloqué·e`) }}><Ban size={18} />Bloquer</button>
             </motion.div>
           )}
@@ -107,6 +107,10 @@ export function ProfilPage({ id }: { id: string }) {
           )}
 
           <p className="faint" style={{ fontSize: 12.5 }}>Albums privés : vous pouvez demander l'accès, {p.nom} accepte ou refuse. Les captures d'écran sont signalées au membre.</p>
+          <div className="row" style={{ gap: 10, marginTop: 22 }}>
+            <button className="btn btn-ghost" style={{ flex: 1, fontSize: 14 }} onClick={() => open({ kind: 'signaler', id: p.id })}><Flag size={16} />Signaler</button>
+            <button className="btn btn-ghost" style={{ flex: 1, fontSize: 14, color: 'var(--rose)' }} onClick={() => { bloquer(p.id); notify(`${p.nom} est bloqué·e`) }}><Ban size={16} />Bloquer</button>
+          </div>
         </div>
       </div>
 

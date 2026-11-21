@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeft, Camera, EyeOff, Lock, SendHorizontal, Timer } from 'lucide-react'
+import { ArrowLeft, Camera, Flag, EyeOff, Lock, SendHorizontal, Timer } from 'lucide-react'
 import { Page } from '../components/Sheet'
 import { profilById } from '../data/profiles'
 import { useApp } from '../store/useApp'
@@ -39,6 +39,7 @@ export function Chat({ id }: { id: string }) {
             <span style={{ fontSize: 12, color: p.enLigne ? 'var(--ok)' : 'var(--faint)' }}>{p.enLigne ? 'En ligne' : 'Hors ligne'}</span>
           </span>
         </button>
+        <button className="icon-btn" aria-label={`Signaler ${p.nom}`} onClick={() => open({ kind: 'signaler', id })}><Flag size={18} /></button>
       </header>
 
       <div className="scroll" style={{ padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 8 }}>

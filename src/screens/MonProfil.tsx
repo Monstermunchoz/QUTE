@@ -8,18 +8,21 @@ import { RangeDouble, RangeSimple } from '../components/RangeDouble'
 
 /** Pourcentage de profil rempli : sert à motiver sans culpabiliser. */
 export function completion(p: MonProfil) {
+  const part = (f: (x: MonProfil['partenaires'][number]) => unknown) => p.partenaires.filter(f).length / p.partenaires.length
   const pts = [
-    p.partenaires.every((x) => x.age && x.orientation),
-    p.partenaires.every((x) => x.silhouette),
-    p.bio.trim().length >= 40,
-    p.recherche.length > 0,
-    Object.keys(p.envies).length >= 3,
-    p.limites.length > 0,
-    p.dispo.length > 0,
-    p.ou.length > 0,
-    !!p.experience,
+    part((x) => x.age),
+    part((x) => x.orientation),
+    part((x) => x.silhouette),
+    part((x) => x.taille),
+    Math.min(1, p.bio.trim().length / 40),
+    p.recherche.length ? 1 : 0,
+    Math.min(1, Object.keys(p.envies).length / 3),
+    p.limites.length ? 1 : 0,
+    p.dispo.length ? 1 : 0,
+    p.ou.length ? 1 : 0,
+    p.experience ? 1 : 0,
   ]
-  return Math.round((pts.filter(Boolean).length / pts.length) * 100)
+  return Math.round((pts.reduce((a, b) => a + b, 0) / pts.length) * 100)
 }
 
 const CYCLE: (Avis | undefined)[] = [undefined, 'oui', 'peut', 'non']
@@ -68,7 +71,7 @@ export function MonProfilPage() {
           <div style={{ fontWeight: 700 }}>{pseudo || 'Mon profil'}</div>
           <div className="faint" style={{ fontSize: 12.5 }}>Profil complété à {pc} %</div>
         </div>
-        <button className="btn btn-primary" style={{ height: 40, padding: '0 16px', fontSize: 14 }} onClick={() => { notify('Profil enregistré'); history.back() }}><Check size={16} />OK</button>
+        <button className="btn btn-primary" style={{ height: 40, padding: '0 16px', fontSize: 14 }} onClick={() => { notify('Profil enregistré'); history.back() }}><Check size={16} />Enregistrer</button>
       </header>
       <div style={{ height: 3, background: 'var(--line)' }}><div style={{ height: '100%', width: `${pc}%`, background: 'var(--velours-hi)', transition: 'width .4s var(--ease)' }} /></div>
 
@@ -80,7 +83,7 @@ export function MonProfilPage() {
             {p.partenaires.map((x, i) => (
               <div key={i} className="card" style={{ padding: 16 }}>
                 <div className="eyebrow" style={{ color: i === 0 ? 'var(--rose)' : 'var(--champagne)' }}>{x.role}</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10, marginTop: 12 }}>
                   <label className="field"><span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--muted)' }}>Âge</span>
                     <input className="input" type="number" inputMode="numeric" min={18} max={99} value={x.age} placeholder="18+" onChange={(e) => setPart(i, 'age', e.target.value ? Math.max(18, +e.target.value) : '')} style={{ height: 48 }} /></label>
                   <label className="field"><span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--muted)' }}>Taille</span>
