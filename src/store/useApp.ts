@@ -185,7 +185,9 @@ export const useApp = create<State>()(
       name: 'qute',
       merge: (persisted, current) => {
         const p = persisted as Partial<State>
-        return { ...current, ...p, profil: { ...profilVide(p.compte ?? null), ...(p.profil ?? {}) } }
+        const profil = { ...profilVide(p.compte ?? null), ...(p.profil ?? {}) }
+        if (profil.ageMax <= profil.ageMin) profil.ageMax = Math.min(80, profil.ageMin + 10)
+        return { ...current, ...p, profil }
       },
       partialize: (s) => {
         const { overlays: _o, toast: _t, panique: _p, ...rest } = s

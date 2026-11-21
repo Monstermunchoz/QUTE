@@ -214,3 +214,14 @@ html.cache .shell > * { filter: blur(30px); }
 /* Zones posées sur une photo : toujours en texte clair, quel que soit le thème */
 .on-dark { --champagne: #eba3ae; --rose: #eba3ae; --text: #f6ede8; --muted: #d6c6c1; --faint: #b3a29e; --line: rgba(246, 233, 226, 0.12); --line-2: rgba(246, 233, 226, 0.2); --on-light: #120c0e; color: var(--text); }
 .on-dark .tag-oui { background: rgba(196, 30, 58, 0.35); color: #ffe3e7; }
+
+/* Curseur double */
+.range2 { position: relative; height: 36px; margin-top: 6px; }
+.range2-piste { position: absolute; left: 0; right: 0; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; background: var(--surface-3); }
+.range2-plage { position: absolute; top: 0; bottom: 0; left: var(--a); right: calc(100% - var(--b)); border-radius: 3px; background: var(--velours-hi); }
+.range2 input { position: absolute; inset: 0; width: 100%; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.range2 input::-webkit-slider-runnable-track { background: none; height: 36px; }
+.range2 input::-moz-range-track { background: none; }
+.range2 input::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 28px; height: 28px; margin-top: 4px; border-radius: 50%; background: var(--text); border: 3px solid var(--velours-hi); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35); cursor: grab; }
+.range2 input::-moz-range-thumb { pointer-events: auto; width: 22px; height: 22px; border-radius: 50%; background: var(--text); border: 3px solid var(--velours-hi); cursor: grab; }
+.range2 input:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--rose); outline-offset: 2px; }

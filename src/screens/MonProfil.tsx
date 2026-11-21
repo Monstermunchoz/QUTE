@@ -4,6 +4,7 @@ import { Page } from '../components/Sheet'
 import { PRATIQUES } from '../data/lexique'
 import { DISPOS, EXPERIENCES, LIMITES, ORIENTATIONS, OU, RECHERCHE, SILHOUETTES } from '../data/profiles'
 import { useApp, type Avis, type MonProfil } from '../store/useApp'
+import { RangeDouble, RangeSimple } from '../components/RangeDouble'
 
 /** Pourcentage de profil rempli : sert à motiver sans culpabiliser. */
 export function completion(p: MonProfil) {
@@ -141,14 +142,10 @@ export function MonProfilPage() {
 
         <Bloc titre="Vos critères de recherche">
           <div className="card" style={{ padding: 16 }}>
-            <div className="row" style={{ justifyContent: 'space-between' }}><span style={{ fontWeight: 600 }}>Âge</span><span className="muted">{p.ageMin} – {p.ageMax} ans</span></div>
-            <label className="sr" htmlFor="amin">Âge minimum</label>
-            <input id="amin" type="range" min={18} max={80} value={p.ageMin} onChange={(e) => setProfil({ ageMin: Math.min(+e.target.value, p.ageMax) })} style={{ width: '100%', marginTop: 12, accentColor: 'var(--velours-hi)' }} />
-            <label className="sr" htmlFor="amax">Âge maximum</label>
-            <input id="amax" type="range" min={18} max={80} value={p.ageMax} onChange={(e) => setProfil({ ageMax: Math.max(+e.target.value, p.ageMin) })} style={{ width: '100%', accentColor: 'var(--velours-hi)' }} />
+            <div className="row" style={{ justifyContent: 'space-between' }}><span style={{ fontWeight: 600 }}>Âge</span><span className="muted">{p.ageMin} – {p.ageMax >= 80 ? '80 ans et +' : `${p.ageMax} ans`}</span></div>
+            <RangeDouble label="Âge" min={18} max={80} bas={p.ageMin} haut={p.ageMax} onChange={(a, b) => setProfil({ ageMin: a, ageMax: b })} />
             <div className="row" style={{ justifyContent: 'space-between', marginTop: 16 }}><span style={{ fontWeight: 600 }}>Distance maximale</span><span className="muted">{p.distance >= 300 ? 'Toute la France' : `${p.distance} km`}</span></div>
-            <label className="sr" htmlFor="dist">Distance maximale</label>
-            <input id="dist" type="range" min={5} max={300} step={5} value={p.distance} onChange={(e) => setProfil({ distance: +e.target.value })} style={{ width: '100%', marginTop: 12, accentColor: 'var(--velours-hi)' }} />
+            <RangeSimple label="Distance maximale" min={5} max={300} step={5} valeur={p.distance} onChange={(v) => setProfil({ distance: v })} />
           </div>
         </Bloc>
 
