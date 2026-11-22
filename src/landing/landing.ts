@@ -155,25 +155,6 @@ $$('[data-offre]').forEach((b) =>
 $$('[data-fermer-offre]').forEach((b) => b.addEventListener('click', fermerOffre))
 addEventListener('keydown', (e) => e.key === 'Escape' && fermerOffre())
 
-/* Téléphone de l'accueil : les profils défilent tout seuls, comme dans l'appli */
-const pile = $('.swipe-pile')
-const calme = matchMedia('(prefers-reduced-motion: reduce)').matches
-if (pile && !calme) {
-  let visible = false
-  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(pile)
-  let n = 0
-  setInterval(() => {
-    if (!visible || document.hidden) return
-    const cartes = Array.from(pile.querySelectorAll<HTMLElement>('.sc'))
-    const dessus = cartes[cartes.length - 1]
-    if (!dessus) return
-    dessus.classList.add(n++ % 3 === 2 ? 'part-g' : 'part-d')
-    setTimeout(() => {
-      dessus.classList.remove('part-d', 'part-g')
-      pile.prepend(dessus)
-    }, 650)
-  }, 2600)
-}
 
 const logoClair = $('[data-logo-clair]')
 if (logoClair) logoClair.innerHTML = logoSvg(13, '#f6ede8')
