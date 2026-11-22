@@ -1,5 +1,12 @@
 import { defineConfig } from 'vite'
-import { resolve } from 'node:path'
+import { resolve, relative } from 'node:path'
+import { readdirSync } from 'node:fs'
+
+// Toutes les pages du blog générées par scripts/blog.py
+const pagesBlog = (readdirSync(resolve(__dirname, 'blog'), { recursive: true }) as string[])
+  .filter((f) => f.endsWith('index.html'))
+  .map((f) => resolve(__dirname, 'blog', f))
+const entreesBlog = Object.fromEntries(pagesBlog.map((p) => [relative(__dirname, p).replace(/\/index\.html$/, '').replace(/\//g, '-'), p]))
 import react from '@vitejs/plugin-react'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -50,7 +57,7 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: mode !== 'single',
     outDir: mode === 'single' ? 'dist-single' : 'dist',
     rollupOptions: {
-      input: mode === 'single' ? resolve(__dirname, 'app/index.html') : { accueil: resolve(__dirname, 'index.html'), app: resolve(__dirname, 'app/index.html') },
+      input: mode === 'single' ? resolve(__dirname, 'app/index.html') : { accueil: resolve(__dirname, 'index.html'), app: resolve(__dirname, 'app/index.html'), boutique: resolve(__dirname, 'boutique/index.html'), ...entreesBlog },
     },
   },
 }))

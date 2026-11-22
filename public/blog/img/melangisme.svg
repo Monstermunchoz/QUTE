@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630"><defs>
+<radialGradient id="f" cx="30%" cy="20%" r="110%"><stop offset="0" stop-color="#6F2A38"/><stop offset=".55" stop-color="#361219"/><stop offset="1" stop-color="#190B0E"/></radialGradient>
+<radialGradient id="h" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#C41E3A" stop-opacity=".45"/><stop offset="1" stop-color="#C41E3A" stop-opacity="0"/></radialGradient>
+<pattern id="p" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#F6EDE8" fill-opacity=".07"/></pattern>
+</defs>
+<rect width="1200" height="630" fill="url(#f)"/><rect width="1200" height="630" fill="url(#p)"/>
+<circle cx="600" cy="315" r="300" fill="url(#h)"/><g transform="translate(600 315)">
+<circle fill="none" stroke="#F6EDE8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" cx="-120" cy="-40" r="130"/><circle fill="none" stroke="#C41E3A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" cx="120" cy="-40" r="130"/>
+<circle fill="none" stroke="#EBA3AE" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" cx="-60" cy="80" r="110"/><circle fill="none" stroke="#F6EDE8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" cx="70" cy="80" r="110" stroke-opacity=".6"/></g></svg>

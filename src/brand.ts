@@ -7,8 +7,13 @@ export const BRAND_CREAM = '#f6ede8'
 
 export function logoSvg(size = 15, color = BRAND_RED, textColor = BRAND_CREAM) {
   const [, , w, h] = SYMBOLE_VB.split(' ').map(Number)
-  const sh = size * 1.27
-  return `<span style="display:inline-flex;align-items:center;gap:${size * 0.35}px" role="img" aria-label="QUTE">` +
+  const sh = size * 1.55
+  return `<span style="display:inline-flex;align-items:center;gap:${size * 0.4}px" role="img" aria-label="QUTE">` +
     `<svg width="${(sh * w) / h}" height="${sh}" viewBox="${SYMBOLE_VB}" aria-hidden="true"><path fill="${color}" fill-rule="evenodd" d="${SYMBOLE_D}"/></svg>` +
-    `<span style="color:${textColor};font-family:Syncopate,sans-serif;font-weight:700;font-size:${size}px;letter-spacing:.22em;margin-right:-.22em;line-height:1">QUTE</span></span>`
+    `<span style="color:${textColor};font-family:'Lilita One',sans-serif;font-weight:400;font-size:${size * 1.6}px;letter-spacing:.03em;line-height:1">QUTE</span></span>`
+}
+
+export function symboleSvg(largeur = 40, color = BRAND_RED) {
+  const [, , w, h] = SYMBOLE_VB.split(' ').map(Number)
+  return `<svg width="${largeur}" height="${(largeur * h) / w}" viewBox="${SYMBOLE_VB}" aria-hidden="true"><path fill="${color}" fill-rule="evenodd" d="${SYMBOLE_D}"/></svg>`
 }

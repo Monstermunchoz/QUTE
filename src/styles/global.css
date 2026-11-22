@@ -1,14 +1,15 @@
-@import '@fontsource/syne/latin-700.css';
-@import '@fontsource/syncopate/latin-700.css';
+@import '@fontsource/lilita-one/latin-400.css';
 
-/* Police de texte : seulement le sous-ensemble latin, pour un chargement rapide */
+/* Police de texte : Open Sans, sous-ensemble latin seulement, pour un chargement rapide */
 @font-face {
-  font-family: 'Plus Jakarta Sans Variable';
+  font-family: 'Open Sans Variable';
   font-style: normal;
   font-display: swap;
-  font-weight: 200 800;
-  src: url('@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 300 800;
+  src: url('@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2') format('woff2-variations');
 }
+
+
 
 :root {
   --bg: #0b0709;
@@ -32,8 +33,8 @@
   --on-light: #120c0e;
   --ok: #6fd3a0;
 
-  --font: 'Plus Jakarta Sans Variable', system-ui, -apple-system, sans-serif;
-  --display: 'Syne', var(--font);
+  --font: 'Open Sans Variable', system-ui, -apple-system, sans-serif;
+  --display: 'Lilita One', var(--font);
 
   --r-s: 12px;
   --r-m: 18px;
@@ -45,6 +46,7 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: dark;
+  font-synthesis: none;
 }
 
 /* Thème clair « Ivoire », assorti au logo rouge sur ivoire */
@@ -116,9 +118,9 @@ input, textarea { font-size: 16px; } /* évite le zoom iOS */
 .pad { padding: 0 20px; }
 
 /* Typo */
-.display { font-family: var(--display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.02; }
-.h1 { font-family: var(--display); font-weight: 700; font-size: 30px; letter-spacing: -0.02em; line-height: 1.05; }
-.h2 { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.015em; line-height: 1.1; }
+.display { font-family: var(--display); font-weight: 400; letter-spacing: 0.005em; line-height: 1.02; }
+.h1 { font-family: var(--display); font-weight: 400; font-size: 30px; letter-spacing: 0.005em; line-height: 1.05; }
+.h2 { font-family: var(--display); font-weight: 400; font-size: 22px; letter-spacing: 0.005em; line-height: 1.1; }
 .eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--champagne); }
 .muted { color: var(--muted); }
 .faint { color: var(--faint); }
