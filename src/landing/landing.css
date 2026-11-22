@@ -499,73 +499,20 @@ details p { color: var(--muted); padding: 0 60px 26px 4px; animation: deplie 0.4
 @media (max-width: 680px) { .profil { flex-basis: 100%; } }
 @media (prefers-reduced-motion: reduce) { .sc { transition: none; } }
 
-/* =========================================================
-   Héros plein écran (esprit Vibratex) : photo teintée, titre
-   empilé qui se révèle, mot fantôme géant, arche, compteur
-   ========================================================= */
-.hs { position: relative; height: 100svh; min-height: 620px; max-height: 1000px; overflow: hidden; background: #2a0b12; }
-.hs-slides, .hs-slide { position: absolute; inset: 0; }
-.hs-slide { opacity: 0; visibility: hidden; transition: opacity 1.1s var(--ease), visibility 0s 1.1s; }
-.hs-slide.actif { opacity: 1; visibility: visible; transition: opacity 1.1s var(--ease); z-index: 1; }
-.hs-fond { position: absolute; inset: 0; overflow: hidden; }
-.hs-fond img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.08) brightness(1.05); transform: scale(1.12); transition: transform 8s linear; }
-.hs-slide.actif .hs-fond img { transform: scale(1); }
-/* teinte duotone rouge-rose, comme Vibratex mais aux couleurs QUTE */
-.hs-fond::after { content: ''; position: absolute; inset: 0; mix-blend-mode: multiply; background: linear-gradient(180deg, #ff3d6e 0%, #e0284b 45%, #6a0d22 100%); }
-.hs-fond::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(20, 4, 9, 0.55) 0%, rgba(20, 4, 9, 0.1) 55%, transparent), linear-gradient(transparent 70%, rgba(11, 7, 9, 0.85)); }
-.hs-fantome { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%) scale(0.94); font-family: var(--display); font-size: clamp(120px, 21vw, 360px); line-height: 0.8; letter-spacing: 0.02em; color: rgba(40, 0, 10, 0.32); white-space: nowrap; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 1.4s var(--ease) 0.2s, transform 1.6s var(--ease) 0.2s; }
-.hs-slide.actif .hs-fantome { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.hs-grille { position: relative; z-index: 3; height: 100%; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 40px; padding-top: 70px; }
-.hs-texte .eyebrow { color: #ffd3da; }
-.hs-titre { font-family: var(--display); font-weight: 400; font-size: clamp(58px, 8.6vw, 132px); line-height: 0.92; color: #fff; margin-top: 18px; text-shadow: 0 6px 40px rgba(60, 0, 15, 0.35); }
-.hs-titre .ligne { display: block; overflow: hidden; padding-bottom: 0.04em; }
-.hs-titre .ligne > span { display: inline-block; transform: translateY(105%); transition: transform 0.9s var(--ease); }
-.hs-slide.actif .hs-titre .ligne > span { transform: none; }
-.hs-slide.actif .hs-titre .ligne:nth-child(2) > span { transition-delay: 0.1s; }
-.hs-slide.actif .hs-titre .ligne:nth-child(3) > span { transition-delay: 0.2s; }
-.hs-titre .ligne:nth-child(2) { color: #1a0509; text-shadow: none; }
-.hs-lead { max-width: 520px; margin-top: 22px; font-size: clamp(16px, 1.4vw, 19px); color: rgba(255, 240, 243, 0.9); opacity: 0; transform: translateY(16px); transition: opacity 0.8s var(--ease) 0.35s, transform 0.8s var(--ease) 0.35s; }
-.hs-texte .cta-row { opacity: 0; transform: translateY(16px); transition: opacity 0.8s var(--ease) 0.45s, transform 0.8s var(--ease) 0.45s; }
-.hs-slide.actif .hs-lead, .hs-slide.actif .hs-texte .cta-row { opacity: 1; transform: none; }
-.btn-verre { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-.hs-arche { margin: 0; display: grid; justify-items: end; gap: 18px; text-align: right; opacity: 0; transform: translateY(30px); transition: opacity 1s var(--ease) 0.5s, transform 1s var(--ease) 0.5s; }
-.hs-slide.actif .hs-arche { opacity: 1; transform: none; }
-.hs-arche-img { display: block; width: clamp(130px, 11vw, 170px); aspect-ratio: 600 / 860; border-radius: 999px 999px 0 0; overflow: hidden; box-shadow: 0 30px 60px rgba(40, 0, 10, 0.45); }
-.hs-arche-img img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.1); }
-.hs-arche figcaption { font-family: var(--display); font-size: clamp(20px, 1.8vw, 26px); line-height: 1.05; color: rgba(255, 255, 255, 0.85); }
-.hs-compteur { position: absolute; z-index: 4; left: 50%; bottom: 34px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; color: #fff; font-size: 15px; font-variant-numeric: tabular-nums; }
-.hs-barre { position: relative; width: clamp(140px, 16vw, 240px); height: 2px; background: rgba(255, 255, 255, 0.3); overflow: hidden; }
-.hs-barre i { position: absolute; inset: 0; background: linear-gradient(90deg, #fff, #ffb3c0); transform-origin: left; transform: scaleX(0); }
-.hs-fleche { width: 36px; height: 36px; border-radius: 50%; font-size: 20px; line-height: 1; color: #fff; border: 1px solid rgba(255, 255, 255, 0.35); display: grid; place-items: center; }
-.hs-fleche:hover { background: rgba(255, 255, 255, 0.15); }
-.hs-stats { margin-top: -1px; padding-top: 34px; display: flex; justify-content: center; }
-.hs-stats .hero-stats { margin: 0; width: 100%; max-width: 720px; }
-.feature-phone { min-height: 0; padding: 40px 0; background: radial-gradient(70% 60% at 50% 40%, #3a0f1b, #140c0e 70%); }
-.feature-phone .phone { transform: scale(0.86); margin: -40px 0; }
-@media (max-width: 860px) {
-  .hs { height: 92svh; }
-  .hs-grille { grid-template-columns: 1fr; align-items: end; padding-bottom: 110px; text-align: center; }
-  .hs-texte .cta-row { justify-content: center; }
-  .hs-lead { margin-inline: auto; }
-  .hs-arche { display: none; }
-  .hs-fantome { top: 34%; font-size: 30vw; }
-  .hs-fond::before { background: linear-gradient(transparent 30%, rgba(20, 4, 9, 0.75) 80%); }
-  .hs-compteur { bottom: 22px; }
-  .feature-phone .phone { transform: scale(0.78); margin: -70px 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hs-fond img, .hs-titre .ligne > span, .hs-lead, .hs-texte .cta-row, .hs-arche, .hs-fantome { transition: none; }
-}
-/* Sur la photo teintée du héros, le symbole du logo passe en blanc pour rester lisible */
-.nav:not(.scrolled) .brand svg path { fill: #fff; }
-
 /* ---------- Le guide (blog) sur l'accueil ---------- */
 .guide-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 90px); align-items: center; }
 .guide-grille .h2, .guide-grille .eyebrow { text-align: left; }
-.guide-visuel { position: relative; margin: 0; display: grid; place-items: center; }
-.guide-arche { position: relative; z-index: 1; display: block; width: min(100%, 440px); aspect-ratio: 3 / 4; border-radius: 999px 999px 40px 40px; overflow: hidden; box-shadow: 0 40px 90px rgba(196, 30, 58, 0.3); }
-.guide-arche img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.3); transform: scale(1.08); }
-.guide-fantome { position: absolute; z-index: 0; bottom: 8%; left: 50%; transform: translateX(-50%); font-family: var(--display); font-size: clamp(90px, 13vw, 190px); line-height: 1; color: rgba(196, 30, 58, 0.18); }
+/* Anneau de texte qui tourne autour d'un visuel central */
+.anneau { position: relative; margin: 0 auto; width: min(100%, 520px); aspect-ratio: 1; display: grid; place-items: center; }
+.anneau svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.anneau-ext text { font-family: var(--display); font-size: 26px; fill: #f0738f; }
+.anneau-int text { font-family: var(--font); font-size: 12.5px; font-weight: 600; fill: rgba(240, 115, 143, 0.75); }
+.anneau-ext { animation: tourne 40s linear infinite; }
+.anneau-int { animation: tourne 30s linear infinite reverse; }
+.anneau-centre { position: relative; width: 52%; height: auto; filter: drop-shadow(0 30px 50px rgba(196, 30, 58, 0.45)); animation: flotte 6s ease-in-out infinite alternate; }
+@keyframes tourne { to { transform: rotate(360deg); } }
+@keyframes flotte { to { transform: translateY(-10px) rotate(-2deg); } }
+@media (prefers-reduced-motion: reduce) { .anneau-ext, .anneau-int, .anneau-centre { animation: none; } }
 .guide-liste { list-style: none; padding: 0; margin: 28px 0 30px; display: grid; gap: 12px; }
 .guide-liste a { display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: center; padding: 10px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); transition: border-color 0.3s, transform 0.3s var(--ease); }
 .guide-liste a:hover { border-color: rgba(217, 41, 74, 0.5); transform: translateX(4px); }

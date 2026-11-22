@@ -63,68 +63,46 @@
     </div>
 
     <main id="contenu">
-      <!-- HÉROS : diaporama plein écran -->
-      <section class="hs" aria-roledescription="carrousel" aria-label="À la une" data-heros>
-        <div class="hs-slides">
-          <article class="hs-slide actif" data-slide aria-roledescription="diapositive" aria-label="1 sur 3">
-            <div class="hs-fond"><img src="/heros/fond-1.svg" width="1920" height="1080" alt="" fetchpriority="high" decoding="async" /></div>
-            <span class="hs-fantome" aria-hidden="true">LIBERTIN</span>
-            <div class="wrap hs-grille">
-              <div class="hs-texte">
-                <p class="eyebrow">Le réseau libertin · Réservé aux adultes</p>
-                <h1 class="hs-titre"><span class="ligne"><span>Osez.</span></span><span class="ligne"><span>En toute</span></span><span class="ligne"><span>confiance.</span></span></h1>
-                <p class="hs-lead">Couples, célibertins, licornes, trans, gays et lesbiennes : rencontrez des libertins près de chez vous, découvrez les clubs et saunas de France, sortez ce soir.</p>
-                <div class="cta-row">
-                  <button class="btn btn-primary" data-install>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Installer l'appli
-                  </button>
-                  <a class="btn btn-ghost btn-verre" href="/app/">Essayer la démo</a>
-                </div>
-              </div>
-              <figure class="hs-arche"><span class="hs-arche-img"><img src="/heros/arche-1.svg" width="600" height="860" alt="" loading="lazy" decoding="async" /></span><figcaption>Sortez<br />ce soir</figcaption></figure>
+      <!-- HÉROS -->
+      <section class="hero dentelle">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="wrap hero-grid">
+          <div class="hero-text reveal">
+            <p class="eyebrow">Le réseau libertin · Réservé aux adultes</p>
+            <h1 class="display">Osez.<br /><span class="red">En toute</span><br />confiance.</h1>
+            <p class="lead">Couples, célibertins, licornes, trans, gays et lesbiennes : rencontrez des libertins près de chez vous, découvrez les clubs et saunas de France, sortez ce soir. Avec des règles claires et une discrétion absolue.</p>
+            <div class="cta-row">
+              <button class="btn btn-primary" data-install>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Installer l'appli
+              </button>
+              <a class="btn btn-ghost" href="/app/">Essayer la démo</a>
             </div>
-          </article>
-          <article class="hs-slide" data-slide aria-roledescription="diapositive" aria-label="2 sur 3" aria-hidden="true">
-            <div class="hs-fond"><img src="/heros/fond-2.svg" width="1920" height="1080" alt="" loading="lazy" decoding="async" /></div>
-            <span class="hs-fantome" aria-hidden="true">DÉSIR</span>
-            <div class="wrap hs-grille">
-              <div class="hs-texte">
-                <p class="eyebrow">Rencontres libertines</p>
-                <p class="hs-titre"><span class="ligne"><span>Le désir</span></span><span class="ligne"><span>se partage</span></span><span class="ligne"><span>à deux.</span></span></p>
-                <p class="hs-lead">Compte couple partagé, matchs validés à deux, profils certifiés par les membres rencontrés en vrai.</p>
-                <div class="cta-row"><a class="btn btn-primary" href="/app/">Découvrir l'appli</a></div>
-              </div>
-              <figure class="hs-arche"><span class="hs-arche-img"><img src="/heros/arche-2.svg" width="600" height="860" alt="" loading="lazy" decoding="async" /></span><figcaption>Matchez<br />à deux</figcaption></figure>
-            </div>
-          </article>
-          <article class="hs-slide" data-slide aria-roledescription="diapositive" aria-label="3 sur 3" aria-hidden="true">
-            <div class="hs-fond"><img src="/heros/fond-3.svg" width="1920" height="1080" alt="" loading="lazy" decoding="async" /></div>
-            <span class="hs-fantome" aria-hidden="true">SOIRÉE</span>
-            <div class="wrap hs-grille">
-              <div class="hs-texte">
-                <p class="eyebrow">Clubs, soirées &amp; boutique</p>
-                <p class="hs-titre"><span class="ligne"><span>Ce soir,</span></span><span class="ligne"><span>on sort</span></span><span class="ligne"><span>ensemble ?</span></span></p>
-                <p class="hs-lead">Clubs et saunas partout en France, agenda des soirées, et notre boutique de partenaires pour la tenue parfaite.</p>
-                <div class="cta-row"><a class="btn btn-primary" href="#boutique">Voir la boutique</a></div>
-              </div>
-              <figure class="hs-arche"><span class="hs-arche-img"><img src="/heros/arche-3.svg" width="600" height="860" alt="" loading="lazy" decoding="async" /></span><figcaption>Habillez<br />vos envies</figcaption></figure>
-            </div>
-          </article>
-        </div>
-        <div class="hs-compteur">
-          <button class="hs-fleche" data-prec aria-label="Diapositive précédente">‹</button>
-          <span data-num>01</span><span class="hs-barre"><i data-barre></i></span><span>03</span>
-          <button class="hs-fleche" data-suiv aria-label="Diapositive suivante">›</button>
-        </div>
-      </section>
-      <div class="wrap hs-stats">
-        <ul class="hero-stats" aria-label="QUTE en chiffres">
+            <ul class="hero-stats" aria-label="QUTE en chiffres">
               <li><a href="#lieux"><strong data-count="lieux">259</strong><span>lieux référencés</span></a></li>
               <li><a href="#lieux"><strong data-count="soirees">163</strong><span>soirées à venir</span></a></li>
               <li><a href="#lieux"><strong data-count="shops">144</strong><span>sex-shops</span></a></li>
             </ul>
-      </div>
+          </div>
+          <div class="hero-phone reveal">
+            <div class="phone">
+              <div class="swipe" data-swipe aria-hidden="true">
+                <div class="swipe-haut"><span data-logo></span><span class="swipe-dispo"><span class="dot ok"></span>Dispo ce soir</span></div>
+                <div class="swipe-pile">
+                <article class="sc c1"><div class="sc-photo"><i class="fig f1"></i><i class="fig f2"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Couple · hétéro</span><strong>Léa &amp; Marc</strong><span class="sc-meta">34 et 37 ans · Lyon · 3 km</span><span class="sc-chips"><span>Soft</span><span>Mélangisme</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
+                <article class="sc c2"><div class="sc-photo"><i class="fig f1"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Licorne</span><strong>Sofia</strong><span class="sc-meta">29 ans · Paris · 5 km</span><span class="sc-chips"><span>Débutante</span><span>Un verre d'abord</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
+                <article class="sc c3"><div class="sc-photo"><i class="fig f1"></i><i class="fig f2"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Couple · lesbien</span><strong>Inès &amp; Camille</strong><span class="sc-meta">31 et 33 ans · Bordeaux</span><span class="sc-chips"><span>Soirées</span><span>Club</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
+                <article class="sc c4"><div class="sc-photo"><i class="fig f1"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Célibertin certifié</span><strong>Thomas</strong><span class="sc-meta">38 ans · Marseille · 8 km</span><span class="sc-chips"><span>Certifié ×4</span><span>Respect</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
+                <article class="sc c5"><div class="sc-photo"><i class="fig f1"></i><i class="fig f2"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Couple · bi</span><strong>Nora &amp; Hugo</strong><span class="sc-meta">30 et 32 ans · Lille · 2 km</span><span class="sc-chips"><span>Échangisme</span><span>Ce soir</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
+                </div>
+                <div class="swipe-btns"><span class="sb non">✕</span><span class="sb fr" data-fraise></span><span class="sb oui">♥</span></div>
+              </div>
+            </div>
+            <div class="float-card fc-1" aria-hidden="true"><span class="dot ok"></span>Léa &amp; Marc sortent ce soir</div>
+            <div class="float-card fc-2" aria-hidden="true"><span data-fraise></span>Tarte aux fraises reçue</div>
+          </div>
+        </div>
+      </section>
 
       <!-- POUR QUI -->
       <section class="section" id="pour-qui">
@@ -148,20 +126,17 @@
           <h2 class="h2 reveal">Pensée par et pour<br />des libertins.</h2>
 
           <div class="feature reveal">
-            <div class="feature-visual feature-phone">
-              <div class="phone">
-              <div class="swipe" data-swipe aria-hidden="true">
-                <div class="swipe-haut"><span data-logo></span><span class="swipe-dispo"><span class="dot ok"></span>Dispo ce soir</span></div>
-                <div class="swipe-pile">
-                <article class="sc c1"><div class="sc-photo"><i class="fig f1"></i><i class="fig f2"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Couple · hétéro</span><strong>Léa &amp; Marc</strong><span class="sc-meta">34 et 37 ans · Lyon · 3 km</span><span class="sc-chips"><span>Soft</span><span>Mélangisme</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
-                <article class="sc c2"><div class="sc-photo"><i class="fig f1"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Licorne</span><strong>Sofia</strong><span class="sc-meta">29 ans · Paris · 5 km</span><span class="sc-chips"><span>Débutante</span><span>Un verre d'abord</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
-                <article class="sc c3"><div class="sc-photo"><i class="fig f1"></i><i class="fig f2"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Couple · lesbien</span><strong>Inès &amp; Camille</strong><span class="sc-meta">31 et 33 ans · Bordeaux</span><span class="sc-chips"><span>Soirées</span><span>Club</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
-                <article class="sc c4"><div class="sc-photo"><i class="fig f1"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Célibertin certifié</span><strong>Thomas</strong><span class="sc-meta">38 ans · Marseille · 8 km</span><span class="sc-chips"><span>Certifié ×4</span><span>Respect</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
-                <article class="sc c5"><div class="sc-photo"><i class="fig f1"></i><i class="fig f2"></i></div><span class="sc-flou">Photo floutée</span><div class="sc-info"><span class="sc-type">Couple · bi</span><strong>Nora &amp; Hugo</strong><span class="sc-meta">30 et 32 ans · Lille · 2 km</span><span class="sc-chips"><span>Échangisme</span><span>Ce soir</span></span></div><span class="sc-stamp oui">ENVIE</span><span class="sc-stamp non">PAS CE SOIR</span></article>
+            <div class="feature-visual">
+              <div class="mini-card">
+                <div class="mini-photo"></div>
+                <div class="mini-body">
+                  <span class="eyebrow">Couple F/H</span>
+                  <strong>Léa &amp; Marc</strong>
+                  <span class="muted">Elle 34 · Lui 37 · Lyon</span>
+                  <span class="chips"><span class="chip oui">Soft</span><span class="chip oui">Côte-à-côtisme</span><span class="chip non">Non : hommes seuls</span></span>
                 </div>
-                <div class="swipe-btns"><span class="sb non">✕</span><span class="sb fr" data-fraise></span><span class="sb oui">♥</span></div>
+                <span class="stamp">ENVIE</span>
               </div>
-            </div>
             </div>
             <div class="feature-text">
               <h3 class="h3">Glissez, matchez, rencontrez.</h3>
@@ -246,20 +221,22 @@
       </section>
 
       <!-- LE GUIDE (BLOG) -->
-      <section class="section guide-accueil" id="guide">
+      <section class="section" id="guide">
         <div class="wrap guide-grille">
-          <figure class="guide-visuel reveal">
-            <span class="guide-arche"><img src="/blog/img/libertinage.svg" width="1200" height="630" alt="Masque vénitien et coupes de champagne, illustration du guide du libertinage" loading="lazy" decoding="async" /></span>
+          <figure class="anneau reveal" aria-hidden="true">
+            <svg class="anneau-ext" viewBox="0 0 500 500"><defs><path id="cercle-ext" d="M250 250m-225 0a225 225 0 1 1 450 0a225 225 0 1 1-450 0"/></defs><text><textPath href="#cercle-ext" textLength="1405">LE GUIDE DU LIBERTINAGE ♥ CE QU'IL FAUT SAVOIR ♥ LE GUIDE DU LIBERTINAGE ♥ CE QU'IL FAUT SAVOIR ♥ </textPath></text></svg>
+            <svg class="anneau-int" viewBox="0 0 500 500"><defs><path id="cercle-int" d="M250 250m-172 0a172 172 0 1 1 344 0a172 172 0 1 1-344 0"/></defs><text><textPath href="#cercle-int" textLength="1075">CONSENTEMENT · RESPECT · DISCRÉTION · COMPLICITÉ · CONSENTEMENT · RESPECT · DISCRÉTION · COMPLICITÉ · </textPath></text></svg>
+            <img class="anneau-centre" src="/guide-masque.svg" width="400" height="400" alt="" loading="lazy" decoding="async" />
           </figure>
           <div class="reveal">
             <p class="eyebrow">Le blog QUTE</p>
             <h2 class="h2">Ce qu'il faut<br /><span class="red">savoir.</span></h2>
             <p class="lead">Échangisme, soft swap, mélangisme, triolisme, couple libre… Le guide du libertinage explique chaque pratique, ses codes et ses règles, pour vivre vos envies sereinement.</p>
             <ul class="guide-liste">
-                <li><a href="/blog/libertinage/"><img src="/blog/img/libertinage.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Libertinage : le guide complet</strong><em>14 min de lecture</em></span></a></li>
-                <li><a href="/blog/echangisme/"><img src="/blog/img/echangisme.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Échangisme : les codes pour débuter</strong><em>12 min de lecture</em></span></a></li>
-                <li><a href="/blog/soft-swap/"><img src="/blog/img/soft-swap.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Soft swap : un premier pas en douceur</strong><em>12 min de lecture</em></span></a></li>
-                <li><a href="/blog/triolisme/"><img src="/blog/img/triolisme.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Triolisme : réussir une rencontre à trois</strong><em>12 min de lecture</em></span></a></li>
+              <li><a href="/blog/libertinage/"><img src="/blog/img/libertinage.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Libertinage : le guide complet</strong><em>14 min de lecture</em></span></a></li>
+              <li><a href="/blog/echangisme/"><img src="/blog/img/echangisme.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Échangisme : les codes pour débuter</strong><em>12 min de lecture</em></span></a></li>
+              <li><a href="/blog/soft-swap/"><img src="/blog/img/soft-swap.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Soft swap : un premier pas en douceur</strong><em>12 min de lecture</em></span></a></li>
+              <li><a href="/blog/triolisme/"><img src="/blog/img/triolisme.svg" width="1200" height="630" alt="" loading="lazy" decoding="async" /><span><strong>Triolisme : réussir une rencontre à trois</strong><em>12 min de lecture</em></span></a></li>
             </ul>
             <a class="btn btn-primary" href="/blog/">Lire le guide</a>
           </div>
