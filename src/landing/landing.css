@@ -397,3 +397,104 @@ details p { color: var(--muted); padding: 0 60px 26px 4px; animation: deplie 0.4
 .partenaire-carte { padding: clamp(28px, 4vw, 44px); border-radius: 40px; background: linear-gradient(160deg, #2b1117, var(--surface) 70%); border: 1px solid var(--line-2); display: grid; gap: 22px; }
 .petit { font-size: 14px; }
 @media (max-width: 860px) { .partenaires { grid-template-columns: 1fr; } }
+
+/* =========================================================
+   Ajustements : rythme vertical identique partout, tout centré
+   ========================================================= */
+:root { --sec: clamp(84px, 10vw, 128px); --tete-contenu: 56px; }
+.section { padding: var(--sec) 0; }
+.section .wrap > .eyebrow, .section .wrap > .h2, .section .wrap > .lead,
+.boutique-tete, .boutique-tete .lead, .faq > .h2, .comment, .comment .h3 { text-align: center; }
+.section .wrap > .lead, .boutique-tete .lead { margin-left: auto; margin-right: auto; }
+.section .wrap > .lead { margin-top: 22px; }
+.boutique-tete { grid-template-columns: 1fr; gap: 0; justify-items: center; }
+.boutique-tete .lead { margin-top: 22px; max-width: 640px; }
+.profils, .regles, .cats, .plans { margin-top: var(--tete-contenu); }
+.faq-list { margin-top: var(--tete-contenu); }
+.cat, .regle, .profil { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.cat-ico { margin-inline: auto; }
+.etapes li { flex-direction: column; align-items: center; text-align: center; }
+.comment .cta-row { justify-content: center; }
+.note-affil { text-align: center; }
+.defile { margin: 0 -10px; }
+
+/* ---------- Pour qui ---------- */
+.profils { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
+.profil { flex: 0 1 calc((100% - 36px) / 3); min-width: 260px; padding: 36px 30px 34px; border-radius: 36px;
+  background: linear-gradient(170deg, #241015 0%, var(--surface) 60%); position: relative; overflow: hidden; }
+.profil::before { content: ''; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, transparent, var(--red-hi), transparent); opacity: 0.8; }
+.profil-ico { display: grid; place-items: center; width: 78px; height: 78px; border-radius: 26px; background: rgba(196, 30, 58, 0.14); color: var(--rose); }
+.profil h3 { font-family: var(--display); font-weight: 400; font-size: 27px; margin-top: 20px; line-height: 1.08; }
+.profil p { font-size: 15.5px; margin-top: 12px; max-width: 300px; }
+
+/* ---------- Téléphone : profils floutés qui défilent ---------- */
+.swipe { position: relative; height: 100%; border-radius: 42px; overflow: hidden; background: #0b0709; display: flex; flex-direction: column; padding: 18px 14px 16px; }
+.swipe-haut { display: flex; justify-content: space-between; align-items: center; padding: 4px 6px 12px; }
+.swipe-dispo { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: rgba(246, 233, 226, 0.06); border: 1px solid var(--line-2); }
+.swipe-pile { position: relative; flex: 1; }
+.sc { position: absolute; inset: 0; border-radius: 30px; overflow: hidden; background: #1b1013; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5); transition: transform 0.6s var(--ease), opacity 0.6s; transform-origin: 50% 110%; }
+.sc:nth-last-child(2) { transform: scale(0.95) translateY(12px); }
+.sc:nth-last-child(n + 3) { transform: scale(0.9) translateY(24px); opacity: 0; }
+.sc.part-d { transform: translateX(130%) rotate(16deg); }
+.sc.part-g { transform: translateX(-130%) rotate(-16deg); }
+.sc-photo { position: absolute; inset: -30px; background: var(--fond); filter: blur(13px) saturate(1.1); }
+.sc-photo::after { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 30%, rgba(255, 220, 190, 0.18), transparent 70%); }
+.fig { position: absolute; bottom: 0; width: 62%; height: 78%; left: 19%; }
+.fig::before { content: ''; position: absolute; left: 50%; top: 6%; width: 38%; aspect-ratio: 0.8; transform: translateX(-50%); border-radius: 50% 50% 46% 46%; background: radial-gradient(60% 60% at 45% 40%, var(--peau-clair), var(--peau) 70%); box-shadow: 0 -14px 0 6px var(--cheveux), 0 10px 0 -2px var(--cheveux-bas, transparent); }
+.fig::after { content: ''; position: absolute; left: 50%; bottom: -6%; width: 100%; height: 58%; transform: translateX(-50%); border-radius: 46% 46% 10% 10%; background: linear-gradient(180deg, var(--haut-clair), var(--haut)); }
+.fig.f1 { --peau: #c98f6e; --peau-clair: #e6b496; --cheveux: #3a2219; --haut: #5a0f1e; --haut-clair: #8e1b31; }
+.fig.f2 { left: auto; right: -4%; width: 56%; height: 72%; --peau: #b07b5c; --peau-clair: #d7a27f; --cheveux: #1f1411; --haut: #191317; --haut-clair: #3b2d33; }
+.c1 .f1 { left: 2%; width: 56%; }
+.c1 { --fond: radial-gradient(80% 60% at 30% 20%, #e1a77a, #6b2a2e 55%, #1d0e12); }
+.c2 { --fond: radial-gradient(80% 60% at 70% 15%, #f0c39a, #8a3b3f 55%, #22101a); }
+.c2 .f1 { --cheveux: #6b3b1f; --cheveux-bas: #6b3b1f; --haut: #101015; --haut-clair: #2b2633; }
+.c3 { --fond: radial-gradient(80% 60% at 40% 10%, #d6a2b8, #5e2a49 55%, #150b14); }
+.c3 .f1 { left: 2%; width: 54%; --cheveux: #b8864f; --cheveux-bas: #b8864f; --haut: #e9dcd6; --haut-clair: #fff4ee; }
+.c3 .f2 { --peau: #8a5a40; --peau-clair: #b07a58; --cheveux: #120c0a; --cheveux-bas: #120c0a; --haut: #6b0f22; --haut-clair: #a41d3a; }
+.c4 { --fond: radial-gradient(80% 60% at 60% 20%, #a8b6c4, #2f3442 55%, #0e0c12); }
+.c4 .f1 { --peau: #b58466; --peau-clair: #d9a688; --cheveux: #2a1c16; --haut: #1d2230; --haut-clair: #3a4256; }
+.c5 { --fond: radial-gradient(80% 60% at 35% 20%, #f2b48a, #7a3326 55%, #1c0d0c); }
+.c5 .f1 { left: 2%; width: 56%; --cheveux: #2c1810; --cheveux-bas: #2c1810; --haut: #f0e6e0; --haut-clair: #fffaf6; }
+.c5 .f2 { --haut: #2a3b2f; --haut-clair: #456150; }
+.sc-flou { position: absolute; top: 14px; left: 14px; font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; background: rgba(11, 7, 9, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.sc-info { position: absolute; left: 0; right: 0; bottom: 0; padding: 60px 18px 18px; display: grid; gap: 4px; background: linear-gradient(transparent, rgba(11, 7, 9, 0.92) 55%); }
+.sc-type { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--rose); }
+.sc-info strong { font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1.05; }
+.sc-meta { font-size: 13px; color: var(--muted); }
+.sc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.sc-chips span { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(111, 211, 160, 0.14); color: #9fe6c1; }
+.sc-stamp { position: absolute; top: 46px; font-family: var(--display); font-size: 26px; padding: 4px 14px; border-radius: 12px; border: 3px solid; opacity: 0; transition: opacity 0.25s; }
+.sc-stamp.oui { left: 18px; color: #6fd3a0; transform: rotate(-12deg); }
+.sc-stamp.non { right: 18px; color: var(--rose); transform: rotate(12deg); }
+.sc.part-d .sc-stamp.oui, .sc.part-g .sc-stamp.non { opacity: 1; }
+.swipe-btns { display: flex; justify-content: center; gap: 18px; padding-top: 14px; }
+.sb { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; background: rgba(246, 233, 226, 0.06); border: 1px solid var(--line-2); }
+.sb.oui { background: linear-gradient(180deg, var(--red-hi), var(--red)); border: 0; }
+.sb.fr { width: 44px; height: 44px; align-self: center; }
+
+/* ---------- Tarifs : QUTE et QUTE+ ---------- */
+.durees { display: flex; justify-content: center; gap: 6px; width: max-content; margin: 34px auto 0; padding: 6px; border-radius: 999px; background: rgba(246, 233, 226, 0.05); border: 1px solid var(--line-2); }
+.duree { height: 44px; padding: 0 20px; border-radius: 999px; font-weight: 700; font-size: 14.5px; color: var(--muted); }
+.duree small { font-size: 11.5px; color: #9fe6c1; margin-left: 4px; }
+.duree[aria-checked='true'] { background: var(--text); color: #1a0e11; }
+.duree[aria-checked='true'] small { color: #1b7f4d; }
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 420px)); justify-content: center; gap: 22px; }
+.plan { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 40px 32px 34px; border-radius: 40px; background: var(--surface); border: 1px solid var(--line-2); }
+.plan-plus { background: radial-gradient(120% 90% at 80% 0%, #6d0d20 0%, #2a0b12 45%, #140c0e 100%); border-color: rgba(217, 41, 74, 0.55); box-shadow: 0 30px 80px rgba(196, 30, 58, 0.22); }
+.plan-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); height: 28px; padding: 0 14px; border-radius: 14px; background: var(--red); color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; display: inline-flex; align-items: center; }
+.plan-logo { display: inline-flex; align-items: center; gap: 6px; }
+.plus-signe { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1; color: var(--red-hi); }
+.plan-pour { color: var(--muted); font-size: 15px; margin-top: 10px; }
+.plan-prix { margin-top: 22px; display: flex; align-items: baseline; gap: 6px; justify-content: center; }
+.plan-prix strong { font-family: var(--display); font-weight: 400; font-size: 56px; line-height: 1; }
+.plan-prix span { color: var(--muted); }
+.plan-facture { font-size: 13.5px; color: var(--muted); margin-top: 6px; min-height: 1.4em; }
+.plan-liste { list-style: none; padding: 0; margin: 26px 0 30px; display: grid; gap: 12px; font-size: 15px; }
+.plan-liste li::before { content: '♥'; color: var(--red-hi); margin-right: 8px; }
+.plan-liste li:first-child b { color: var(--rose); }
+.plan .btn { width: 100%; margin-top: auto; }
+.offres-note { text-align: center; margin-top: 28px; }
+@media (max-width: 960px) { .profil { flex-basis: calc((100% - 18px) / 2); } }
+@media (max-width: 860px) { .plans { grid-template-columns: minmax(0, 480px); } .durees { width: 100%; } .duree { flex: 1; padding: 0 8px; } }
+@media (max-width: 680px) { .profil { flex-basis: 100%; } }
+@media (prefers-reduced-motion: reduce) { .sc { transition: none; } }

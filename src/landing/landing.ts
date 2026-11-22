@@ -102,22 +102,52 @@ $$('[data-install]').forEach((b) =>
 $$('[data-close]').forEach((b) => b.addEventListener('click', () => sheet && (sheet.hidden = true)))
 addEventListener('keydown', (e) => e.key === 'Escape' && sheet && (sheet.hidden = true))
 
-/* Détail des offres */
-const OFFRES: Record<string, { titre: string; prix: string; detail: string; eco: string }> = {
-  '1m': { titre: '1 mois', prix: '19,99 €', detail: '19,99 € par mois, sans engagement.', eco: '' },
-  '3m': { titre: '3 mois', prix: '15 €', detail: '44,99 € tous les 3 mois.', eco: 'Vous économisez 25 %' },
-  '12m': { titre: '12 mois', prix: '10 €', detail: '119,99 € par an.', eco: 'Vous économisez 50 %' },
+/* Tarifs : deux formules (QUTE, QUTE+) et trois durées */
+type Duree = '1m' | '3m' | '12m'
+type Plan = 'qute' | 'plus'
+const TARIFS: Record<Plan, Record<Duree, { mois: string; facture: string; eco: string }>> = {
+  qute: {
+    '1m': { mois: '19,99 €', facture: 'Sans engagement', eco: '' },
+    '3m': { mois: '15 €', facture: 'Facturé 44,99 € tous les 3 mois', eco: 'Vous économisez 25 %' },
+    '12m': { mois: '10 €', facture: 'Facturé 119,99 € par an', eco: 'Vous économisez 50 %' },
+  },
+  plus: {
+    '1m': { mois: '29,99 €', facture: 'Sans engagement', eco: '' },
+    '3m': { mois: '25 €', facture: 'Facturé 74,99 € tous les 3 mois', eco: 'Vous économisez 17 %' },
+    '12m': { mois: '16,67 €', facture: 'Facturé 199,99 € par an', eco: 'Vous économisez 44 %' },
+  },
 }
+const LIBELLE_DUREE: Record<Duree, string> = { '1m': '1 mois', '3m': '3 mois', '12m': '12 mois' }
+let duree: Duree = '3m'
+const majPrix = () =>
+  (Object.keys(TARIFS) as Plan[]).forEach((p) => {
+    const t = TARIFS[p][duree]
+    const prix = $(`[data-prix="${p}"]`)
+    const facture = $(`[data-facture="${p}"]`)
+    if (prix) prix.textContent = t.mois
+    if (facture) facture.textContent = t.facture
+  })
+$$('[data-duree]').forEach((b) =>
+  b.addEventListener('click', () => {
+    duree = (b.dataset.duree as Duree) ?? '3m'
+    $$('[data-duree]').forEach((x) => x.setAttribute('aria-checked', String(x === b)))
+    majPrix()
+  }),
+)
+
 const modale = $('[data-modale-offre]')
 const fermerOffre = () => { if (modale) { modale.hidden = true; document.body.style.overflow = '' } }
 $$('[data-offre]').forEach((b) =>
   b.addEventListener('click', () => {
-    const o = OFFRES[b.dataset.offre ?? '3m']
-    if (!modale || !o) return
-    $('[data-offre-titre]')!.textContent = o.titre
-    $('[data-offre-prix]')!.textContent = o.prix
-    $('[data-offre-detail]')!.textContent = o.detail
-    $('[data-offre-eco]')!.textContent = o.eco
+    const plan = (b.dataset.offre as Plan) === 'plus' ? 'plus' : 'qute'
+    const t = TARIFS[plan][duree]
+    if (!modale) return
+    $('[data-offre-plan]')!.textContent = plan === 'plus' ? 'QUTE+' : 'QUTE'
+    $('[data-offre-titre]')!.textContent = LIBELLE_DUREE[duree]
+    $('[data-offre-prix]')!.textContent = t.mois
+    $('[data-offre-detail]')!.textContent = t.facture
+    $('[data-offre-eco]')!.textContent = t.eco
+    $$('[data-plus-seulement]').forEach((li) => (li.hidden = plan !== 'plus'))
     modale.hidden = false
     document.body.style.overflow = 'hidden'
   }),
@@ -125,14 +155,26 @@ $$('[data-offre]').forEach((b) =>
 $$('[data-fermer-offre]').forEach((b) => b.addEventListener('click', fermerOffre))
 addEventListener('keydown', (e) => e.key === 'Escape' && fermerOffre())
 
-/* Choix de la formule, comme dans l'appli */
-const ctaPrivee = $('.privee-cta')
-$$('[data-formule]').forEach((f) =>
-  f.addEventListener('click', () => {
-    $$('[data-formule]').forEach((x) => x.setAttribute('aria-checked', String(x === f)))
-    if (ctaPrivee) ctaPrivee.dataset.offre = f.dataset.formule
-  }),
-)
+/* Téléphone de l'accueil : les profils défilent tout seuls, comme dans l'appli */
+const pile = $('.swipe-pile')
+const calme = matchMedia('(prefers-reduced-motion: reduce)').matches
+if (pile && !calme) {
+  let visible = false
+  new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(pile)
+  let n = 0
+  setInterval(() => {
+    if (!visible || document.hidden) return
+    const cartes = Array.from(pile.querySelectorAll<HTMLElement>('.sc'))
+    const dessus = cartes[cartes.length - 1]
+    if (!dessus) return
+    dessus.classList.add(n++ % 3 === 2 ? 'part-g' : 'part-d')
+    setTimeout(() => {
+      dessus.classList.remove('part-d', 'part-g')
+      pile.prepend(dessus)
+    }, 650)
+  }, 2600)
+}
+
 const logoClair = $('[data-logo-clair]')
 if (logoClair) logoClair.innerHTML = logoSvg(13, '#f6ede8')
 
