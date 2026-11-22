@@ -254,6 +254,7 @@ def main():
       </section>
       <div class="wrap blog-grille">
         <div>
+          <h2 class="h3 titre-liste">À la une</h2>
           {carte(une, grande=True)}
           <h2 class="h3 titre-liste">Toutes les pratiques</h2>
           <div class="cartes-2">{reste}</div>
@@ -279,7 +280,7 @@ def main():
         </div>
       </section>
       <div class="wrap blog-grille">
-        <div class="cartes-2">{''.join(carte(a) for a in liste)}</div>
+        <div><h2 class="h3 titre-liste">Les articles</h2><div class="cartes-2">{''.join(carte(a) for a in liste)}</div></div>
         {sidebar(tous, c)}
       </div>'''
         ecrire(f'blog/categorie/{c}/index.html', page(f'{nom} : articles du guide du libertinage | QUTE', intro, f'/blog/categorie/{c}/', corps, schema=[fil_ld]))
@@ -297,7 +298,7 @@ def main():
         </div>
       </section>
       <div class="wrap blog-grille">
-        <div class="cartes-2">{''.join(carte(a) for a in liste)}</div>
+        <div><h2 class="h3 titre-liste">Les articles</h2><div class="cartes-2">{''.join(carte(a) for a in liste)}</div></div>
         {sidebar(tous)}
       </div>'''
         ecrire(f'blog/tag/{slugify(t)}/index.html', page(f'#{t} : articles sur le libertinage | QUTE', f'Les articles du guide du libertinage QUTE sur le thème « {t} ».', f'/blog/tag/{slugify(t)}/', corps, schema=[fil_ld], robots='noindex, follow'))
