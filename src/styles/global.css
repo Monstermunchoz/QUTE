@@ -1,5 +1,5 @@
 @import '@fontsource/syne/latin-700.css';
-@import '@fontsource/syncopate/latin-700.css';
+@import '@fontsource/montserrat/latin-500.css';
 
 /* Police de texte : seulement le sous-ensemble latin, pour un chargement rapide */
 @font-face {
