@@ -528,3 +528,4 @@ details p { color: var(--muted); padding: 0 60px 26px 4px; animation: deplie 0.4
 .ap-tabs { margin-top: auto; display: flex; justify-content: space-around; padding: 12px 8px; border-radius: 22px; background: rgba(246, 233, 226, 0.05); border: 1px solid var(--line); font-size: 18px; color: var(--muted); }
 .ap-tabs .on { color: var(--red-hi); }
 .plan-badge { white-space: nowrap; }
+.carte-note { margin-top: 12px; font-size: 14.5px; }

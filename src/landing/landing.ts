@@ -42,7 +42,7 @@ if (villes) {
   villes.innerHTML = Object.entries(parVille)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 14)
-    .map(([v, n]) => `<a class="ville" href="${APP_URL}">${v} <span>${n}</span></a>`)
+    .map(([v, n]) => `<a class="ville" href="#prive">${v} <span>${n}</span></a>`)
     .join('')
 }
 
