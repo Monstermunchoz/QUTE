@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
-    "@fontsource/montserrat": "^5.3.0",
     "@fontsource/syncopate": "^5.3.0",
     "@fontsource/syne": "^5.3.0",
     "leaflet": "^1.9.4",

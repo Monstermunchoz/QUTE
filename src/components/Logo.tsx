@@ -1,5 +1,5 @@
 /**
- * Logo QUTE : symbole des deux cœurs entrelacés (trait épais) + nom en Montserrat.
+ * Logo QUTE : symbole des deux cœurs entrelacés (trait épais) + nom en Syncopate.
  * Par défaut : symbole rouge (var(--brand)) et texte crème. Passer `color` seul
  * colore le symbole ET le texte de la même couleur (ex. version claire sur fond rouge).
  */
@@ -28,11 +28,11 @@ export function Logo({
 }) {
   const symColor = color ?? 'var(--brand)'
   const txtColor = textColor ?? color ?? '#f6ede8'
-  const symHeight = size * 1.24
+  const symHeight = size * 1.27
   return (
     <span role="img" aria-label="QUTE" style={{ display: 'inline-flex', alignItems: 'center', gap: size * 0.35 }}>
       {symbole && <Symbole size={(symHeight * VB_W) / VB_H} color={symColor} />}
-      <span style={{ color: txtColor, fontFamily: 'Montserrat, var(--font)', fontWeight: 500, fontSize: size, letterSpacing: '0.27em', marginRight: '-0.27em', lineHeight: 1 }}>QUTE</span>
+      <span style={{ color: txtColor, fontFamily: 'Syncopate, var(--font)', fontWeight: 700, fontSize: size, letterSpacing: '0.22em', marginRight: '-0.22em', lineHeight: 1 }}>QUTE</span>
     </span>
   )
 }
