@@ -155,6 +155,49 @@ $$('[data-offre]').forEach((b) =>
 $$('[data-fermer-offre]').forEach((b) => b.addEventListener('click', fermerOffre))
 addEventListener('keydown', (e) => e.key === 'Escape' && fermerOffre())
 
+/* Héros : diaporama automatique (7 s), flèches, glisser au doigt, pause au survol */
+const heros = $('[data-heros]')
+if (heros) {
+  const slides = $$('[data-slide]')
+  const barre = $('[data-barre]')
+  const num = $('[data-num]')
+  const DUREE = 7000
+  let i = 0
+  let t0 = performance.now()
+  let pause = false
+  const aller = (n: number) => {
+    i = (n + slides.length) % slides.length
+    slides.forEach((s, k) => {
+      s.classList.toggle('actif', k === i)
+      s.setAttribute('aria-hidden', String(k !== i))
+      s.querySelectorAll<HTMLElement>('a, button').forEach((el) => (el.tabIndex = k === i ? 0 : -1))
+      if (k === i) s.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => (img.loading = 'eager'))
+    })
+    if (num) num.textContent = String(i + 1).padStart(2, '0')
+    t0 = performance.now()
+  }
+  aller(0)
+  $('[data-suiv]')?.addEventListener('click', () => aller(i + 1))
+  $('[data-prec]')?.addEventListener('click', () => aller(i - 1))
+  heros.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && (pause = true))
+  heros.addEventListener('pointerleave', () => (pause = false))
+  let x0 = 0
+  heros.addEventListener('touchstart', (e) => (x0 = e.touches[0].clientX), { passive: true })
+  heros.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - x0
+    if (Math.abs(dx) > 50) aller(dx < 0 ? i + 1 : i - 1)
+  })
+  const auto = !matchMedia('(prefers-reduced-motion: reduce)').matches
+  const boucle = (t: number) => {
+    if (pause || document.hidden) t0 = t - (barre ? parseFloat(barre.dataset.p ?? '0') * DUREE : 0)
+    const p = Math.min(1, (t - t0) / DUREE)
+    if (barre) { barre.style.transform = `scaleX(${p})`; barre.dataset.p = String(p) }
+    if (auto && p >= 1) aller(i + 1)
+    requestAnimationFrame(boucle)
+  }
+  if (auto) requestAnimationFrame(boucle)
+}
+
 /* Téléphone de l'accueil : les profils défilent tout seuls, comme dans l'appli */
 const pile = $('.swipe-pile')
 const calme = matchMedia('(prefers-reduced-motion: reduce)').matches
