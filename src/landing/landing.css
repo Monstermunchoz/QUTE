@@ -558,3 +558,40 @@ details p { color: var(--muted); padding: 0 60px 26px 4px; animation: deplie 0.4
 }
 /* Sur la photo teintée du héros, le symbole du logo passe en blanc pour rester lisible */
 .nav:not(.scrolled) .brand svg path { fill: #fff; }
+
+/* ---------- Le guide (blog) sur l'accueil ---------- */
+.guide-grille { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 6vw, 90px); align-items: center; }
+.guide-grille .h2, .guide-grille .eyebrow { text-align: left; }
+.guide-visuel { position: relative; margin: 0; display: grid; place-items: center; }
+.guide-arche { position: relative; z-index: 1; display: block; width: min(100%, 440px); aspect-ratio: 3 / 4; border-radius: 999px 999px 40px 40px; overflow: hidden; box-shadow: 0 40px 90px rgba(196, 30, 58, 0.3); }
+.guide-arche img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.3); transform: scale(1.08); }
+.guide-fantome { position: absolute; z-index: 0; bottom: 8%; left: 50%; transform: translateX(-50%); font-family: var(--display); font-size: clamp(90px, 13vw, 190px); line-height: 1; color: rgba(196, 30, 58, 0.18); }
+.guide-liste { list-style: none; padding: 0; margin: 28px 0 30px; display: grid; gap: 12px; }
+.guide-liste a { display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: center; padding: 10px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); transition: border-color 0.3s, transform 0.3s var(--ease); }
+.guide-liste a:hover { border-color: rgba(217, 41, 74, 0.5); transform: translateX(4px); }
+.guide-liste img { width: 110px; height: 64px; object-fit: cover; border-radius: 16px; }
+.guide-liste strong { display: block; font-family: var(--display); font-weight: 400; font-size: 19px; line-height: 1.15; }
+.guide-liste em { font-style: normal; font-size: 13px; color: var(--rose); }
+@media (max-width: 860px) {
+  .guide-grille { grid-template-columns: 1fr; text-align: center; }
+  .guide-grille .h2, .guide-grille .eyebrow { text-align: center; }
+  .guide-liste a { text-align: left; }
+  .guide-arche { width: min(80%, 340px); }
+}
+
+/* ---------- Boutique : vitrine sex toys (cartes à visuel arrondi, comme une vitrine) ---------- */
+.toys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px 22px; margin-top: var(--tete-contenu); }
+.toy { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.toy-visuel { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1 / 0.82; border-radius: 40px; transition: transform 0.45s var(--ease), border-radius 0.45s var(--ease); }
+.toy:hover .toy-visuel { transform: translateY(-6px) rotate(-1deg); border-radius: 60px 40px 60px 40px; }
+.toy-visuel svg { transition: transform 0.6s var(--ease); }
+.toy:hover .toy-visuel svg { transform: scale(1.12) rotate(-6deg); }
+.toy-visuel.rose { background: linear-gradient(160deg, #ffd6e2, #f39ab4); color: #8d0f2c; }
+.toy-visuel.creme { background: linear-gradient(160deg, #fffaf6, #ead9cf); color: #6d0d20; }
+.toy-visuel.rouge { background: linear-gradient(160deg, #e0405c, #8e0f24); color: #fff; }
+.toy-visuel.violet { background: linear-gradient(160deg, #c9b6ff, #6d4bd1); color: #1d0b3f; }
+.toy-badge { position: absolute; top: 18px; right: 18px; height: 28px; padding: 0 12px; border-radius: 14px; background: rgba(11, 7, 9, 0.75); color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; }
+.toy h3 { font-family: var(--display); font-weight: 400; font-size: 28px; margin-top: 22px; }
+.toy p { color: var(--muted); font-size: 15px; margin-top: 8px; max-width: 320px; }
+@media (max-width: 960px) { .toys { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .toys { grid-template-columns: 1fr; } }
